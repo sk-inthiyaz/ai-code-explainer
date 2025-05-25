@@ -1,5 +1,4 @@
 import React from "react";
-import ReactMarkdown from "react-markdown";
 import CodeExplanation from "./CodeExplanation";
 
 function isPlainMessage(content) {
@@ -11,24 +10,23 @@ function isPlainMessage(content) {
 
 function ChatWindow({ messages, isLoading }) {
   return (
-    <div className="bg-gray-100 shadow-md rounded-lg p-4 h-[70vh] overflow-y-auto flex flex-col gap-4">
+    <div className="bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-2 sm:p-4 h-[70vh] overflow-y-auto flex flex-col gap-3 sm:gap-4">
       {messages.map((msg, idx) => (
         <div
           key={idx}
-          className={`flex ${
-            msg.role === "user" ? "justify-end" : "justify-start"
-          }`}
+          className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
         >
           <div
-            className={`max-w-[75%] px-4 py-3 rounded-lg break-words ${
-              msg.role === "user"
-                ? "bg-blue-500 text-white"
-                : "bg-white text-gray-800 border border-gray-300"
-            } shadow prose-pre:bg-gray-100 prose-pre:p-2 prose-pre:rounded prose-code:text-blue-600`}
+            className={`max-w-[95%] sm:max-w-[75%] px-3 py-2 sm:px-4 sm:py-3 rounded-lg break-words shadow 
+            ${msg.role === "user"
+              ? "bg-blue-500 text-white"
+              : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+            } 
+            prose-pre:bg-gray-100 prose-pre:p-2 prose-pre:rounded prose-code:text-blue-600`}
           >
             {msg.role === "ai" ? (
               isPlainMessage(msg.content) ? (
-                <div className="text-gray-600 italic">{msg.content}</div>
+                <div className="text-gray-600 italic dark:text-gray-300">{msg.content}</div>
               ) : (
                 <CodeExplanation response={msg.content} />
               )
@@ -41,7 +39,7 @@ function ChatWindow({ messages, isLoading }) {
 
       {isLoading && (
         <div className="flex justify-start">
-          <div className="px-4 py-3 rounded-lg bg-gray-200 text-gray-800 italic">
+          <div className="px-4 py-2 sm:py-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 italic">
             Thinking...
           </div>
         </div>
