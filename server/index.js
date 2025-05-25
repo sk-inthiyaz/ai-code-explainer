@@ -1,55 +1,50 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const bodyParser = require("body-parser");
-const axios = require("axios");
+const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const authRoutes = require('./routes/auth');
+const explainRoutes = require('./routes/explainRoute');
 
 dotenv.config();
-
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+// CORS Configuration
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 
-app.post("/api/explain", async (req, res) => {
-  const { code } = req.body;
+// Middleware
+app.use(express.json());
 
+// MongoDB Connection
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch((err) => console.error('MongoDB connection error:', err));
+
+// User routes
+app.post('/api/signup', async (req, res) => {
   try {
-    const response = await axios.post(GEMINI_URL, {
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: `
-You are an AI Code Explainer.
-If the input is code, detect the programming language and explain the code line by line.
-For each line, show:
-Language: <language>
-* \`<code line>\`: <short, attractive explanation of what this line does>
-Use clear, concise, and engaging bullet points.
-If the input is not code or is unrelated (like a question or statement), reply ONLY with:
-"This is an AI Code Explainer. Please enter code to get an explanation."
-Input:
-\`\`\`
-${code}
-\`\`\`
-`,
-            },
-          ],
-        },
-      ],
-    });
-
-    const explanation = response.data.candidates?.[0]?.content?.parts?.[0]?.text || "No explanation found.";
-    res.json({ explanation });
+    const { email, password } = req.body;
+    // Add your user creation logic here
+    res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
-    console.error("Error calling Gemini API:", error.message);
-    res.status(500).json({ error: "Failed to get explanation." });
+    res.status(500).json({ error: error.message });
   }
 });
 
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/', explainRoutes);
+
+app.get('/', (req, res) => {
+  res.send('API is running');
+});
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

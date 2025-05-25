@@ -1,60 +1,51 @@
 import React from "react";
-import "./ChatWindow.css";
+import ReactMarkdown from "react-markdown";
+import CodeExplanation from "./CodeExplanation";
 
-function formatExplanation(content) {
-  if (!content) return null;
-  if (content.trim() === "This is an AI Code Explainer. Please enter code to get an explanation.") {
-    return <div>{content}</div>;
-  }
-  const lines = content.split('\n').filter(line => line.trim() !== "");
-  const languageLine = lines.find(line => line.startsWith("Language:"));
-  const bullets = lines.filter(line => line.startsWith("*"));
-
-  // Extract code lines and explanations
-  const codeLines = [];
-  const explanations = [];
-  bullets.forEach(bullet => {
-    const match = bullet.match(/`([^`]+)`:\s*(.*)/);
-    if (match) {
-      codeLines.push(match[1]);
-      explanations.push(match[2]);
-    }
-  });
-
+function isPlainMessage(content) {
   return (
-    <div>
-      {languageLine && (
-        <div className="language-label">{languageLine.replace("Language:", "").trim()}</div>
-      )}
-      {codeLines.length > 0 && (
-        <div className="code-block">
-          {codeLines.map((cl, idx) => (
-            <div key={idx}>{cl}</div>
-          ))}
-        </div>
-      )}
-      <ul style={{ paddingLeft: "20px" }}>
-        {explanations.map((exp, idx) => (
-          <li key={idx} style={{ marginBottom: "6px" }}>
-            {exp}
-          </li>
-        ))}
-      </ul>
-    </div>
+    content.trim().startsWith("👋 Hi! I'm a code explainer bot.") ||
+    content.trim() === "This is an AI Code Explainer. Please enter code to get an explanation."
   );
 }
 
-function ChatWindow({ messages }) {
+function ChatWindow({ messages, isLoading }) {
   return (
-    <div className="chat-window">
+    <div className="bg-gray-100 shadow-md rounded-lg p-4 h-[70vh] overflow-y-auto flex flex-col gap-4">
       {messages.map((msg, idx) => (
         <div
           key={idx}
-          className={`message ${msg.role === "user" ? "user" : "ai"}`}
+          className={`flex ${
+            msg.role === "user" ? "justify-end" : "justify-start"
+          }`}
         >
-          {msg.role === "ai" ? formatExplanation(msg.content) : msg.content}
+          <div
+            className={`max-w-[75%] px-4 py-3 rounded-lg break-words ${
+              msg.role === "user"
+                ? "bg-blue-500 text-white"
+                : "bg-white text-gray-800 border border-gray-300"
+            } shadow prose-pre:bg-gray-100 prose-pre:p-2 prose-pre:rounded prose-code:text-blue-600`}
+          >
+            {msg.role === "ai" ? (
+              isPlainMessage(msg.content) ? (
+                <div className="text-gray-600 italic">{msg.content}</div>
+              ) : (
+                <CodeExplanation response={msg.content} />
+              )
+            ) : (
+              msg.content
+            )}
+          </div>
         </div>
       ))}
+
+      {isLoading && (
+        <div className="flex justify-start">
+          <div className="px-4 py-3 rounded-lg bg-gray-200 text-gray-800 italic">
+            Thinking...
+          </div>
+        </div>
+      )}
     </div>
   );
 }

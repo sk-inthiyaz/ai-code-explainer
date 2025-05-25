@@ -16,6 +16,22 @@ h1 {
   margin: 20px 0;
 }
 
+/* Animation for the main heading */
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+h1.heading {
+  animation: fadeInScale 1s ease forwards;
+}
+
 .chat-window {
   background: #ffffff;
   border-radius: 16px;
@@ -110,4 +126,120 @@ button {
 
 button:hover {
   background: #005bb5;
+}
+
+.bubble.loading {
+  font-style: italic;
+  color: #888;
+  display: flex;
+  align-items: center;
+}
+
+.bubble.loading::after {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: #888;
+  animation: loading 1s infinite;
+}
+
+@keyframes loading {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Style for the language label */
+.language-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Style for the explanation block */
+.explanation-block {
+  background: #f9f9f9;
+  border: 1px solid #e3e6ea;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 8px;
+  font-family: "Fira Mono", monospace;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Style for each explanation bullet */
+.explanation-block ul {
+  list-style-type: disc;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.explanation-block li {
+  margin-bottom: 8px;
+}
+
+/* Style for structured AI response */
+.structured-response {
+  background: #f9f9f9;
+  border: 1px solid #e3e6ea;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  font-family: "Segoe UI", sans-serif;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.structured-response .section {
+  margin-bottom: 12px;
+}
+
+.structured-response .section.explanation {
+  font-weight: bold;
+  color: #0070f3;
+}
+
+.structured-response .section.method {
+  font-weight: bold;
+  color: #ff9800;
+}
+
+.structured-response .section.driver {
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.structured-response .section.complexity {
+  font-weight: bold;
+  color: #9c27b0;
+}
+
+.structured-response .section.tips {
+  font-weight: bold;
+  color: #f44336;
+}
+
+.structured-response .section.output {
+  font-weight: bold;
+  color: #3f51b5;
 }
