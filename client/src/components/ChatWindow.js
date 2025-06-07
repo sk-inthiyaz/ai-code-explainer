@@ -8,7 +8,7 @@ function isPlainMessage(content) {
   );
 }
 
-function ChatWindow({ messages, isLoading }) {
+function ChatWindow({ messages, isLoading, isDark }) {
   return (
     <div className="bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-2 sm:p-4 h-[70vh] overflow-y-auto flex flex-col gap-3 sm:gap-4">
       {messages.map((msg, idx) => (
@@ -23,12 +23,13 @@ function ChatWindow({ messages, isLoading }) {
               : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
             } 
             prose-pre:bg-gray-100 prose-pre:p-2 prose-pre:rounded prose-code:text-blue-600`}
+            style={{ overflowWrap: 'break-word' }}
           >
             {msg.role === "ai" ? (
               isPlainMessage(msg.content) ? (
                 <div className="text-gray-600 italic dark:text-gray-300">{msg.content}</div>
               ) : (
-                <CodeExplanation response={msg.content} />
+                <CodeExplanation response={msg.content} isDark={isDark} />
               )
             ) : (
               msg.content

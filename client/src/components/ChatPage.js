@@ -16,6 +16,8 @@ function ChatPage() {
 
   // Load messages from local storage on mount/user change
   useEffect(() => {
+    // Clear messages when user changes
+    setMessages([]);
     if (user) {
       const savedMessages = localStorage.getItem(`chatMessages_${user.userId}`);
       if (savedMessages) {
@@ -24,6 +26,7 @@ function ChatPage() {
         setMessages([{ role: "ai", content: "This is an AI Code Explainer. Please enter code to get an explanation." }]);
       }
     } else {
+      // Clear messages if user logs out
       setMessages([]);
     }
   }, [user]);
