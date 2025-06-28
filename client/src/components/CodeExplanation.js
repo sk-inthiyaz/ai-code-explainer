@@ -2,15 +2,11 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import './CodeExplanation.css';
 
 function CodeExplanation({ response, isDark }) {
   return (
-    <div className={`p-4 rounded-lg shadow-md prose prose-lg break-words ${isDark ? 'bg-gray-700 text-gray-100' : 'bg-white'} prose-pre:overflow-x-auto ${isDark ? 'prose-invert' : ''}`}>
-      <style jsx>{`
-        .dark .prose :where(p, li, blockquote, th, td) {
-          color: #1f2937; /* text-gray-900 */
-        }
-      `}</style>
+    <div className={`code-explanation${isDark ? ' dark' : ''}`}>
       <ReactMarkdown
         components={{
           code({
