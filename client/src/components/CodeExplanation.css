@@ -1,0 +1,61 @@
+/* CodeExplanation.css - Modern, readable markdown/code block styling */
+
+.code-explanation {
+  padding: 18px 14px;
+  border-radius: 14px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  background: #fff;
+  color: #23272f;
+  font-size: 1.05rem;
+  margin: 4px 0;
+  word-break: break-word;
+  overflow-x: auto;
+  transition: background 0.3s, color 0.3s;
+}
+.code-explanation.dark {
+  background: #23272f;
+  color: #f3f4f6;
+}
+
+.code-explanation pre, .code-explanation code {
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', 'monospace';
+  font-size: 0.98em;
+  background: #f3f4f6;
+  color: #222;
+  border-radius: 8px;
+  padding: 8px 10px;
+  overflow-x: auto;
+}
+.code-explanation.dark pre, .code-explanation.dark code {
+  background: #181c23;
+  color: #c7d2fe;
+}
+
+.code-explanation ul, .code-explanation ol {
+  margin-left: 1.2em;
+  margin-bottom: 0.5em;
+}
+.code-explanation li {
+  margin-bottom: 0.2em;
+}
+
+.code-explanation h1, .code-explanation h2, .code-explanation h3 {
+  font-weight: 700;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.code-explanation blockquote {
+  border-left: 3px solid #2563eb;
+  padding-left: 1em;
+  color: #6b7280;
+  margin: 0.5em 0;
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .code-explanation {
+    padding: 12px 6px;
+    font-size: 0.98rem;
+  }
+}

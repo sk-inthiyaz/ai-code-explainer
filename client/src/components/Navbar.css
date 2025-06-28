@@ -1,0 +1,69 @@
+/* Navbar.css - Minimal, mobile-friendly, screenshot-matching style */
+
+.navbar-root {
+  position: fixed;
+  top: 0; left: 0; width: 100vw;
+  background: #fff;
+  z-index: 100;
+  border-bottom: 1px solid #e5e7eb;
+  height: 44px;
+  box-shadow: none;
+}
+.dark .navbar-root {
+  background: #181c23;
+  border-bottom: 1px solid #23272f;
+}
+
+.navbar-inner {
+  width: 100vw;
+  max-width: 100vw;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.navbar-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2563eb;
+  letter-spacing: -0.5px;
+  text-align: left;
+}
+.dark .navbar-title {
+  color: #c7d2fe;
+}
+
+.navbar-darkmode-btn {
+  background: #f3f4f6;
+  color: #222;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  padding: 7px 10px;
+  font-size: 1.2rem;
+  margin-left: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  outline: none;
+}
+.dark .navbar-darkmode-btn {
+  background: #23272f;
+  color: #f3f4f6;
+  border: 1px solid #444;
+}
+
+@media (max-width: 640px) {
+  .navbar-root, .navbar-inner {
+    height: 44px;
+    padding: 0 8px;
+  }
+  .navbar-title {
+    font-size: 0.98rem;
+  }
+  .navbar-darkmode-btn {
+    font-size: 1.1rem;
+    padding: 6px 9px;
+  }
+}
