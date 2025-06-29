@@ -32,7 +32,7 @@ A web application that allows users to input code snippets and receive AI-genera
 - npm or yarn
 - Git
 
-### Installation
+### Installation.
 
 1. Clone the repo
 
