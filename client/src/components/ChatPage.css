@@ -5,24 +5,70 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  height: 100vh;
+}
+.dark body, .dark {
+  background: linear-gradient(to bottom right, #23272f, #181c23) !important;
+}
+
+.chatpage-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatpage-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .chat-wrapper {
   width: 65%;
-  margin: 40px auto;
+  margin: 0 auto 0 auto;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 32px 32px 18px 18px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), 0 1.5px 0 #bfc9d1 inset;
   display: flex;
   flex-direction: column;
-  height: 90vh;
+  height: 80vh;
+  max-height: 100vh;
   overflow: hidden;
+  position: relative;
+  border: 4px solid #bfc9d1;
+}
+.dark .chat-wrapper {
+  background: #23272f;
+  border-color: #444a57;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.28), 0 1.5px 0 #23272f inset;
+}
+
+/* Monitor stand */
+.monitor-stand {
+  width: 120px;
+  height: 18px;
+  background: #bfc9d1;
+  border-radius: 0 0 18px 18px;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  position: relative;
+  top: -8px;
+  z-index: 1;
+}
+.dark .monitor-stand {
+  background: #23272f;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.22);
 }
 
 .chat-box {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  background: transparent;
+}
+.dark .chat-box {
+  background: transparent;
 }
 
 .message {
@@ -34,6 +80,9 @@ body {
   color: #555;
   font-style: italic;
 }
+.dark .info-msg {
+  color: #bfc9d1;
+}
 
 .user-msg {
   background: #007bff;
@@ -43,44 +92,82 @@ body {
   align-self: flex-end;
   width: fit-content;
 }
+.dark .user-msg {
+  background: #2563eb;
+  color: #e0e7ef;
+}
 
 .bot-msg {
   background: #f1f1f1;
   padding: 12px;
   border-radius: 8px;
 }
+.dark .bot-msg {
+  background: #23272f;
+  color: #e0e7ef;
+}
 
+/* Keyboard style input */
 .input-box {
   display: flex;
-  border-top: 1px solid #ccc;
-  padding: 10px;
-  background: #f9f9f9;
+  border-top: 1.5px solid #bfc9d1;
+  padding: 16px 18px 18px 18px;
+  background: #e6eaf0;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+  border-radius: 0 0 18px 18px;
+  margin: 0 32px 0 32px;
+  position: relative;
+  top: 18px;
+  z-index: 2;
+}
+.dark .input-box {
+  background: #181c23;
+  border-top: 1.5px solid #444a57;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
 }
 
 .input-box textarea {
   flex: 1;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px 0 0 6px;
+  padding: 14px;
+  border: 1.5px solid #bfc9d1;
+  border-radius: 8px 0 0 8px;
   resize: none;
-  font-size: 14px;
+  font-size: 15px;
   height: 50px;
   outline: none;
+  background: #f8fafc;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  color: #222;
+}
+.dark .input-box textarea {
+  background: #23272f;
+  color: #e0e7ef;
+  border-color: #444a57;
 }
 
 .input-box button {
   background: #007bff;
   color: white;
   border: none;
-  padding: 0 20px;
-  border-radius: 0 6px 6px 0;
-  font-size: 14px;
+  padding: 0 24px;
+  border-radius: 0 8px 8px 0;
+  font-size: 15px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+  font-weight: 600;
+}
+.dark .input-box button {
+  background: #2563eb;
+  color: #e0e7ef;
 }
 
 .input-box button:hover {
   background: #0056b3;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.13);
+}
+.dark .input-box button:hover {
+  background: #1e40af;
 }
 
 @media (max-width: 900px) {
@@ -89,8 +176,20 @@ body {
     margin: 0 auto;
     height: 100vh;
     border-radius: 0;
+    border-width: 2px;
   }
   .chat-box {
     padding: 10px;
+  }
+  .input-box {
+    margin: 0 4px 0 4px;
+    border-radius: 0 0 12px 12px;
+    padding: 10px 6px 12px 6px;
+  }
+  .monitor-stand {
+    width: 60px;
+    height: 10px;
+    border-radius: 0 0 10px 10px;
+    top: -4px;
   }
 }
