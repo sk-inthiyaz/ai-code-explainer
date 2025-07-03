@@ -1,0 +1,99 @@
+/* Sidebar.css - Modern BlackBox.ai inspired sidebar */
+
+.sidebar-hamburger {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 120;
+  background: var(--chat-bg);
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.sidebar-hamburger:focus,
+.sidebar-hamburger:hover {
+  background: #e3eafe;
+}
+
+.sidebar-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 270px;
+  height: 100vh;
+  background: var(--chat-bg);
+  color: var(--text-color);
+  z-index: 200;
+  box-shadow: 2px 0 24px 0 rgba(0,0,0,0.18);
+  transform: translateX(-100%);
+  transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+  display: flex;
+  flex-direction: column;
+  padding-top: 0;
+}
+.sidebar-root.open {
+  transform: translateX(0);
+}
+.sidebar-header {
+  padding: 32px 24px 18px 24px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border-color);
+}
+.sidebar-title {
+  color: #e3eafe;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+.sidebar-menu {
+  list-style: none;
+  padding: 0 0 0 0;
+  margin: 0;
+  flex: 1;
+}
+.sidebar-menu-label {
+  margin: 18px 0 6px 24px;
+  font-size: 0.98rem;
+  color: #bfc9d1;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.sidebar-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  font-size: 1.08rem;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--text-color);
+  border-radius: 8px;
+  transition: background 0.18s;
+}
+.sidebar-menu-item:hover {
+  background: #353a45;
+}
+.sidebar-icon {
+  font-size: 1.2em;
+}
+.sidebar-empty {
+  color: #bfc9d1;
+  font-style: italic;
+}
+.sidebar-backdrop {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.18);
+  z-index: 110;
+}
+@media (max-width: 600px) {
+  .sidebar-root {
+    width: 90vw;
+    min-width: 0;
+    max-width: 340px;
+  }
+}
