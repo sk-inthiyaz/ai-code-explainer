@@ -3,9 +3,9 @@
 .navbar-root {
   position: fixed;
   top: 0; left: 0; width: 100vw;
-  background: #fff;
+  background: var(--chat-bg);
   z-index: 100;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-color);
   height: 44px;
   box-shadow: none;
 }
@@ -37,7 +37,7 @@
 
 .navbar-welcome {
   font-size: 0.98rem;
-  color: #444;
+  color: var(--text-color);
   margin-right: 8px;
 }
 

@@ -1,65 +1,171 @@
-/* ChatWindow.css - Modern, mobile-friendly chat UI */
-
+/* ChatWindow.css - update for dark mode support */
 .chat-window {
-  background: transparent;
-  border-radius: 24px;
-  box-shadow: none;
-  padding: 0;
-  min-height: 420px;
-  max-width: 520px;
-  width: 100%;
-  overflow-y: visible;
+  flex: 1;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin: 0 auto;
-  border: none;
+  padding: 12px;
+  gap: 14px;
+  background: var(--chat-bg);
+  min-height: 0;
 }
 
 .message-row {
   display: flex;
-  align-items: flex-end;
-  width: 100%;
+  margin-bottom: 8px;
 }
+
 .message-row.user {
-  justify-content: flex-end;
+  justify-content: flex-end; /* Align user messages to right */
 }
+
 .message-row.ai {
-  justify-content: flex-start;
+  justify-content: flex-start; /* Align AI messages to left */
 }
 
 .message-bubble {
-  max-width: 80%;
-  padding: 12px 18px;
-  border-radius: 16px;
-  font-size: 16px;
+  max-width: 600px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 15px;
   line-height: 1.5;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  word-break: break-word;
-  margin-bottom: 8px;
-  transition: background 0.3s, color 0.3s;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow-x: auto;
+  background: #e0ecff;
+  color: var(--text-color);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  position: relative;
+  margin: 0;
+  box-sizing: border-box;
+  min-width: 0;
 }
+
 .user-bubble {
-  background: #f6f8ff;
-  color: #23272f;
-  border-bottom-right-radius: 6px;
+  background-color: #e0ecff;
+  color: var(--text-color);
+  border-bottom-right-radius: 0;
 }
+
 .ai-bubble {
-  background: #fff;
-  color: #23272f;
-  border-bottom-left-radius: 6px;
-  border: 1px solid #e5e7eb;
+  background-color: var(--chat-bg);
+  color: var(--text-color);
+  border-bottom-left-radius: 0;
+  border: 1px solid var(--border-color);
+  padding: 0;
+  max-width: 600px;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  margin: 0;
+  overflow: visible;
+}
+
+/* Style markdown/code explanation inside AI bubble */
+.ai-bubble .code-explanation {
+  background: none;
+  box-shadow: none;
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 1.01rem;
+  color: var(--text-color);
+  margin: 0;
+  overflow-x: auto;
+  word-break: break-word;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  white-space: pre-line;
+}
+
+.ai-bubble .code-explanation pre,
+.ai-bubble .code-explanation code {
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', 'monospace';
+  font-size: 0.97em;
+  background: #e3eafe;
+  color: var(--text-color);
+  border-radius: 7px;
+  padding: 7px 9px;
+  overflow-x: auto;
+  margin: 6px 0 6px 0;
+  display: block;
+  max-width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.ai-bubble .code-explanation pre {
+  margin: 6px 0 6px 0;
+  padding: 7px 9px;
+  background: #e3eafe;
+  border-radius: 7px;
+  overflow-x: auto;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+}
+
+.ai-bubble .code-explanation ul,
+.ai-bubble .code-explanation ol {
+  margin-left: 1.1em;
+  margin-bottom: 0.3em;
+  padding-left: 1.1em;
+}
+
+.ai-bubble .code-explanation li {
+  margin-bottom: 0.1em;
+}
+
+.ai-bubble .code-explanation h1,
+.ai-bubble .code-explanation h2,
+.ai-bubble .code-explanation h3 {
+  font-weight: 700;
+  margin-top: 0.7em;
+  margin-bottom: 0.3em;
+  word-break: break-word;
+}
+
+.ai-bubble .code-explanation blockquote {
+  border-left: 3px solid #2563eb;
+  padding-left: 0.8em;
+  color: #6b7280;
+  margin: 0.3em 0;
+  font-style: italic;
+  word-break: break-word;
+}
+
+.ai-plain-message {
+  font-size: 0.88rem;
+  font-style: italic;
+  color: #6b7280;
+  line-height: 1.4;
+  max-width: 90%;
+  padding: 8px 12px;
+  word-break: break-word;
+  margin: 0;
+}
+
+/* Remove extra blank lines between blocks in markdown */
+.ai-bubble .code-explanation > * {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
 }
 
 @media (max-width: 640px) {
-  .chat-window {
-    min-height: 55vh;
-    padding: 4px 0;
-    border-radius: 12px;
-    gap: 6px;
-  }
   .message-bubble {
-    font-size: 0.98rem;
-    padding: 8px 12px;
+    max-width: 98vw;
+    font-size: 0.9rem;
+    padding: 8px 6px;
+  }
+  .ai-bubble .code-explanation {
+    padding: 8px 4px;
+    font-size: 0.97rem;
   }
 }
