@@ -2,32 +2,75 @@ import React, { useState, useRef, useEffect } from "react";
 import ChatWindow from "./ChatWindow";
 import { useAuth } from "../context/AuthContext";
 import "./ChatPage.css";
+import Sidebar from "./Sidebar";
+import { getChatTitle } from "../utils/chat";
 
 function ChatPage({ isDark, toggleDarkMode }) {
   const [messages, setMessages] = useState([]);
   const [inputCode, setInputCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const textareaRef = useRef(null);
   const { user, loading } = useAuth();
 
+  // Always ensure chatHistory is an array
+  const [chatHistory, setChatHistory] = useState([]);
+
+  // Fetch chat history from backend
+  useEffect(() => {
+    if (user && user.userId) {
+      fetch(`http://localhost:5000/api/chat-history/${user.userId}`)
+        .then(res => res.json())
+        .then(data => setChatHistory(Array.isArray(data) ? data : []))
+        .catch(() => setChatHistory([]));
+    } else {
+      setChatHistory([]);
+    }
+  }, [user]);
+
+  // Reset messages when user changes or starts a new chat
   useEffect(() => {
     setMessages([]);
     if (user) {
-      const savedMessages = localStorage.getItem(`chatMessages_${user.userId}`);
-      if (savedMessages) {
-        setMessages(JSON.parse(savedMessages));
-      } else {
-        setMessages([{ role: "ai", content: "This is an AI Code Explainer. Please enter code to get an explanation." }]);
-      }
+      setMessages([{ role: "ai", content: "This is an AI Code Explainer. Please enter code to get an explanation." }]);
     } else {
       setMessages([]);
     }
   }, [user]);
 
-  useEffect(() => {
-    if (user && messages.length > 0) {
-      localStorage.setItem(`chatMessages_${user.userId}`, JSON.stringify(messages));
+  // Save chat history to backend only when a new chat is started (not on every message)
+  const saveChatHistory = (msgs) => {
+    if (
+      user &&
+      msgs.length > 1 &&
+      msgs[msgs.length - 1].role === "ai" &&
+      msgs.some(msg => msg.role === "user")
+    ) {
+      const title = getChatTitle(msgs);
+      fetch("http://localhost:5000/api/chat-history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.userId, messages: msgs, title })
+      })
+        .then(res => res.json())
+        .then(newChat => {
+          setChatHistory(prev => Array.isArray(prev) ? [newChat, ...prev] : [newChat]);
+        })
+        .catch(() => {});
     }
+  };
+
+  useEffect(() => {
+    // Only save if the last message is AI and there is at least one user message
+    if (
+      user &&
+      messages.length > 1 &&
+      messages[messages.length - 1].role === "ai" &&
+      messages.some(msg => msg.role === "user")
+    ) {
+      saveChatHistory(messages);
+    }
+    // eslint-disable-next-line
   }, [messages, user]);
 
   useEffect(() => {
@@ -46,7 +89,7 @@ function ChatPage({ isDark, toggleDarkMode }) {
   const handleSend = async () => {
     if (!inputCode.trim()) return;
     const userMsg = { role: "user", content: inputCode };
-    setMessages((prev) => [...prev, userMsg]);
+    setMessages((prev) => Array.isArray(prev) ? [...prev, userMsg] : [userMsg]);
     setInputCode("");
     setIsLoading(true);
     try {
@@ -62,11 +105,11 @@ function ChatPage({ isDark, toggleDarkMode }) {
       const data = await res.json();
       if (!data.explanation) throw new Error("No explanation received");
       const aiMsg = { role: "ai", content: data.explanation };
-      setMessages((prev) => [...prev, aiMsg]);
+      setMessages((prev) => Array.isArray(prev) ? [...prev, aiMsg] : [aiMsg]);
     } catch (error) {
       console.error("Error:", error);
       const errorMsg = { role: "ai", content: "Something went wrong. Please try again." };
-      setMessages((prev) => [...prev, errorMsg]);
+      setMessages((prev) => Array.isArray(prev) ? [...prev, errorMsg] : [errorMsg]);
     } finally {
       setIsLoading(false);
     }
@@ -79,8 +122,44 @@ function ChatPage({ isDark, toggleDarkMode }) {
     }
   };
 
+  // Sidebar menu handlers
+  const handleNewChat = () => {
+    // Save the current chat if it has user messages and an AI response
+    if (
+      user &&
+      messages.length > 1 &&
+      messages[messages.length - 1].role === "ai" &&
+      messages.some(msg => msg.role === "user")
+    ) {
+      saveChatHistory(messages);
+    }
+    setMessages([{ role: "ai", content: "This is an AI Code Explainer. Please enter code to get an explanation." }]);
+    setSidebarOpen(false);
+  };
+  const handleSelectHistory = (item) => {
+    setMessages(Array.isArray(item.messages) ? item.messages : []);
+    setSidebarOpen(false);
+  };
+  const handleOpenLearnHub = () => {
+    alert("LearnHub coming soon! Upload PDFs and language guides here.");
+    setSidebarOpen(false);
+  };
+  const handleOpenAbout = () => {
+    alert("AI Code Explainer helps you learn programming by explaining code. Built for students and curious minds!");
+    setSidebarOpen(false);
+  };
+
   return (
-    <div className={`chatpage-root${isDark ? " dark" : ""}`}>  
+    <div className="chatpage-root">
+      <Sidebar
+        isOpen={sidebarOpen}
+        setIsOpen={setSidebarOpen}
+        onNewChat={handleNewChat}
+        onSelectHistory={handleSelectHistory}
+        onOpenLearnHub={handleOpenLearnHub}
+        onOpenAbout={handleOpenAbout}
+        chatHistory={chatHistory}
+      />
       <main className="chatpage-main">
         {/* Heading below nav bar, centered, bold, with emoji */}
         <div className="heading-container">
