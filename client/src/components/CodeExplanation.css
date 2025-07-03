@@ -12,23 +12,15 @@
   overflow-x: auto;
   transition: background 0.3s, color 0.3s;
 }
-.code-explanation.dark {
-  background: #23272f;
-  color: #f3f4f6;
-}
 
 .code-explanation pre, .code-explanation code {
   font-family: 'Fira Mono', 'Consolas', 'Menlo', 'monospace';
   font-size: 0.98em;
-  background: #f3f4f6;
-  color: #222;
+  background: #e3eafe;
+  color: #23272f;
   border-radius: 8px;
   padding: 8px 10px;
   overflow-x: auto;
-}
-.code-explanation.dark pre, .code-explanation.dark code {
-  background: #181c23;
-  color: #c7d2fe;
 }
 
 .code-explanation ul, .code-explanation ol {

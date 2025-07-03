@@ -1,3 +1,4 @@
+/* Black Box AI Home Page Style */
 .app {
   width: 100vw;
   min-height: 100vh;
@@ -5,46 +6,47 @@
   padding: 0;
   font-family: "Segoe UI", sans-serif;
   text-align: center;
-  background: linear-gradient(135deg, #e3e6ea 0%, #cfd9df 100%);
+  background: linear-gradient(135deg, #e3eafe 0%, #f6f8ff 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
 }
 
-h1 {
-  margin: 20px 0;
-}
-
-/* Animation for the main heading */
-@keyframes fadeInScale {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-h1.heading {
+h1, h1.heading, .chatpage-title-fixed {
+  margin: 40px 0 32px 0;
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #23272f;
+  text-shadow: none;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  text-transform: uppercase;
   animation: fadeInScale 1s ease forwards;
 }
 
+/* Center the chat window and update its dimensions and shadow to match the screenshot */
 .chat-window {
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #e3e6ea;
-  padding: 24px;
+  background: #fff;
+  border-radius: 24px;
+  border: 1.5px solid #e5e7eb;
+  padding: 24px 0 0 0;
   width: 100%;
-  max-width: 800px;
-  height: calc(100vh - 180px); /* Adjust height dynamically */
-  overflow-y: auto;
+  max-width: 540px;
+  min-height: 520px;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.12), 0 1.5px 0 #e3eafe inset;
+  margin: 48px auto 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  overflow: visible;
+}
+
+/* Add a soft drop shadow to the chat window container */
+.app > .chat-window {
+  box-shadow: 0 8px 40px 0 rgba(0,0,0,0.13), 0 1.5px 0 #e3eafe inset;
 }
 
 .message {
@@ -60,40 +62,45 @@ h1.heading {
   justify-content: flex-start;
 }
 
+/* Adjust message bubbles for screenshot look */
 .bubble {
-  max-width: 70%;
-  padding: 12px 16px;
-  border-radius: 12px;
+  max-width: 80%;
+  padding: 12px 18px;
+  border-radius: 16px;
   font-size: 16px;
   line-height: 1.5;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  margin: 8px 0;
 }
 
 .user .bubble {
-  background-color: #0070f3;
-  color: white;
-  border-bottom-right-radius: 4px;
+  background-color: #f6f8ff;
+  color: #23272f;
+  border-bottom-right-radius: 6px;
 }
 
 .ai .bubble {
-  background-color: #f1f1f1;
-  color: #333;
-  border-bottom-left-radius: 4px;
+  background-color: #fff;
+  color: #23272f;
+  border-bottom-left-radius: 6px;
+  border: 1px solid #e5e7eb;
 }
 
 .input-area {
   display: flex;
   align-items: center;
-  background: #ffffff;
-  border: 1px solid #e3e6ea;
-  border-radius: 16px;
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 18px;
   padding: 12px 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-top: 16px;
-  width: 100%;
-  max-width: 800px;
-  position: fixed;
-  bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  margin: 0 0 24px 0;
+  width: 90%;
+  max-width: 480px;
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 textarea {
@@ -104,7 +111,8 @@ textarea {
   font-family: "Segoe UI", sans-serif;
   resize: none;
   padding: 8px;
-  color: #333;
+  color: #23272f;
+  background: #fff;
 }
 
 textarea::placeholder {
@@ -112,11 +120,11 @@ textarea::placeholder {
 }
 
 button {
-  background: #0070f3;
-  color: white;
+  background: #2563eb;
+  color: #fff;
   border: none;
   border-radius: 8px;
-  padding: 10px 16px;
+  padding: 10px 24px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
@@ -125,12 +133,13 @@ button {
 }
 
 button:hover {
-  background: #005bb5;
+  background: #1d4ed8;
+  color: #fff;
 }
 
 .bubble.loading {
   font-style: italic;
-  color: #888;
+  color: #bfc9d1;
   display: flex;
   align-items: center;
 }
@@ -142,179 +151,36 @@ button:hover {
   height: 8px;
   margin-left: 8px;
   border-radius: 50%;
-  background: #888;
+  background: #bfc9d1;
   animation: loading 1s infinite;
 }
 
 @keyframes loading {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.5);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
 }
 
-/* Style for the language label */
-.language-label {
-  font-size: 14px;
-  font-weight: bold;
-  color: #555;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.language-label, .explanation-block, .structured-response {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  color: #23272f;
 }
 
-/* Style for the explanation block */
-.explanation-block {
-  background: #f9f9f9;
-  border: 1px solid #e3e6ea;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-top: 8px;
-  font-family: "Fira Mono", monospace;
-  font-size: 14px;
-  color: #333;
-  line-height: 1.6;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-/* Style for each explanation bullet */
-.explanation-block ul {
-  list-style-type: disc;
-  margin: 0;
-  padding-left: 20px;
-}
-
-.explanation-block li {
-  margin-bottom: 8px;
-}
-
-/* Style for structured AI response */
-.structured-response {
-  background: #f9f9f9;
-  border: 1px solid #e3e6ea;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 16px;
-  font-family: "Segoe UI", sans-serif;
-  font-size: 14px;
-  color: #333;
-  line-height: 1.6;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-.structured-response .section {
-  margin-bottom: 12px;
-}
-
-.structured-response .section.explanation {
-  font-weight: bold;
-  color: #0070f3;
-}
-
-.structured-response .section.method {
-  font-weight: bold;
-  color: #ff9800;
-}
-
-.structured-response .section.driver {
-  font-weight: bold;
-  color: #4caf50;
-}
-
-.structured-response .section.complexity {
-  font-weight: bold;
-  color: #9c27b0;
-}
-
-.structured-response .section.tips {
-  font-weight: bold;
-  color: #f44336;
-}
-
-.structured-response .section.output {
-  font-weight: bold;
-  color: #3f51b5;
-}
-
+/* Responsive for mobile */
 @media (max-width: 640px) {
-  .chat-window {
-    padding: 8px;
+  .chat-window, .input-area {
+    max-width: 98vw;
+    min-width: unset;
     border-radius: 12px;
-    min-height: 50vh;
-    max-width: 100vw;
-    height: 60vh;
+  }
+  h1, h1.heading, .chatpage-title-fixed {
+    font-size: 2rem;
+    margin: 24px 0 18px 0;
   }
   .input-area {
-    padding: 8px;
-    border-radius: 12px;
-    max-width: 100vw;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-  }
-  .bubble {
-    font-size: 1rem;
-    border-radius: 18px;
-    padding: 10px 14px;
-    margin-bottom: 2px;
-  }
-  .user .bubble {
-    border-bottom-right-radius: 6px;
-  }
-  .ai .bubble {
-    border-bottom-left-radius: 6px;
-  }
-  h1.heading {
-    font-size: 1.2rem;
-    padding: 0.5rem 0;
-    margin: 0;
-  }
-}
-
-/* Fixed top bar for heading */
-@media (max-width: 640px) {
-  .fixed-top-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    z-index: 50;
-    background: rgba(255,255,255,0.95);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 56px;
-  }
-}
-
-/* Floating dark mode button for mobile */
-@media (max-width: 640px) {
-  .floating-dark-toggle {
-    position: fixed;
-    bottom: 80px;
-    right: 16px;
-    z-index: 100;
-    background: #f3f4f6;
-    color: #222;
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    padding: 12px;
-    font-size: 1.5rem;
-    border: 1px solid #e5e7eb;
-    transition: background 0.2s;
-  }
-  .floating-dark-toggle.dark {
-    background: #374151;
-    color: #fff;
-    border: 1px solid #4b5563;
+    width: 98vw;
+    left: 1vw;
+    transform: none;
   }
 }

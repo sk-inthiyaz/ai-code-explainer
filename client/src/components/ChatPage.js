@@ -3,15 +3,12 @@ import ChatWindow from "./ChatWindow";
 import { useAuth } from "../context/AuthContext";
 import "./ChatPage.css";
 
-function ChatPage() {
+function ChatPage({ isDark, toggleDarkMode }) {
   const [messages, setMessages] = useState([]);
   const [inputCode, setInputCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const textareaRef = useRef(null);
   const { user, loading } = useAuth();
-  const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem("theme") === "dark";
-  });
 
   useEffect(() => {
     setMessages([]);
@@ -46,12 +43,6 @@ function ChatPage() {
     }
   }, [user]);
 
-  const toggleDarkMode = () => {
-    const newMode = !isDark;
-    setIsDark(newMode);
-    localStorage.setItem("theme", newMode ? "dark" : "light");
-  };
-
   const handleSend = async () => {
     if (!inputCode.trim()) return;
     const userMsg = { role: "user", content: inputCode };
@@ -59,7 +50,7 @@ function ChatPage() {
     setInputCode("");
     setIsLoading(true);
     try {
-      const res = await fetch("http://192.168.138.2:5000/api/explain", {
+      const res = await fetch("http://localhost:5000/api/explain", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,39 +81,37 @@ function ChatPage() {
 
   return (
     <div className={`chatpage-root${isDark ? " dark" : ""}`}>  
-      <header className="chatpage-header">
-        <h1 className="chatpage-title">AI Code Explainer</h1>
-        <button
-          onClick={toggleDarkMode}
-          className="chatpage-darkmode-btn"
-          aria-label="Toggle dark mode"
-        >
-          {isDark ? "☀️" : "🌙"}
-        </button>
-      </header>
       <main className="chatpage-main">
-        <section className="chatpage-chatwindow">
-          <ChatWindow messages={messages} isLoading={isLoading} isDark={isDark} />
-        </section>
-        <form className="chatpage-inputbar" onSubmit={e => { e.preventDefault(); handleSend(); }}>
-          <textarea
-            ref={textareaRef}
-            className="chatpage-textarea"
-            placeholder="Write your code or question..."
-            value={inputCode}
-            onChange={(e) => setInputCode(e.target.value)}
-            onKeyDown={handleKeyPress}
-            style={{ fontFamily: "monospace" }}
-          />
-          <button
-            type="submit"
-            className="chatpage-sendbtn"
-            aria-label="Send message"
-          >
-            <span className="desktop">Send</span>
-            <span className="mobile">➤</span>
-          </button>
-        </form>
+        {/* Heading below nav bar, centered, bold, with emoji */}
+        <div className="heading-container">
+          <h1 className="chatpage-title-fixed">
+            AI Code Explainer <span role="img" aria-label="robot">🤖</span>
+          </h1>
+        </div>
+        <div className="chat-wrapper chat-wrapper-fixed">
+          <section className="chatpage-chatwindow chat-box chat-box-fixed">
+            <ChatWindow messages={messages} isLoading={isLoading} isDark={isDark} />
+          </section>
+          <form className="input-box input-box-fixed" onSubmit={e => { e.preventDefault(); handleSend(); }}>
+            <textarea
+              ref={textareaRef}
+              className="chatpage-textarea textarea-fixed"
+              placeholder="Write your code or question here..."
+              value={inputCode}
+              onChange={(e) => setInputCode(e.target.value)}
+              onKeyDown={handleKeyPress}
+              style={{ fontFamily: "monospace" }}
+            />
+            <button
+              type="submit"
+              className="chatpage-sendbtn sendbtn-fixed"
+              aria-label="Send message"
+            >
+              Send
+            </button>
+          </form>
+        </div>
+        <div className="monitor-stand"></div>
       </main>
     </div>
   );

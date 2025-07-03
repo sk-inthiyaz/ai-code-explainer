@@ -14,6 +14,16 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const textareaRef = useRef(null);
 
+  // Dark mode state centralized here
+  const [isDark, setIsDark] = useState(() => {
+    return localStorage.getItem("theme") === "dark";
+  });
+
+  useEffect(() => {
+    document.body.classList.toggle("dark", isDark);
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  }, [isDark]);
+
   // Load messages from local storage on component mount or when user changes
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -103,11 +113,15 @@ function App() {
     }
   };
 
+  const toggleDarkMode = () => {
+    setIsDark((prev) => !prev);
+  };
+
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-gray-100 flex flex-col">
-          <Navbar />
+        <div className={`min-h-screen flex flex-col${isDark ? ' dark' : ''}`}>
+          <Navbar isDark={isDark} toggleDarkMode={toggleDarkMode} />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -115,7 +129,7 @@ function App() {
               path="/" 
               element={
                 <PrivateRoute>
-                  <ChatPage />
+                  <ChatPage isDark={isDark} toggleDarkMode={toggleDarkMode} />
                 </PrivateRoute>
               } 
             />
