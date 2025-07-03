@@ -1,3 +1,2 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Remove Tailwind imports since you are not using Tailwind anymore */
+/* (file should be empty or contain only your custom CSS) */
