@@ -11,7 +11,7 @@ function isPlainMessage(content) {
 
 function ChatWindow({ messages, isLoading, isDark }) {
   return (
-    <div className={`chat-window${isDark ? " dark" : ""}`}> 
+    <div className="chat-window">
       {messages.map((msg, idx) => (
         <div
           key={idx}

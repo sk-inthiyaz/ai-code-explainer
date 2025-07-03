@@ -6,11 +6,12 @@ import './CodeExplanation.css';
 
 function CodeExplanation({ response, isDark }) {
   return (
-    <div className={`code-explanation${isDark ? ' dark' : ''}`}>
+    <div className="code-explanation">
       <ReactMarkdown
         components={{
           code({
-ode, inline, className, children, ...props}) {
+            node, inline, className, children, ...props
+          }) {
             const match = /language-(\w+)/.exec(className || '')
             return !inline && match ? (
               <SyntaxHighlighter
