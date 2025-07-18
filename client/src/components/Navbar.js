@@ -7,7 +7,7 @@ const Navbar = ({ isDark, toggleDarkMode }) => {
   const { user, logout } = useAuth();
 
   return (
-    <nav className={`navbar-root${isDark ? " dark" : ""}`}>
+    <nav className="navbar-root">
       <div className="navbar-inner">
         <span className="navbar-title">Code Explainer</span>
         <div className="navbar-right-group">

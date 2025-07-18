@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const explainRoutes = require('./routes/explainRoute');
+const chatHistoryRoutes = require('./routes/chatHistory');
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.post('/api/signup', async (req, res) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/', explainRoutes);
+app.use('/api/chat-history', chatHistoryRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running');
