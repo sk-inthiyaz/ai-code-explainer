@@ -4,33 +4,42 @@ import { useAuth } from "../context/AuthContext";
 import "./ChatPage.css";
 import Sidebar from "./Sidebar";
 import { getChatTitle } from "../utils/chat";
+import LearnHubMainPage from "./LearnHubMainPage"; // 👈 Import LearnHub component
 
 function ChatPage({ isDark, toggleDarkMode }) {
   const [messages, setMessages] = useState([]);
   const [inputCode, setInputCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLearnHub, setShowLearnHub] = useState(false); // 👈 New state
   const textareaRef = useRef(null);
   const { user, loading } = useAuth();
-
-  // Always ensure chatHistory is an array
   const [chatHistory, setChatHistory] = useState([]);
+  const [currentChatId, setCurrentChatId] = useState(null);
 
-  // Fetch chat history from backend
   useEffect(() => {
-    if (user && user.userId) {
-      fetch(`http://localhost:5000/api/chat-history/${user.userId}`)
-        .then(res => res.json())
+    const userId = user?._id || user?.userId;
+    if (user && userId) {
+      fetch(`http://localhost:5000/api/chat-history/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          return res.json();
+        })
         .then(data => setChatHistory(Array.isArray(data) ? data : []))
-        .catch(() => setChatHistory([]));
+        .catch((error) => {
+          console.error('Error fetching chat history:', error);
+          setChatHistory([]);
+        });
     } else {
       setChatHistory([]);
     }
   }, [user]);
 
-  // Reset messages when user changes or starts a new chat
   useEffect(() => {
-    setMessages([]);
     if (user) {
       setMessages([{ role: "ai", content: "This is an AI Code Explainer. Please enter code to get an explanation." }]);
     } else {
@@ -38,40 +47,60 @@ function ChatPage({ isDark, toggleDarkMode }) {
     }
   }, [user]);
 
-  // Save chat history to backend only when a new chat is started (not on every message)
-  const saveChatHistory = (msgs) => {
-    if (
-      user &&
-      msgs.length > 1 &&
-      msgs[msgs.length - 1].role === "ai" &&
-      msgs.some(msg => msg.role === "user")
-    ) {
-      const title = getChatTitle(msgs);
-      fetch("http://localhost:5000/api/chat-history", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.userId, messages: msgs, title })
-      })
-        .then(res => res.json())
-        .then(newChat => {
-          setChatHistory(prev => Array.isArray(prev) ? [newChat, ...prev] : [newChat]);
-        })
-        .catch(() => {});
+  const updateExistingChat = async (chatId, msgs) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/chat-history/${chatId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ messages: msgs })
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+      const updatedChat = await response.json();
+      setChatHistory(prev => prev.map(chat => chat._id === chatId ? updatedChat : chat));
+      return updatedChat;
+    } catch (error) {
+      console.error('Error updating chat:', error);
+      return null;
     }
   };
 
-  useEffect(() => {
-    // Only save if the last message is AI and there is at least one user message
-    if (
-      user &&
-      messages.length > 1 &&
-      messages[messages.length - 1].role === "ai" &&
-      messages.some(msg => msg.role === "user")
-    ) {
-      saveChatHistory(messages);
+  const saveChatHistory = async (msgs) => {
+    const userId = user?._id || user?.userId;
+    if (!userId) return;
+
+    if (msgs.length > 1 && msgs.some(msg => msg.role === "user")) {
+      const title = getChatTitle(msgs) || msgs.find(msg => msg.role === "user")?.content.slice(0, 30) + "...";
+
+      try {
+        const response = await fetch("http://localhost:5000/api/chat-history", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            userId,
+            messages: msgs,
+            title: title || "New Chat"
+          })
+        });
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+        const newChat = await response.json();
+        setChatHistory(prev => Array.isArray(prev) ? [newChat, ...prev] : [newChat]);
+        return newChat;
+      } catch (error) {
+        console.error('Error saving chat:', error);
+        return null;
+      }
     }
-    // eslint-disable-next-line
-  }, [messages, user]);
+  };
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -81,17 +110,16 @@ function ChatPage({ isDark, toggleDarkMode }) {
   }, [inputCode]);
 
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
+    if (textareaRef.current) textareaRef.current.focus();
   }, [user]);
 
   const handleSend = async () => {
     if (!inputCode.trim()) return;
     const userMsg = { role: "user", content: inputCode };
-    setMessages((prev) => Array.isArray(prev) ? [...prev, userMsg] : [userMsg]);
+    setMessages((prev) => [...prev, userMsg]);
     setInputCode("");
     setIsLoading(true);
+
     try {
       const res = await fetch("http://localhost:5000/api/explain", {
         method: "POST",
@@ -101,15 +129,26 @@ function ChatPage({ isDark, toggleDarkMode }) {
         },
         body: JSON.stringify({ code: inputCode })
       });
+
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
       if (!data.explanation) throw new Error("No explanation received");
+
       const aiMsg = { role: "ai", content: data.explanation };
-      setMessages((prev) => Array.isArray(prev) ? [...prev, aiMsg] : [aiMsg]);
+      const newMessages = [...messages, userMsg, aiMsg];
+
+      if (currentChatId) {
+        updateExistingChat(currentChatId, newMessages);
+      } else {
+        saveChatHistory(newMessages).then(newChat => {
+          if (newChat) setCurrentChatId(newChat._id);
+        });
+      }
+
+      setMessages(newMessages);
     } catch (error) {
       console.error("Error:", error);
-      const errorMsg = { role: "ai", content: "Something went wrong. Please try again." };
-      setMessages((prev) => Array.isArray(prev) ? [...prev, errorMsg] : [errorMsg]);
+      setMessages((prev) => [...prev, { role: "ai", content: "Something went wrong. Please try again." }]);
     } finally {
       setIsLoading(false);
     }
@@ -122,31 +161,51 @@ function ChatPage({ isDark, toggleDarkMode }) {
     }
   };
 
-  // Sidebar menu handlers
   const handleNewChat = () => {
-    // Save the current chat if it has user messages and an AI response
-    if (
-      user &&
-      messages.length > 1 &&
-      messages[messages.length - 1].role === "ai" &&
-      messages.some(msg => msg.role === "user")
-    ) {
-      saveChatHistory(messages);
-    }
+    setCurrentChatId(null);
     setMessages([{ role: "ai", content: "This is an AI Code Explainer. Please enter code to get an explanation." }]);
     setSidebarOpen(false);
   };
+
   const handleSelectHistory = (item) => {
+    setCurrentChatId(item._id);
     setMessages(Array.isArray(item.messages) ? item.messages : []);
     setSidebarOpen(false);
   };
+
   const handleOpenLearnHub = () => {
-    alert("LearnHub coming soon! Upload PDFs and language guides here.");
+    setShowLearnHub(true); // 👈 show LearnHub
     setSidebarOpen(false);
   };
+
   const handleOpenAbout = () => {
     alert("AI Code Explainer helps you learn programming by explaining code. Built for students and curious minds!");
     setSidebarOpen(false);
+  };
+
+  const handleDeleteChat = async (chatId) => {
+    if (!chatId || !window.confirm('Are you sure you want to delete this chat?')) return;
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/chat-history/${chatId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to delete chat');
+
+      setChatHistory(prev => prev.filter(chat => chat._id !== chatId));
+
+      if (chatId === currentChatId) {
+        setCurrentChatId(null);
+        setMessages([{ role: "ai", content: "This is an AI Code Explainer. Please enter code to get an explanation." }]);
+      }
+    } catch (error) {
+      console.error('Error deleting chat:', error);
+      alert('Failed to delete chat. Please try again.');
+    }
   };
 
   return (
@@ -158,39 +217,45 @@ function ChatPage({ isDark, toggleDarkMode }) {
         onSelectHistory={handleSelectHistory}
         onOpenLearnHub={handleOpenLearnHub}
         onOpenAbout={handleOpenAbout}
+        onDeleteChat={handleDeleteChat}
         chatHistory={chatHistory}
       />
       <main className="chatpage-main">
-        {/* Heading below nav bar, centered, bold, with emoji */}
-        <div className="heading-container">
-          <h1 className="chatpage-title-fixed">
-            AI Code Explainer <span role="img" aria-label="robot">🤖</span>
-          </h1>
-        </div>
-        <div className="chat-wrapper chat-wrapper-fixed">
-          <section className="chatpage-chatwindow chat-box chat-box-fixed">
-            <ChatWindow messages={messages} isLoading={isLoading} isDark={isDark} />
-          </section>
-          <form className="input-box input-box-fixed" onSubmit={e => { e.preventDefault(); handleSend(); }}>
-            <textarea
-              ref={textareaRef}
-              className="chatpage-textarea textarea-fixed"
-              placeholder="Write your code or question here..."
-              value={inputCode}
-              onChange={(e) => setInputCode(e.target.value)}
-              onKeyDown={handleKeyPress}
-              style={{ fontFamily: "monospace" }}
-            />
-            <button
-              type="submit"
-              className="chatpage-sendbtn sendbtn-fixed"
-              aria-label="Send message"
-            >
-              Send
-            </button>
-          </form>
-        </div>
-        <div className="monitor-stand"></div>
+        {showLearnHub ? (
+          <LearnHubMainPage onClose={() => setShowLearnHub(false)} />
+        ) : (
+          <>
+            <div className="heading-container">
+              <h1 className="chatpage-title-fixed">
+                AI Code Explainer <span role="img" aria-label="robot">🤖</span>
+              </h1>
+            </div>
+            <div className="chat-wrapper chat-wrapper-fixed">
+              <section className="chatpage-chatwindow chat-box chat-box-fixed">
+                <ChatWindow messages={messages} isLoading={isLoading} isDark={isDark} />
+              </section>
+              <form className="input-box input-box-fixed" onSubmit={e => { e.preventDefault(); handleSend(); }}>
+                <textarea
+                  ref={textareaRef}
+                  className="chatpage-textarea textarea-fixed"
+                  placeholder="Write your code or question here..."
+                  value={inputCode}
+                  onChange={(e) => setInputCode(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  style={{ fontFamily: "monospace" }}
+                />
+                <button
+                  type="submit"
+                  className="chatpage-sendbtn sendbtn-fixed"
+                  aria-label="Send message"
+                >
+                  Send
+                </button>
+              </form>
+            </div>
+            <div className="monitor-stand"></div>
+          </>
+        )}
       </main>
     </div>
   );

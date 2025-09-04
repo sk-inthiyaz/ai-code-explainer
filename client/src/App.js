@@ -6,12 +6,20 @@ import Signup from "./components/Signup";
 import PrivateRoute from "./components/PrivateRoute";
 import ChatPage from "./components/ChatPage";
 import { AuthProvider } from "./context/AuthContext";
+import StartLearningMain from './components/startLearningComponent/data/StartLearningMain';
+import LearnHubMainPage from './components/LearnHubMainPage';
+import PracticeSelection from './components/practiceWithAI/PracticeSelection';
+import PracticeLanding from './components/practiceWithAI/PracticeLanding';
+import ProblemPage from './components/practiceWithAI/ProblemPage';
+import AIFeedback from './components/practiceWithAI/AIFeedback';
+import PracticeCodeEditor from './components/practiceWithAI/PracticeCodeEditor';
 import './index.css';
 
 function App() {
   const [messages, setMessages] = useState([]);
   const [inputCode, setInputCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [currentProblem, setCurrentProblem] = useState(null);
   const textareaRef = useRef(null);
 
   // Dark mode state centralized here
@@ -28,7 +36,8 @@ function App() {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
-      const savedMessages = localStorage.getItem(`chatMessages_${user.userId}`);
+      const userId = user._id || user.userId;
+      const savedMessages = localStorage.getItem(`chatMessages_${userId}`);
       if (savedMessages) {
         setMessages(JSON.parse(savedMessages));
       } else {
@@ -63,15 +72,10 @@ function App() {
     adjustTextareaHeight();
   }, [inputCode]);
 
-  const handleSend = async () => {
+  const handleExplain = async () => {
     if (!inputCode.trim()) return;
 
-    const userMsg = { role: "user", content: inputCode };
-    setMessages((prev) => [...prev, userMsg]);
-    setInputCode("");
-
     setIsLoading(true);
-
     try {
       const res = await fetch("http://localhost:5000/api/explain", {
         method: "POST",
@@ -85,43 +89,22 @@ function App() {
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      
+
       const data = await res.json();
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      if (!data.explanation) {
-        throw new Error("No explanation received from server");
-      }
-
-      const aiMsg = { role: "ai", content: data.explanation };
-      setMessages((prev) => [...prev, aiMsg]);
+      setMessages(prev => [...prev, { role: "ai", content: data.explanation }]);
     } catch (error) {
-      console.error("Error fetching AI response:", error);
-      const errorMsg = { role: "ai", content: "Something went wrong. Please try again." };
-      setMessages((prev) => [...prev, errorMsg]);
+      console.error("Error:", error);
+      setMessages(prev => [...prev, { role: "ai", content: "Sorry, there was an error processing your request." }]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const toggleDarkMode = () => {
-    setIsDark((prev) => !prev);
-  };
-
   return (
-    <AuthProvider>
-      <Router>
-        <div className={`min-h-screen flex flex-col${isDark ? ' dark' : ''}`}>
-          <Navbar isDark={isDark} toggleDarkMode={toggleDarkMode} />
+    <div className="App">
+      <AuthProvider>
+        <Router>
+          <Navbar isDark={isDark} setIsDark={setIsDark} />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -129,14 +112,54 @@ function App() {
               path="/" 
               element={
                 <PrivateRoute>
-                  <ChatPage isDark={isDark} toggleDarkMode={toggleDarkMode} />
+                  <ChatPage 
+                    messages={messages}
+                    setMessages={setMessages}
+                    inputCode={inputCode}
+                    setInputCode={setInputCode}
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
+                    textareaRef={textareaRef}
+                    handleExplain={handleExplain}
+                  />
                 </PrivateRoute>
-              } 
+              }
             />
+            <Route path="/LearnHub" element={<LearnHubMainPage />} />
+            <Route path="/learnhub/topics" element={<StartLearningMain />} />
+            <Route path="/learnhub/practice" element={
+              <PrivateRoute>
+                <PracticeSelection />
+              </PrivateRoute>
+            } />
+            <Route path="/learnhub/practice/landing" element={
+              <PrivateRoute>
+                <PracticeLanding 
+                  setCurrentProblem={setCurrentProblem}
+                />
+              </PrivateRoute>
+            } />
+            <Route path="/learnhub/practice/problem" element={
+              <PrivateRoute>
+                <ProblemPage 
+                  currentProblem={currentProblem}
+                />
+              </PrivateRoute>
+            } />
+            <Route path="/learnhub/practice/feedback" element={
+              <PrivateRoute>
+                <AIFeedback />
+              </PrivateRoute>
+            } />
+            <Route path="/practice-code-editor" element={
+              <PrivateRoute>
+                <PracticeCodeEditor />
+              </PrivateRoute>
+            } />
           </Routes>
-        </div>
-      </Router>
-    </AuthProvider>
+        </Router>
+      </AuthProvider>
+    </div>
   );
 }
 

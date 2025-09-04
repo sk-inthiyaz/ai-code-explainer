@@ -12,7 +12,12 @@ const Navbar = ({ isDark, toggleDarkMode }) => {
         <span className="navbar-title">Code Explainer</span>
         <div className="navbar-right-group">
           {user && (
-            <span className="navbar-welcome">Welcome, {user.name}</span>
+            <>
+              <Link to="/practice-code-editor" className="navbar-practice-link">
+                🚀 Practice Arena
+              </Link>
+              <span className="navbar-welcome">Welcome, {user.name}</span>
+            </>
           )}
           {user ? (
             <button onClick={logout} className="navbar-logout-btn">
