@@ -1,11 +1,27 @@
 const express = require('express');
 const ChatHistory = require('../models/ChatHistory');
+const mongoose = require('mongoose');
 const router = express.Router();
 
 // Get all chat histories for a user
 router.get('/:userId', async (req, res) => {
   try {
-    const histories = await ChatHistory.find({ userId: req.params.userId }).sort({ created: -1 });
+    const userId = req.params.userId;
+    // Convert to ObjectId if valid
+    const objectId = mongoose.Types.ObjectId.isValid(userId) ? new mongoose.Types.ObjectId(userId) : userId;
+    // Find all chats and sort by last message timestamp
+    const histories = await ChatHistory.aggregate([
+      { $match: { userId: objectId } },
+      { $addFields: {
+        lastMessageTime: {
+          $ifNull: [
+            { $max: "$messages.timestamp" },
+            "$created"
+          ]
+        }
+      }},
+      { $sort: { lastMessageTime: -1 } }
+    ]);
     res.json(histories);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -16,12 +32,22 @@ router.get('/:userId', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     console.log('POST /api/chat-history body:', req.body);
-    const { userId, messages, title } = req.body;
+    let { userId, messages, title } = req.body;
+
+    // Fallback: try to get userId from req.user if not provided (if using auth middleware)
+    if (!userId && req.user && req.user.userId) {
+      userId = req.user.userId;
+    }
 
     // Input validation
     if (!userId || !Array.isArray(messages) || messages.length === 0 || !title) {
-      console.error('Validation error:', { userId, messages, title });
+      console.error('Validation error: userId missing or invalid', { userId, messages, title });
       return res.status(400).json({ error: 'userId, messages (array, not empty), and title are required.' });
+    }
+
+    // Convert userId to ObjectId if valid, otherwise leave as string
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      userId = new mongoose.Types.ObjectId(userId);
     }
 
     // Optional: Check that at least one user and one ai message exist
@@ -32,6 +58,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Chat history must include at least one user and one ai message.' });
     }
 
+    // Save chat
     const chat = new ChatHistory({ userId, messages, title });
     await chat.save();
     res.status(201).json(chat);

@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = (data) => {
     localStorage.setItem('token', data.token);
+    // Store the complete user object from the server
     setUser(data.user);
   };
 

@@ -1,0 +1,127 @@
+.practice-selection {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    min-height: calc(100vh - 64px);
+}
+
+.selection-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.selection-header h1 {
+    font-size: 2.5rem;
+    color: #2d3748;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #4a90e2, #6b8afd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.selection-header p {
+    font-size: 1.2rem;
+    color: #718096;
+}
+
+.practice-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.practice-option-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(107, 138, 253, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.practice-option-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 25px rgba(107, 138, 253, 0.15);
+}
+
+.option-icon {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    background: rgba(107, 138, 253, 0.1);
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.practice-option-card:hover .option-icon {
+    transform: scale(1.1);
+    background: rgba(107, 138, 253, 0.15);
+}
+
+.practice-option-card h2 {
+    font-size: 1.5rem;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.practice-option-card p {
+    color: #718096;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.features-list {
+    text-align: left;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.feature-item {
+    color: #4a5568;
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+}
+
+.feature-bullet {
+    color: #6b8afd;
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.start-button {
+    background: linear-gradient(135deg, #4a90e2, #6b8afd);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+
+.start-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(107, 138, 253, 0.2);
+}
+
+@media (max-width: 768px) {
+    .practice-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .selection-header h1 {
+        font-size: 2rem;
+    }
+}

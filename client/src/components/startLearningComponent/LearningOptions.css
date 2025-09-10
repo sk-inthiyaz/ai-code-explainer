@@ -1,0 +1,44 @@
+.learning-options {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.tutorial-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.tutorial-buttons button {
+  padding: 12px 22px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  color: white;
+}
+
+.watch-btn {
+  background-color: #e74c3c;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.watch-btn:hover {
+  background-color: #c0392b;
+}
+
+.learn-btn {
+  background-color: #2f8d46;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.learn-btn:hover {
+  background-color: #237237;
+}

@@ -66,7 +66,13 @@ router.post('/login', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    res.json({ token, user });
+    // Include _id in the response
+    const userData = {
+      _id: user._id,
+      email: user.email,
+      name: user.name
+    };
+    res.json({ token, user: userData });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Server error during login' });

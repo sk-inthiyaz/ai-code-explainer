@@ -1,0 +1,27 @@
+.topic-selector {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.topic-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.topic-buttons button {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.topic-buttons button:hover {
+  background-color: #1e8449;
+}
