@@ -1,0 +1,248 @@
+.feedback-page {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.feedback-header {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.feedback-title {
+  font-size: 2rem;
+  color: #2d3748;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.feedback-title svg {
+  width: 2rem;
+  height: 2rem;
+  color: #4CAF50;
+}
+
+.feedback-subtitle {
+  color: #718096;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.feedback-metadata {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(107, 138, 253, 0.1);
+}
+
+.metadata-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+
+.metadata-item svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #6b8afd;
+}
+
+.feedback-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.feedback-section {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.section-title {
+  font-size: 1.3rem;
+  color: #2d3748;
+  font-weight: 600;
+  margin: 0 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-title svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #6b8afd;
+}
+
+.feedback-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feedback-item {
+  margin-bottom: 1.25rem;
+  padding-left: 1.75rem;
+  position: relative;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.feedback-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6b8afd;
+}
+
+.code-block {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin: 1rem 0;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  border: 1px solid rgba(107, 138, 253, 0.1);
+}
+
+.improvement-suggestion {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background: #f0f7ff;
+  border-radius: 8px;
+  border-left: 3px solid #6b8afd;
+}
+
+.score-section {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  margin-bottom: 2rem;
+}
+
+.score-title {
+  font-size: 1.2rem;
+  color: #2d3748;
+  margin: 0 0 1.5rem;
+}
+
+.score-display {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+}
+
+.score-item {
+  text-align: center;
+}
+
+.score-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #6b8afd;
+  margin-bottom: 0.5rem;
+}
+
+.score-label {
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.next-btn, .retry-btn {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.next-btn {
+  background: #6b8afd;
+  color: white;
+  box-shadow: 0 4px 12px rgba(107, 138, 253, 0.2);
+}
+
+.retry-btn {
+  background: white;
+  color: #6b8afd;
+  border: 1px solid rgba(107, 138, 253, 0.3);
+}
+
+.next-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(107, 138, 253, 0.3);
+}
+
+.retry-btn:hover {
+  background: #f8fafc;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .feedback-page {
+    padding: 1rem;
+  }
+
+  .feedback-header {
+    padding: 1.5rem;
+  }
+
+  .feedback-title {
+    font-size: 1.75rem;
+  }
+
+  .feedback-metadata {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .feedback-content {
+    grid-template-columns: 1fr;
+  }
+
+  .score-display {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .next-btn, .retry-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
