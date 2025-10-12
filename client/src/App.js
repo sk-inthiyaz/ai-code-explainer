@@ -1,19 +1,29 @@
 import React, { useState, useRef, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+
+// Components
 import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import PrivateRoute from "./components/PrivateRoute";
 import ChatPage from "./components/ChatPage";
-import { AuthProvider } from "./context/AuthContext";
-import StartLearningMain from './components/startLearningComponent/data/StartLearningMain';
 import LearnHubMainPage from './components/LearnHubMainPage';
+import AskAIDoubts from './components/AskAIDoubts';
+
+// Practice Components
 import PracticeSelection from './components/practiceWithAI/PracticeSelection';
 import PracticeLanding from './components/practiceWithAI/PracticeLanding';
 import ProblemPage from './components/practiceWithAI/ProblemPage';
 import AIFeedback from './components/practiceWithAI/AIFeedback';
 import PracticeCodeEditor from './components/practiceWithAI/PracticeCodeEditor';
+
+// Learning Components
+import StartLearningMain from './components/startLearningComponent/data/StartLearningMain';
+
+// Styles
 import './index.css';
+import './styles/theme.css';
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -21,16 +31,25 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentProblem, setCurrentProblem] = useState(null);
   const textareaRef = useRef(null);
-
-  // Dark mode state centralized here
+  
+  // Initialize theme state
   const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem("theme") === "dark";
+    const savedTheme = localStorage.getItem("theme") === "dark";
+    // Set initial theme
+    document.documentElement.setAttribute('data-theme', savedTheme ? 'dark' : 'light');
+    document.body.classList.toggle('dark', savedTheme);
+    return savedTheme;
   });
 
-  useEffect(() => {
-    document.body.classList.toggle("dark", isDark);
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  }, [isDark]);
+  const toggleDarkMode = () => {
+    setIsDark(prev => {
+      const newTheme = !prev;
+      document.documentElement.setAttribute('data-theme', newTheme ? 'dark' : 'light');
+      document.body.classList.toggle('dark', newTheme);
+      localStorage.setItem("theme", newTheme ? "dark" : "light");
+      return newTheme;
+    });
+  };
 
   // Load messages from local storage on component mount or when user changes
   useEffect(() => {
@@ -101,65 +120,77 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <Router>
       <AuthProvider>
-        <Router>
-          <Navbar isDark={isDark} setIsDark={setIsDark} />
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route 
-              path="/" 
-              element={
-                <PrivateRoute>
-                  <ChatPage 
-                    messages={messages}
-                    setMessages={setMessages}
-                    inputCode={inputCode}
-                    setInputCode={setInputCode}
-                    isLoading={isLoading}
-                    setIsLoading={setIsLoading}
-                    textareaRef={textareaRef}
-                    handleExplain={handleExplain}
-                  />
-                </PrivateRoute>
-              }
-            />
-            <Route path="/LearnHub" element={<LearnHubMainPage />} />
-            <Route path="/learnhub/topics" element={<StartLearningMain />} />
-            <Route path="/learnhub/practice" element={
-              <PrivateRoute>
-                <PracticeSelection />
-              </PrivateRoute>
-            } />
-            <Route path="/learnhub/practice/landing" element={
-              <PrivateRoute>
-                <PracticeLanding 
-                  setCurrentProblem={setCurrentProblem}
-                />
-              </PrivateRoute>
-            } />
-            <Route path="/learnhub/practice/problem" element={
-              <PrivateRoute>
-                <ProblemPage 
-                  currentProblem={currentProblem}
-                />
-              </PrivateRoute>
-            } />
-            <Route path="/learnhub/practice/feedback" element={
-              <PrivateRoute>
-                <AIFeedback />
-              </PrivateRoute>
-            } />
-            <Route path="/practice-code-editor" element={
-              <PrivateRoute>
-                <PracticeCodeEditor />
-              </PrivateRoute>
-            } />
-          </Routes>
-        </Router>
+        <div className={`app-container ${isDark ? 'dark' : 'light'}`}>
+          <Navbar isDark={isDark} toggleDarkMode={toggleDarkMode} />
+          <main>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route 
+                path="/" 
+                element={
+                  <PrivateRoute>
+                    <ChatPage 
+                      messages={messages}
+                      setMessages={setMessages}
+                      inputCode={inputCode}
+                      setInputCode={setInputCode}
+                      isLoading={isLoading}
+                      setIsLoading={setIsLoading}
+                      textareaRef={textareaRef}
+                      handleExplain={handleExplain}
+                      isDark={isDark}
+                    />
+                  </PrivateRoute>
+                }
+              />
+              <Route 
+                path="/LearnHub" 
+                element={
+                  <PrivateRoute>
+                    <LearnHubMainPage isDark={isDark} />
+                  </PrivateRoute>
+                }
+              />
+              <Route 
+                path="/learnhub/topics" 
+                element={
+                  <PrivateRoute>
+                    <StartLearningMain isDark={isDark} />
+                  </PrivateRoute>
+                }
+              />
+              <Route 
+                path="/learnhub/practice" 
+                element={
+                  <PrivateRoute>
+                    <PracticeSelection isDark={isDark} />
+                  </PrivateRoute>
+                }
+              />
+              <Route 
+                path="/practice-code-editor" 
+                element={
+                  <PrivateRoute>
+                    <PracticeCodeEditor isDark={isDark} />
+                  </PrivateRoute>
+                }
+              />
+              <Route 
+                path="/learnhub/askai" 
+                element={
+                  <PrivateRoute>
+                    <AskAIDoubts isDark={isDark} />
+                  </PrivateRoute>
+                }
+              />
+            </Routes>
+          </main>
+        </div>
       </AuthProvider>
-    </div>
+    </Router>
   );
 }
 
