@@ -41,7 +41,21 @@ function ChatPage({ isDark, toggleDarkMode }) {
 
   useEffect(() => {
     if (user) {
-      setMessages([{ role: "ai", content: "This is an AI Code Explainer. Please enter code to get an explanation." }]);
+      setMessages([{ 
+        role: "ai", 
+        content: `Hi there! 👋 I'm your AI coding assistant.
+
+I can help you with anything coding-related! Just ask me to:
+• Generate code (e.g., "Write a bubble sort algorithm")
+• Explain code concepts
+• Help with debugging
+• Provide coding best practices
+
+No need to paste code first - just ask me what you need! 💻
+4. Provide best practices
+
+Just ask me anything about coding! 🚀`
+      }]);
     } else {
       setMessages([]);
     }
@@ -121,13 +135,22 @@ function ChatPage({ isDark, toggleDarkMode }) {
     setIsLoading(true);
 
     try {
+      // Check if the input is a code generation request
+      const generationKeywords = ['generate', 'write', 'create', 'implement', 'show me', 'give me', 'make'];
+      const input = inputCode.toLowerCase();
+      const isGenerationRequest = generationKeywords.some(keyword => input.includes(keyword)) || 
+                                /how to|algorithm|sort|search|function/i.test(input);
+
       const res = await fetch("http://localhost:5000/api/explain", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
-        body: JSON.stringify({ code: inputCode })
+        body: JSON.stringify({ 
+          code: inputCode,
+          type: isGenerationRequest ? 'generate' : 'explain'
+        })
       });
 
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -227,7 +250,7 @@ function ChatPage({ isDark, toggleDarkMode }) {
           <>
             <div className="heading-container">
               <h1 className="chatpage-title-fixed">
-                AI Code Explainer <span role="img" aria-label="robot">🤖</span>
+                AI Coding Assistant <span role="img" aria-label="robot">🤖</span>
               </h1>
             </div>
             <div className="chat-wrapper chat-wrapper-fixed">

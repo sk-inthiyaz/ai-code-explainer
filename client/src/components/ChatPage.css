@@ -1,44 +1,80 @@
 /* ChatPage.css - Classic layout with chat-wrapper, chat-box, input-box styles */
-body {
-  --bg-gradient: linear-gradient(135deg, #e3eafe, #f6f8ff);
-  --chat-bg: #ffffff;
-  --input-bg: #f8fafc;
-  --text-color: #111827;
-  --border-color: #e5e7eb;
-}
-body.dark {
-  --bg-gradient: linear-gradient(135deg, #0f172a, #1e293b);
-  --chat-bg: #1e293b;
-  --input-bg: #334155;
-  --text-color: #f9fafb;
-  --border-color: #475569;
+/* ChatPage uses global theme variables defined in theme.css */
+
+body.dark .chatpage-textarea {
+  background: #1E293B;
+  color: #F3F4F6 !important;
+  border-color: rgba(99, 102, 241, 0.3);
 }
 
 .chatpage-root {
   background: var(--bg-gradient);
   color: var(--text-color);
+  min-height: 100vh;
 }
 
-
 .heading-container {
-  /* width: 100%; */
   display: flex;
-  /* flex-direction: column; */
   align-items: center;
-  margin-top: 64px;
-  /* margin-bottom: 0; */
+  justify-content: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
 }
 
 .chatpage-title-fixed {
-  /* margin-bottom: px; */
-  font-size: 1.6rem;
+  font-size: 2rem;
   font-weight: 700;
-  letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--accent-color), #818CF8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   text-align: center;
-  color: var(--text-color);
-  text-shadow: none;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  text-transform: uppercase;
+  margin-bottom: 24px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.chat-wrapper-fixed {
+  position: relative;
+  background: var(--chat-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  margin: 20px;
+  padding: 20px;
+}
+
+.chat-wrapper-fixed:hover {
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
+}
+
+.chatpage-textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #FFFFFF;
+  color: #1F2937 !important;
+  border: 2px solid var(--border-color);
+  font-size: 16px;
+  line-height: 1.5;
+  resize: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.chatpage-textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+}
+
+.textarea-fixed {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.011em;
 }
 
 /* --- MONITOR STYLE CHAT BOX --- */
@@ -48,6 +84,8 @@ body.dark {
   align-items: center;
   min-height: 80vh;
   width: 100vw;
+  padding-top: 0px;
+  margin-top: -2px;
 }
 
 .chat-wrapper-fixed {

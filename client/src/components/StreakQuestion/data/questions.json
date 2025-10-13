@@ -1,0 +1,20 @@
+{
+  "questions": [
+    {
+      "_id": "sample1",
+      "title": "Binary Search Implementation",
+      "difficulty": "easy",
+      "description": "Implement binary search algorithm to find a target element in a sorted array.",
+      "sampleInput": "[1, 2, 3, 4, 5], target = 3",
+      "sampleOutput": "2 (index of target element)",
+      "hints": [
+        "Think about dividing the array in half",
+        "Compare target with middle element",
+        "Update search space based on comparison"
+      ],
+      "solution": "def binary_search(arr, target):\n    left, right = 0, len(arr) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1",
+      "createdAt": "2025-10-13T00:00:00.000Z",
+      "updatedAt": "2025-10-13T00:00:00.000Z"
+    }
+  ]
+}

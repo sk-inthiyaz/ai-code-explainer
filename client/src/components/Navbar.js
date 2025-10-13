@@ -9,14 +9,23 @@ const Navbar = ({ isDark, toggleDarkMode }) => {
   return (
     <nav className="navbar-root">
       <div className="navbar-inner">
-        <span className="navbar-title">Code Explainer</span>
+        <Link to="/LearnHub" className="navbar-title">Coding Hub</Link>
         <div className="navbar-right-group">
           {user && (
             <>
-              <Link to="/practice-code-editor" className="navbar-practice-link">
-                🚀 Practice Arena
-              </Link>
-              <span className="navbar-welcome">Welcome, {user.name}</span>
+              {!user.isAdmin && (
+                <Link to="/practice-code-editor" className="navbar-practice-link">
+                  🚀 Practice Arena
+                </Link>
+              )}
+              {user.isAdmin && (
+                <Link to="/admin/dashboard" className="navbar-admin-link">
+                  👑 Admin Dashboard
+                </Link>
+              )}
+              <span className="navbar-welcome">
+                Welcome, {user.isAdmin ? 'Admin' : user.name}
+              </span>
             </>
           )}
           {user ? (

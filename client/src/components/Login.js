@@ -8,16 +8,22 @@ const Login = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { login } = useAuth();
+  
+  const ADMIN_EMAIL = 'admin@codinghub.com';
+  const ADMIN_PASSWORD = '0000';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Check if the credentials match admin credentials
+      const isAdmin = email === ADMIN_EMAIL && password === ADMIN_PASSWORD;
+
       const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, isAdmin }),
       });
 
       const data = await response.json();
@@ -26,10 +32,19 @@ const Login = () => {
         throw new Error(data.message || 'Login failed');
       }
 
-      // Store token
+      // Store token and admin status
       localStorage.setItem('token', data.token);
+      if (data.user.isAdmin) {
+        localStorage.setItem('isAdmin', 'true');
+      }
       login(data); // Update auth context
-      navigate('/');
+      
+      // Redirect based on user type
+      if (data.user.isAdmin) {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       console.error('Login error:', error);
       setError(error.message);

@@ -1,6 +1,6 @@
-# AI Code Explainer
+# Coding Hub
 
-A web application that allows users to input code snippets and receive AI-generated explanations in real-time. Built with React for the frontend and Node.js/Express for the backend API.
+An AI-powered coding assistant platform that helps users with code explanations, problem-solving, debugging, and best practices. Built with React for the frontend and Node.js/Express for the backend API.
 
 ---
 

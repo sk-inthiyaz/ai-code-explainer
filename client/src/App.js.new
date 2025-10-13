@@ -1,30 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
-
-// Components
 import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import PrivateRoute from "./components/PrivateRoute";
 import ChatPage from "./components/ChatPage";
-import LearnHubMainPage from './components/LearnHubMainPage';
-import AskAIDoubts from './components/AskAIDoubts';
-
-// Practice Components
-import PracticeSelection from './components/practiceWithAI/PracticeSelection';
-import PracticeLanding from './components/practiceWithAI/PracticeLanding';
-import ProblemPage from './components/practiceWithAI/ProblemPage';
-import AIFeedback from './components/practiceWithAI/AIFeedback';
-import PracticeCodeEditor from './components/practiceWithAI/PracticeCodeEditor';
-
-// Learning Components
+import { AuthProvider } from "./context/AuthContext";
 import StartLearningMain from './components/startLearningComponent/data/StartLearningMain';
-
-// Admin Components
-import AdminDashboard from './components/AdminDashboard';
-
-// Styles
+import LearnHubMainPage from './components/LearnHubMainPage';
+import PracticeSelection from './components/practiceWithAI/PracticeSelection';
+import PracticeCodeEditor from './components/practiceWithAI/PracticeCodeEditor';
+import AskAIDoubts from './components/AskAIDoubts';
 import './index.css';
 import './styles/theme.css';
 
@@ -38,7 +24,6 @@ function App() {
   // Initialize theme state
   const [isDark, setIsDark] = useState(() => {
     const savedTheme = localStorage.getItem("theme") === "dark";
-    // Set initial theme
     document.documentElement.setAttribute('data-theme', savedTheme ? 'dark' : 'light');
     document.body.classList.toggle('dark', savedTheme);
     return savedTheme;
@@ -54,7 +39,7 @@ function App() {
     });
   };
 
-  // Load messages from local storage on component mount or when user changes
+  // Load messages from local storage
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
@@ -63,36 +48,23 @@ function App() {
       if (savedMessages) {
         setMessages(JSON.parse(savedMessages));
       } else {
-        // Optional: Set an initial message if no history exists
-        setMessages([{ role: "ai", content: "This is an AI Code Explainer. Please enter code to get an explanation." }]);
+        setMessages([{
+          role: "ai",
+          content: "Welcome to Coding Hub! I'm your AI coding assistant. How can I help you today?"
+        }]);
       }
     } else {
-      // Clear messages if user logs out
       setMessages([]);
     }
   }, []);
 
-  // Save messages to local storage whenever messages state changes
+  // Save messages to local storage
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && messages.length > 0) {
       localStorage.setItem(`chatMessages_${user.userId}`, JSON.stringify(messages));
     }
   }, [messages]);
-
-  // Function to adjust textarea height
-  const adjustTextareaHeight = () => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = `${Math.min(textarea.scrollHeight, 300)}px`; // Max height of 300px
-    }
-  };
-
-  // Adjust height when input changes
-  useEffect(() => {
-    adjustTextareaHeight();
-  }, [inputCode]);
 
   const handleExplain = async () => {
     if (!inputCode.trim()) return;
@@ -131,14 +103,6 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              <Route 
-                path="/admin/dashboard" 
-                element={
-                  <PrivateRoute adminOnly={true}>
-                    <AdminDashboard />
-                  </PrivateRoute>
-                }
-              />
               <Route 
                 path="/" 
                 element={

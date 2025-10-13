@@ -14,6 +14,7 @@ const explainRoutes = require('./routes/explainRoute');
 const chatHistoryRoutes = require('./routes/chatHistory');
 const tutorialRoutes = require('./routes/tutorialRoutes');
 const practiceRoutes = require('./routes/practiceRoutes');
+const questionRoutes = require('./routes/questionRoutes');
 const testApiRoute = require('./routes/testApiRoute');
 
 const app = express();
@@ -37,10 +38,24 @@ app.use((req, res, next) => {
 // Debug: Log the MongoDB URI to check if it's loaded
 console.log('MONGODB_URI:', process.env.MONGODB_URI);
 
+const initializeAdmin = require('./utils/initAdmin');
+
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+mongoose.connect(process.env.MONGODB_URI, {
+  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+})
+.then(async () => {
+  console.log('MongoDB connected successfully');
+  console.log('Connected to database:', mongoose.connection.name);
+  // Initialize admin user
+  await initializeAdmin();
+})
+.catch(err => {
+  console.error('MongoDB connection error:', err);
+  if (err.code === 'ECONNREFUSED') {
+    console.error('Make sure MongoDB is running on your machine');
+  }
+});
 
 // Routes
 // Routes Configuration
@@ -49,6 +64,7 @@ app.use('/api/explain', explainRoutes);
 app.use('/api/chat-history', chatHistoryRoutes);
 app.use('/api/tutorials', tutorialRoutes);
 app.use('/api/practice', practiceRoutes);
+app.use('/api/questions', questionRoutes);
 app.use('/api/test', testApiRoute);
 
 app.get('/', (req, res) => {

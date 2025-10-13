@@ -23,7 +23,16 @@ function isLikelyCode(input) {
   return codeIndicators.some(regex => regex.test(input));
 }
 
-router.post("/api/explain", async (req, res) => {
+// Test route to verify the API is working
+router.get("/test", (req, res) => {
+  res.json({ 
+    message: "Explain API is working!", 
+    timestamp: new Date().toISOString(),
+    endpoint: "/api/explain"
+  });
+});
+
+router.post("/", async (req, res) => {
   try {
     const { code } = req.body;
 
@@ -31,14 +40,32 @@ router.post("/api/explain", async (req, res) => {
       return res.status(400).json({ error: "Code is required" });
     }
 
-    // 👇 Filter: Don't allow random text like "how are you"
-    if (!isLikelyCode(code)) {
+    const { type = 'explain' } = req.body;
+    
+    // If it's a generation request, skip the code check
+    if (type !== 'generate' && !isLikelyCode(code)) {
       return res.status(200).json({
-        explanation: `👋 Hi! I'm a code explainer bot.\n\nPlease paste your code snippet and I'll explain it in a clean and structured way. 💻\n\nLet’s make learning easier! 🚀`,
+        explanation: `👋 Hi! I'm a code explainer bot.\n\nPlease paste your code snippet and I'll explain it in a clean and structured way. 💻\n\nLet's make learning easier! 🚀`,
       });
     }
 
-    const prompt = `You are a professional programming assistant.
+    const prompt = type === 'generate' 
+      ? `You are an expert programming assistant. The user has requested: "${code}"
+
+Please provide a clean, well-commented implementation following these guidelines:
+1. Use clear variable names and proper indentation
+2. Add detailed comments explaining the logic
+3. Include the time and space complexity
+4. If the language isn't specified, use Python as default
+5. Format the response using markdown for code blocks
+6. Include a brief explanation of how the code works
+
+Please format your response as:
+1. Brief description of what the code does
+2. The implementation with comments
+3. Example usage
+4. Time and space complexity`
+      : `You are a professional programming assistant.
 
 Explain the following code in a clean, beginner-friendly, and well-structured format using markdown.
 

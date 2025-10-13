@@ -10,10 +10,10 @@ const LearnHubMainPage = () => {
       icon: "🔰",
       title: "Start Learning",
       desc: "Explore basics like Variables, Loops, Recursion, etc.",
-      link: "/learnhub/topics", // This should route to StartLearningMain.js via routes
+      link: "/learnhub/topics",
     },
     {
-      icon: "�",
+      icon: "💻",
       title: "Interactive Coding Practice",
       desc: "Master coding through hands-on practice and AI-powered guidance",
       link: "/learnhub/practice",
@@ -21,8 +21,8 @@ const LearnHubMainPage = () => {
     {
       icon: "🐞",
       title: "Debug This Code",
-      desc: "Paste broken code and let AI explain what’s wrong",
-      link: "/learnhub/debug",
+      desc: "Paste broken code and let AI explain what's wrong",
+      link: "/",
     },
     {
       icon: "✍️",
@@ -46,7 +46,7 @@ const LearnHubMainPage = () => {
 
   return (
     <div className="learnhub-container">
-      <h2 className="learnhub-title">📚 Welcome to LearnHub</h2>
+      <h2 className="learnhub-title">� Welcome to Coding Hub</h2>
       <div className="card-grid">
         {cards.map((card, index) => (
           <div

@@ -1,0 +1,127 @@
+sk-inthiyaz: #codebase 
+Hey could you give all my project Data 
+like what it contains 
+what my project does 
+I want to upload this all in My reference page
+like what it does 
+
+
+GitHub Copilot: Searched codebase for "#codebase 
+Hey could you give all my project Data 
+like what it contains 
+what my project does 
+I want to upload this all in My reference page
+like what it does 
+", no results
+
+I'll help you analyze your project and provide a comprehensive overview. Let me gather some key information about your project structure and functionality. 
+
+Read [](file:///c%3A/Users/sinti/OneDrive/Pictures/Documents/Desktop/ai-code-explainer/README.md)
+
+Let me gather more context about the main functionality. 
+
+Searched codebase for "main functionality components LearnHubMainPage features", no results
+
+Based on the project structure and the content I've analyzed, here's a comprehensive overview of your project:
+
+# AI Code Explainer - Project Overview
+
+## Project Description
+This is an advanced learning platform that helps users understand and practice coding through AI-powered interactions. The project is built as a full-stack web application with distinct client and server architectures.
+
+## Key Components
+
+### 1. Learning Hub
+- Main interface: `LearnHubMainPage`
+- Language selection feature for multiple programming languages
+- Topic-based learning paths
+- Integrated tutorial system with video content
+- Custom learning options and paths
+
+### 2. AI-Powered Features
+1. **Code Explanation System**
+   - Real-time code analysis
+   - Detailed explanations of code snippets
+   - Interactive chat interface
+   - Dark/Light mode support
+
+2. **Practice with AI**
+   - Interactive code editor
+   - Real-time AI feedback
+   - Practice problem database
+   - Problem selection interface
+   - Automated code evaluation
+
+3. **AI Doubts Resolution**
+   - Chat-based doubt clearing system
+   - Real-time responses
+   - Context-aware assistance
+
+### 3. User Features
+- Authentication system (Login/Signup)
+- Personal progress tracking
+- Chat history storage
+- Customizable learning paths
+
+## Technical Architecture
+
+### Frontend (React.js)
+- **Components Structure**
+  - Navigation system
+  - Code editor integration
+  - Chat interface
+  - Tutorial viewers
+  - Practice interfaces
+
+### Backend (Node.js/Express)
+- **Core Services**
+  - Authentication handling
+  - AI integration (Gemini)
+  - YouTube API integration
+  - Chat history management
+  - Practice problem management
+
+### Database Models
+- User management
+- Chat history
+- Code explanations
+- Practice problems
+
+## Key Technologies
+1. **Frontend**
+   - React.js
+   - CSS3
+   - Context API for state management
+   - Modern JavaScript (ES6+)
+
+2. **Backend**
+   - Node.js
+   - Express.js
+   - MongoDB (implied from models)
+   - Google's Gemini AI integration
+
+3. **Features**
+   - Real-time code execution
+   - Interactive learning
+   - Multi-language support
+   - Video tutorial integration
+   - AI-powered code analysis
+
+## Project Structure
+```
+├── client/          # Frontend React application
+├── server/          # Backend Node.js server
+└── src/             # Core application source
+```
+
+## Unique Selling Points
+1. Integrated AI assistance for learning
+2. Interactive practice environment
+3. Comprehensive learning paths
+4. Real-time code analysis
+5. Multi-modal learning (text, video, practice)
+6. Personalized learning experience
+
+This project serves as a comprehensive learning platform that combines AI-powered code explanation, practice environments, and structured learning paths to help users master programming concepts effectively.
+
+You can use this information for your reference page as it provides a complete overview of your project's capabilities, architecture, and technical implementation.
