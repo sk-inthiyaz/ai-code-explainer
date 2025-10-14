@@ -17,20 +17,18 @@ const PracticeSelection = () => {
         'Instant AI code analysis',
         'Save your solutions'
       ],
-      action: () => navigate('/practice-code-editor')
+      action: () => navigate('/learnhub/practice/editor')
     },
     {
       id: 'guided',
-      title: 'Practice with AI Guidance',
-      description: 'Choose your language, topic, and difficulty level to get curated problems with AI feedback',
+      title: 'Practice with Guidance',
+      description: 'Step-by-step guided practice with structured problems and comprehensive feedback',
       icon: '🎯',
       features: [
-        'C and Java programming languages',
-        'Curated problem sets (Arrays, Strings, Loops)',
-        'Progressive difficulty levels (Beginner, Medium, Advanced)',
-        'Get 5 problems per session',
-        'Real-time AI feedback',
-        'Test cases for validation'
+        'Curated problem sets',
+        'Progressive difficulty levels',
+        'Detailed explanations',
+        'Track your progress'
       ],
       action: () => navigate('/learnhub/practice/landing')
     }

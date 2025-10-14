@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
-import { FaPlay, FaCode, FaLightbulb, FaMagic, FaRocket } from 'react-icons/fa';
+import { FaPlay, FaCode, FaLightbulb, FaMagic } from 'react-icons/fa';
 import './CodeEditor.css';
 import { analyzeCode } from './services/aiService';
 
 const CodeEditor = () => {
-  const navigate = useNavigate();
   const [code, setCode] = useState('// Write your code here...');
   const [language, setLanguage] = useState('javascript');
   const [theme, setTheme] = useState('vs-dark');
@@ -102,13 +100,6 @@ const CodeEditor = () => {
             disabled={isAnalyzing}
           >
             <FaMagic /> Analyze Code
-          </button>
-          <button 
-            className="toolbar-button practice-button"
-            onClick={() => navigate('/practice-code-editor')}
-            title="Open Practice Arena with AI Feedback"
-          >
-            <FaRocket /> Practice
           </button>
         </div>
       </div>

@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-
 // Components
 import Navbar from "./components/Navbar";
 import Login from "./components/Login";
@@ -21,8 +20,11 @@ import PracticeCodeEditor from './components/practiceWithAI/PracticeCodeEditor';
 // Learning Components
 import StartLearningMain from './components/startLearningComponent/data/StartLearningMain';
 
+//Streak realted
 // Admin Components
 import AdminDashboard from './components/pages/AdminDashboard';
+//StreakUserCard
+import StreakPage from "./components/StreakQuestion/StreakPage";
 
 // Styles
 import './index.css';
@@ -197,6 +199,7 @@ function App() {
                   </PrivateRoute>
                 }
               />
+              <Route path="/streak" element={<StreakPage />} />
             </Routes>
           </main>
         </div>

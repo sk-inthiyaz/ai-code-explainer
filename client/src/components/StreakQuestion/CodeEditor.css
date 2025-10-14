@@ -1,0 +1,89 @@
+.question-right {
+  flex: 1;
+  background-color: #1a1d24;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.language-select {
+  background-color: #0f1117;
+  color: white;
+  border: 1px solid #2f323d;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.code-editor {
+  flex-grow: 1;
+  background-color: #0f1117;
+  color: #f9fafb;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1rem;
+  font-family: "Fira Code", monospace;
+  resize: none;
+  outline: none;
+}
+
+.editor-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.run-btn,
+.submit-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.run-btn {
+  background-color: #22c55e;
+  color: white;
+}
+
+.run-btn:hover {
+  background-color: #16a34a;
+}
+
+.submit-btn {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.submit-btn:hover {
+  background-color: #2563eb;
+}
+
+.editor-output {
+  margin-top: 12px;
+  background-color: #0f1117;
+  border-radius: 8px;
+  padding: 10px;
+  color: #d1d5db;
+  font-family: monospace;
+  font-size: 0.9rem;
+  min-height: 80px;
+  overflow-y: auto;
+}
+
+.editor-output h4 {
+  margin-bottom: 6px;
+  color: #60a5fa;
+}

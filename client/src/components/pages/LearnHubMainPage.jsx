@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./LearnHubMainPage.css";
-
+import UserStreakQuestionCard from "../StreakQuestion/UserStreakQuestionCard";
 const LearnHubMainPage = () => {
   const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ const LearnHubMainPage = () => {
       icon: "🐞",
       title: "Solve Streak quetion🔥",
       desc: "Master our daily quetions and win rewards and badges📛🪙",
-      link: "/",
+      link: "/streak",
     },
     {
       icon: "✍️",

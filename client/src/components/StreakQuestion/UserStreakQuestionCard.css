@@ -1,0 +1,41 @@
+.streak-card {
+  background: white;
+  margin: 30px auto;
+  padding: 25px;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  transition: 0.3s;
+}
+
+.streak-card:hover {
+  transform: scale(1.02);
+}
+
+.streak-card h2 {
+  font-size: 1.5rem;
+  color: #1d4ed8;
+  margin-bottom: 10px;
+}
+
+.streak-card p {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.streak-card button {
+  background: #1d4ed8;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.streak-card button:hover {
+  background: #2563eb;
+}

@@ -1,30 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getRandomProblems } from './data/problemsDatabase';
+import { generateProblems } from './services/aiService';
 import { FaCode, FaLightbulb, FaRobot, FaChartLine } from 'react-icons/fa';
 import './PracticeLanding.css';
 
-const languages = [
-  { 
-    id: 'c', 
-    name: 'C', 
-    icon: '�',
-    description: 'Master the fundamentals with C programming',
-    color: '#00599C'
-  },
-  { 
-    id: 'java', 
-    name: 'Java', 
-    icon: '☕',
-    description: 'Object-oriented programming with Java',
-    color: '#ED8B00'
-  }
-];
-
 const topics = [
-  { id: 'arrays', title: 'Arrays', icon: '�', description: 'Master array manipulation and algorithms' },
-  { id: 'strings', title: 'Strings', icon: '�', description: 'Learn string operations and patterns' },
-  { id: 'loops', title: 'Loops', icon: '🔄', description: 'Practice iterative problem solving' }
+  { id: 'arrays', title: 'Arrays', icon: '📊', description: 'Master array manipulation and algorithms' },
+  { id: 'strings', title: 'Strings', icon: '📝', description: 'Learn string operations and patterns' },
+  { id: 'loops', title: 'Loops', icon: '🔄', description: 'Practice iterative problem solving' },
+  { id: 'recursion', title: 'Recursion', icon: '🔁', description: 'Understand recursive algorithms' },
+  { id: 'sorting', title: 'Sorting', icon: '📶', description: 'Implement various sorting algorithms' },
+  { id: 'trees', title: 'Trees', icon: '🌳', description: 'Work with tree data structures' },
 ];
 
 const difficulties = [
@@ -48,25 +34,40 @@ const difficulties = [
   },
 ];
 
+const features = [
+  {
+    icon: <FaRobot />,
+    title: 'AI-Powered Feedback',
+    description: 'Get instant, personalized feedback on your code from our advanced AI system'
+  },
+  {
+    icon: <FaCode />,
+    title: 'Real-World Problems',
+    description: 'Practice with carefully curated problems that mirror real coding scenarios'
+  },
+  {
+    icon: <FaLightbulb />,
+    title: 'Learning Insights',
+    description: 'Gain deep insights into different approaches and best practices'
+  },
+  {
+    icon: <FaChartLine />,
+    title: 'Track Progress',
+    description: 'Monitor your improvement with detailed performance analytics'
+  }
+];
+
 const PracticeLanding = ({ 
+  selectedTopic,
+  selectedDifficulty,
+  setSelectedTopic, 
+  setSelectedDifficulty,
   setCurrentProblem
 }) => {
   const navigate = useNavigate();
-  const [selectedLanguage, setSelectedLanguage] = useState(null);
-  const [selectedTopic, setSelectedTopic] = useState(null);
-  const [selectedDifficulty, setSelectedDifficulty] = useState(null);
-
-  const handleLanguageSelect = (languageId) => {
-    setSelectedLanguage(languageId);
-    // Reset topic and difficulty when language changes
-    setSelectedTopic(null);
-    setSelectedDifficulty(null);
-  };
 
   const handleTopicSelect = (topicId) => {
     setSelectedTopic(topicId);
-    // Reset difficulty when topic changes
-    setSelectedDifficulty(null);
   };
 
   const handleDifficultySelect = (difficultyId) => {
@@ -74,25 +75,25 @@ const PracticeLanding = ({
   };
 
   const handleGenerateProblems = async () => {
-    if (!selectedLanguage || !selectedTopic || !selectedDifficulty) {
-      alert('Please select language, topic, and difficulty level');
+    if (!selectedTopic || !selectedDifficulty) {
+      alert('Please select both a topic and difficulty level');
       return;
     }
 
     try {
-      console.log('[DEBUG] Generating problems for:', { selectedLanguage, selectedTopic, selectedDifficulty });
-      const problems = getRandomProblems(selectedLanguage, selectedTopic, selectedDifficulty, 5);
+      console.log('[DEBUG] Generating problems for:', { selectedTopic, selectedDifficulty });
+      const problems = await generateProblems(selectedTopic, selectedDifficulty);
       
-      if (!problems || problems.length === 0) {
-        console.error('[DEBUG] No problems found:', problems);
-        alert('No problems found for this combination. Please try different selections.');
+      if (!problems || !Array.isArray(problems) || problems.length === 0) {
+        console.error('[DEBUG] No problems received:', problems);
+        alert('No problems were generated. Please try again.');
         return;
       }
 
       console.log('[DEBUG] Setting problems and navigating:', problems);
       setCurrentProblem(problems);
       
-      // Navigate to problems page
+      // Add a small delay to ensure state is updated before navigation
       setTimeout(() => {
         navigate('/learnhub/practice/problem');
       }, 100);
@@ -110,86 +111,71 @@ const PracticeLanding = ({
         <p>Enhance your coding skills with interactive problems and AI-powered feedback</p>
       </header>
 
+      {/* Features Section */}
+      <div className="feature-grid">
+        {features.map((feature, index) => (
+          <div key={index} className="feature-card">
+            <div className="feature-icon">
+              {feature.icon}
+            </div>
+            <h3>{feature.title}</h3>
+            <p>{feature.description}</p>
+          </div>
+        ))}
+      </div>
+
       <div className="practice-sections">
-        {/* Language Selection */}
         <div className="section-container">
-          <h2 className="section-title">Choose a Language</h2>
-          <div className="languages-grid">
-            {languages.map((language) => (
+          <h2 className="section-title">Choose Your Topic</h2>
+          <div className="topics-grid">
+            {topics.map((topic) => (
               <div
-                key={language.id}
-                className={`language-card ${selectedLanguage === language.id ? 'selected' : ''}`}
-                onClick={() => handleLanguageSelect(language.id)}
-                style={{ '--accent-color': language.color }}
+                key={topic.id}
+                className={`topic-card ${selectedTopic === topic.id ? 'selected' : ''}`}
+                onClick={() => handleTopicSelect(topic.id)}
               >
-                <div className="language-content">
-                  <span className="language-icon">{language.icon}</span>
-                  <h3>{language.name}</h3>
-                  <p>{language.description}</p>
+                <div className="topic-content">
+                  <span className="topic-icon">{topic.icon}</span>
+                  <h3>{topic.title}</h3>
+                  <p>{topic.description}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Topic Selection - Only show if language is selected */}
-        {selectedLanguage && (
-          <div className="section-container">
-            <h2 className="section-title">Choose Your Topic</h2>
-            <div className="topics-grid">
-              {topics.map((topic) => (
-                <div
-                  key={topic.id}
-                  className={`topic-card ${selectedTopic === topic.id ? 'selected' : ''}`}
-                  onClick={() => handleTopicSelect(topic.id)}
-                >
-                  <div className="topic-content">
-                    <span className="topic-icon">{topic.icon}</span>
-                    <h3>{topic.title}</h3>
-                    <p>{topic.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div className="section-container">
+          <h2 className="section-title">Select Difficulty Level</h2>
+          <div className="difficulty-buttons">
+            {difficulties.map((diff) => (
+              <button
+                key={diff.id}
+                className={`difficulty-btn ${selectedDifficulty === diff.id ? 'selected' : ''}`}
+                onClick={() => handleDifficultySelect(diff.id)}
+                style={{ '--accent-color': diff.color }}
+              >
+                <span className="difficulty-icon">
+                  {diff.id === 'beginner' ? '🌱' : diff.id === 'medium' ? '🚀' : '⭐'}
+                </span>
+                <span className="difficulty-content">
+                  <span className="difficulty-title">{diff.title}</span>
+                  <span className="difficulty-description">{diff.description}</span>
+                </span>
+              </button>
+            ))}
           </div>
-        )}
+        </div>
 
-        {/* Difficulty Selection - Only show if topic is selected */}
-        {selectedLanguage && selectedTopic && (
-          <div className="section-container">
-            <h2 className="section-title">Select Difficulty Level</h2>
-            <div className="difficulty-buttons">
-              {difficulties.map((diff) => (
-                <button
-                  key={diff.id}
-                  className={`difficulty-btn ${selectedDifficulty === diff.id ? 'selected' : ''}`}
-                  onClick={() => handleDifficultySelect(diff.id)}
-                  style={{ '--accent-color': diff.color }}
-                >
-                  <span className="difficulty-icon">
-                    {diff.id === 'beginner' ? '🌱' : diff.id === 'medium' ? '🚀' : '⭐'}
-                  </span>
-                  <span className="difficulty-content">
-                    <span className="difficulty-title">{diff.title}</span>
-                    <span className="difficulty-description">{diff.description}</span>
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Generate Problems Button - Only show if all selections are made */}
-        {selectedLanguage && selectedTopic && selectedDifficulty && (
-          <div className="section-container">
-            <button
-              className="generate-btn"
-              onClick={handleGenerateProblems}
-            >
-              Start Practice - Get 5 Problems
-            </button>
-          </div>
-        )}
+        {/* Generate Problems Button */}
+        <div className="section-container">
+          <button
+            className="generate-btn"
+            onClick={handleGenerateProblems}
+            disabled={!selectedTopic || !selectedDifficulty}
+          >
+            Generate Problems
+          </button>
+        </div>
       </div>
     </div>
   );

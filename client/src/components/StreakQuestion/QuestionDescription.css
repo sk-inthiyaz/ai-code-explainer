@@ -1,0 +1,40 @@
+.streak-question-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 20px;
+  height: 90vh;
+  background-color: #0f1117;
+  color: white;
+}
+
+.question-left {
+  flex: 1;
+  background-color: #1a1d24;
+  padding: 20px;
+  border-radius: 12px;
+  overflow-y: auto;
+}
+
+.question-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #4ade80;
+}
+
+.question-description {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.question-example,
+.question-constraints {
+  background-color: #111319;
+  padding: 10px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #d1d5db;
+  white-space: pre-wrap;
+}

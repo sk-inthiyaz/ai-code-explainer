@@ -1,0 +1,31 @@
+.streak-status {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  color: white;
+  padding: 20px;
+  border-radius: 16px;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.streak-status h3 {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+
+.streak-status p {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .streak-status {
+    padding: 15px;
+  }
+
+  .streak-status h3 {
+    font-size: 1.2rem;
+  }
+}

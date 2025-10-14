@@ -49,15 +49,7 @@ const analyzeSolution = (code) => {
 };
 
 const calculateScore = (results, analysis) => {
-  // Handle case where results is undefined (for C/Java code structure validation)
-  let correctness;
-  if (results && Array.isArray(results)) {
-    correctness = results.filter(r => r.passed).length / results.length * 100;
-  } else {
-    // For C/Java code, assume good structure means 85% correctness
-    correctness = 85;
-  }
-  
+  let correctness = results.filter(r => r.passed).length / results.length * 100;
   let efficiency = analysis.codeQuality.score;
   let readability = analysis.codeQuality.score;
 
@@ -84,10 +76,7 @@ const AIFeedback = () => {
     // Analyze the code and calculate scores
     const codeAnalysis = analyzeSolution(location.state.code);
     setAnalysis(codeAnalysis);
-    
-    // Handle both cases: with results (JavaScript) or without results (C/Java)
-    const results = location.state.results || null;
-    setScores(calculateScore(results, codeAnalysis));
+    setScores(calculateScore(location.state.results, codeAnalysis));
   }, [location.state, navigate]);
 
   const handleNext = () => {
