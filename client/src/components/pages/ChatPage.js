@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import ChatWindow from "./ChatWindow";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import "./ChatPage.css";
-import Sidebar from "./Sidebar";
-import { getChatTitle } from "../utils/chat";
+import Sidebar from "../Sidebar";
+import { getChatTitle } from "../../utils/chat";
 import LearnHubMainPage from "./LearnHubMainPage"; // 👈 Import LearnHub component
 
 function ChatPage({ isDark, toggleDarkMode }) {

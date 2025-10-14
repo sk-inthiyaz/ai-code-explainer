@@ -1,0 +1,72 @@
+{
+  "questions": [
+    {
+      "title": "Two Sum",
+      "description": "Given an array of integers nums and an integer target, return indices of the two numbers in the array that add up to target. You can assume each input has exactly one solution.",
+      "difficulty": "easy",
+      "testCases": [
+        {
+          "input": "nums = [2,7,11,15], target = 9",
+          "expectedOutput": "[0,1] # Because nums[0] + nums[1] = 2 + 7 = 9"
+        },
+        {
+          "input": "nums = [3,2,4], target = 6",
+          "expectedOutput": "[1,2] # Because nums[1] + nums[2] = 2 + 4 = 6"
+        }
+      ]
+    },
+    {
+      "title": "String Palindrome",
+      "description": "Write a function that checks if a given string is a palindrome. A string is a palindrome when it reads the same backward as forward. Consider only alphanumeric characters and ignore case.",
+      "difficulty": "easy",
+      "testCases": [
+        {
+          "input": "A man, a plan, a canal: Panama",
+          "expectedOutput": "true"
+        },
+        {
+          "input": "race a car",
+          "expectedOutput": "false"
+        }
+      ]
+    },
+    {
+      "title": "FizzBuzz",
+      "description": "Write a function that returns an array of strings for numbers from 1 to n where:\n- For multiples of 3, use 'Fizz'\n- For multiples of 5, use 'Buzz'\n- For multiples of both 3 and 5, use 'FizzBuzz'\n- For other numbers, use the number itself as a string",
+      "difficulty": "easy",
+      "testCases": [
+        {
+          "input": "n = 3",
+          "expectedOutput": "['1', '2', 'Fizz']"
+        },
+        {
+          "input": "n = 5",
+          "expectedOutput": "['1', '2', 'Fizz', '4', 'Buzz']"
+        },
+        {
+          "input": "n = 15",
+          "expectedOutput": "['1', '2', 'Fizz', '4', 'Buzz', 'Fizz', '7', '8', 'Fizz', 'Buzz', '11', 'Fizz', '13', '14', 'FizzBuzz']"
+        }
+      ]
+    },
+    {
+      "title": "Find Maximum Element",
+      "description": "Write a function that finds the largest element in an array/list of numbers. If the array is empty, return null or an appropriate value for empty input.",
+      "difficulty": "easy",
+      "testCases": [
+        {
+          "input": "[1, 5, 3, 8, 2]",
+          "expectedOutput": "8"
+        },
+        {
+          "input": "[-1, -5, -2, -8]",
+          "expectedOutput": "-1"
+        },
+        {
+          "input": "[]",
+          "expectedOutput": "null"
+        }
+      ]
+    }
+  ]
+}

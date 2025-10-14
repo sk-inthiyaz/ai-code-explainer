@@ -7,9 +7,9 @@ import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import PrivateRoute from "./components/PrivateRoute";
-import ChatPage from "./components/ChatPage";
-import LearnHubMainPage from './components/LearnHubMainPage';
-import AskAIDoubts from './components/AskAIDoubts';
+import ChatPage from "./components/pages/ChatPage";
+import LearnHubMainPage from './components/pages/LearnHubMainPage';
+import AskAIDoubts from './components/pages/AskAIDoubts';
 
 // Practice Components
 import PracticeSelection from './components/practiceWithAI/PracticeSelection';
@@ -22,7 +22,7 @@ import PracticeCodeEditor from './components/practiceWithAI/PracticeCodeEditor';
 import StartLearningMain from './components/startLearningComponent/data/StartLearningMain';
 
 // Admin Components
-import AdminDashboard from './components/AdminDashboard';
+import AdminDashboard from './components/pages/AdminDashboard';
 
 // Styles
 import './index.css';

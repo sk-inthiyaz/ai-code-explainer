@@ -26,11 +26,6 @@ const questionSchema = new mongoose.Schema({
     enum: ['easy', 'medium', 'hard'],
     required: true
   },
-  category: {
-    type: String,
-    enum: ['javascript', 'python', 'java', 'cpp'],
-    required: true
-  },
   testCases: [testCaseSchema],
   createdAt: {
     type: Date,

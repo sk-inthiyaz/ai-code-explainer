@@ -20,8 +20,8 @@ const LearnHubMainPage = () => {
     },
     {
       icon: "🐞",
-      title: "Debug This Code",
-      desc: "Paste broken code and let AI explain what's wrong",
+      title: "Solve Streak quetion🔥",
+      desc: "Master our daily quetions and win rewards and badges📛🪙",
       link: "/",
     },
     {

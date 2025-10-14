@@ -3,6 +3,63 @@ const router = express.Router();
 const Question = require('../models/Question');
 const isAdmin = require('../middleware/isAdmin');
 
+// Bulk import questions (admin only)
+router.post('/bulk-import', isAdmin, async (req, res) => {
+  try {
+    let questionsToImport;
+    
+    // Check if the JSON follows the expected structure
+    if (req.body.questions && Array.isArray(req.body.questions)) {
+      questionsToImport = req.body.questions;
+    } else if (Array.isArray(req.body)) {
+      questionsToImport = req.body;
+    } else {
+      return res.status(400).json({ 
+        message: 'Invalid format. JSON should either be an array of questions or have a "questions" array property'
+      });
+    }
+
+    const importedQuestions = [];
+    const errors = [];
+
+    // Use a transaction to ensure all-or-nothing import
+    const session = await mongoose.startSession();
+    await session.withTransaction(async () => {
+      for (let i = 0; i < questions.length; i++) {
+        const question = questions[i];
+        try {
+          // Check for duplicate titles
+          const existingQuestion = await Question.findOne({ title: question.title });
+          if (existingQuestion) {
+            errors.push(`Question "${question.title}" already exists`);
+            continue;
+          }
+
+          const newQuestion = new Question(question);
+          await newQuestion.save({ session });
+          importedQuestions.push(newQuestion);
+        } catch (error) {
+          errors.push(`Error importing question at index ${i}: ${error.message}`);
+        }
+      }
+
+      if (errors.length > 0 && importedQuestions.length === 0) {
+        // If no questions were imported successfully, abort the transaction
+        throw new Error('No questions were imported successfully');
+      }
+    });
+
+    res.status(201).json({
+      message: 'Questions imported successfully',
+      questions: importedQuestions,
+      errors: errors.length > 0 ? errors : undefined
+    });
+  } catch (error) {
+    console.error('Error importing questions:', error);
+    res.status(500).json({ message: 'Error importing questions', error: error.message });
+  }
+});
+
 // Get all questions
 router.get('/questions', async (req, res) => {
   try {
