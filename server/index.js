@@ -9,6 +9,7 @@ console.log('[DEBUG] Environment Variables:', {
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const authRoutes = require('./routes/auth');
 const explainRoutes = require('./routes/explainRoute');
 const chatHistoryRoutes = require('./routes/chatHistory');
@@ -16,7 +17,8 @@ const tutorialRoutes = require('./routes/tutorialRoutes');
 const practiceRoutes = require('./routes/practiceRoutes');
 const questionRoutes = require('./routes/questionRoutes');
 const testApiRoute = require('./routes/testApiRoute');
-
+const adminRoutes = require('./routes/adminRoutes');
+const streakRoutes = require('./routes/streakRoutes');
 const app = express();
 
 // CORS Configuration
@@ -25,7 +27,8 @@ app.use(cors({
   credentials: true
 }));
 
-// Middleware
+// Middleware with increased body size limit
+app.use(bodyParser.json({ limit: "10mb" }));
 app.use(express.json());
 
 // Debug logging middleware
@@ -57,7 +60,6 @@ mongoose.connect(process.env.MONGODB_URI, {
   }
 });
 
-// Routes
 // Routes Configuration
 app.use('/api/auth', authRoutes);
 app.use('/api/explain', explainRoutes);
@@ -66,6 +68,8 @@ app.use('/api/tutorials', tutorialRoutes);
 app.use('/api/practice', practiceRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/test', testApiRoute);
+app.use('/api/admin', adminRoutes);
+app.use('/api/streak', streakRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running');
@@ -73,5 +77,5 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
