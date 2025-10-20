@@ -3,7 +3,7 @@ const BASE_URL = 'http://localhost:5000/api';
 // Fetch all questions
 export const fetchQuestions = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/streak-questions`, {
+    const response = await fetch(`${BASE_URL}/streak/admin/questions`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
       }
@@ -19,7 +19,7 @@ export const fetchQuestions = async () => {
 // Add a new question
 export const addQuestion = async (questionData) => {
   try {
-    const response = await fetch(`${BASE_URL}/streak-questions`, {
+    const response = await fetch(`${BASE_URL}/streak/admin/add`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export const addQuestion = async (questionData) => {
 // Delete a question
 export const deleteQuestion = async (questionId) => {
   try {
-    const response = await fetch(`${BASE_URL}/streak-questions/${questionId}`, {
+    const response = await fetch(`${BASE_URL}/streak/admin/questions/${questionId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -55,7 +55,7 @@ export const deleteQuestion = async (questionId) => {
 // Update a question
 export const updateQuestion = async (questionId, questionData) => {
   try {
-    const response = await fetch(`${BASE_URL}/streak-questions/${questionId}`, {
+    const response = await fetch(`${BASE_URL}/streak/admin/questions/${questionId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ export const updateQuestion = async (questionId, questionData) => {
 // Get question statistics
 export const getQuestionStats = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/streak-questions/stats`, {
+    const response = await fetch(`${BASE_URL}/streak/admin/stats`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
       }
@@ -83,6 +83,25 @@ export const getQuestionStats = async () => {
     return await response.json();
   } catch (error) {
     console.error('Error fetching question statistics:', error);
+    throw error;
+  }
+};
+
+// New: Add 5 daily questions
+export const addDailyQuestions = async (payload) => {
+  try {
+    const response = await fetch(`${BASE_URL}/streak/admin/daily`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) throw new Error('Failed to add daily questions');
+    return await response.json();
+  } catch (error) {
+    console.error('Error adding daily questions:', error);
     throw error;
   }
 };

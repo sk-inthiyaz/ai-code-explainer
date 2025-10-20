@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { addQuestion } from './utils/adminAPI';
+import toast from 'react-hot-toast';
+import { addDailyQuestions } from './utils/adminAPI';
 import './AdminQuestionForm.css';
 
 const difficultyLevels = [
@@ -10,49 +11,106 @@ const difficultyLevels = [
   { value: 'mix', label: 'Mix (Level 5)', emoji: '5️⃣' }
 ];
 
+const levelTabs = [
+  { id: 1, name: 'Easy' },
+  { id: 2, name: 'Mid' },
+  { id: 3, name: 'Mid-Easy' },
+  { id: 4, name: 'Hard' },
+  { id: 5, name: 'Mix' },
+];
+
+const emptyQuestion = () => ({
+  title: '',
+  description: '',
+  constraints: '',
+  starterCode: '',
+  hints: [''],
+  testCases: [
+    { input: '', expectedOutput: '', explanation: '' }
+  ]
+});
+
 const AdminQuestionForm = ({ onQuestionAdded }) => {
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    difficulty: 'easy',
-    sampleInput: '',
-    sampleOutput: '',
-    testCases: [],
-    hints: [''],
-    solution: ''
+  const [activeTab, setActiveTab] = useState(1);
+  const [date, setDate] = useState(() => new Date().toISOString().slice(0,10));
+  const [questions, setQuestions] = useState({
+    1: emptyQuestion(),
+    2: emptyQuestion(),
+    3: emptyQuestion(),
+    4: emptyQuestion(),
+    5: emptyQuestion(),
   });
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
+  const handleChange = (field, value) => {
+    setQuestions(prev => ({
       ...prev,
-      [name]: value
+      [activeTab]: {
+        ...prev[activeTab],
+        [field]: value
+      }
     }));
   };
 
   const handleHintChange = (index, value) => {
-    const newHints = [...formData.hints];
+    const newHints = [...questions[activeTab].hints];
     newHints[index] = value;
-    setFormData(prev => ({
+    setQuestions(prev => ({
       ...prev,
-      hints: newHints
+      [activeTab]: {
+        ...prev[activeTab],
+        hints: newHints
+      }
     }));
   };
 
   const addHint = () => {
-    setFormData(prev => ({
+    setQuestions(prev => ({
       ...prev,
-      hints: [...prev.hints, '']
+      [activeTab]: {
+        ...prev[activeTab],
+        hints: [...prev[activeTab].hints, '']
+      }
     }));
   };
 
   const removeHint = (index) => {
-    setFormData(prev => ({
+    setQuestions(prev => ({
       ...prev,
-      hints: prev.hints.filter((_, i) => i !== index)
+      [activeTab]: {
+        ...prev[activeTab],
+        hints: prev[activeTab].hints.filter((_, i) => i !== index)
+      }
+    }));
+  };
+
+  const handleTestCaseChange = (idx, field, value) => {
+    const newTC = questions[activeTab].testCases.map((tc, i) => i === idx ? { ...tc, [field]: value } : tc);
+    setQuestions(prev => ({
+      ...prev,
+      [activeTab]: { ...prev[activeTab], testCases: newTC }
+    }));
+  };
+
+  const addTestCase = () => {
+    setQuestions(prev => ({
+      ...prev,
+      [activeTab]: {
+        ...prev[activeTab],
+        testCases: [...prev[activeTab].testCases, { input: '', expectedOutput: '', explanation: '' }]
+      }
+    }));
+  };
+
+  const removeTestCase = (idx) => {
+    setQuestions(prev => ({
+      ...prev,
+      [activeTab]: {
+        ...prev[activeTab],
+        testCases: prev[activeTab].testCases.filter((_, i) => i !== idx)
+      }
     }));
   };
 
@@ -62,22 +120,29 @@ const AdminQuestionForm = ({ onQuestionAdded }) => {
     setLoading(true);
 
     try {
-      const newQuestion = await addQuestion(formData);
-      onQuestionAdded(newQuestion);
-      // Reset form
-      setFormData({
-        title: '',
-        description: '',
-        difficulty: 'easy',
-        sampleInput: '',
-        sampleOutput: '',
-        testCases: [],
-        hints: [''],
-        solution: ''
-      });
+      // Validate all 5 questions minimally
+      for (let lvl = 1; lvl <= 5; lvl++) {
+        const q = questions[lvl];
+        if (!q.title || !q.description || !q.testCases.length) {
+          throw new Error(`Please complete Level ${lvl} question fields`);
+        }
+      }
+
+      const payload = {
+        date,
+        questions: [questions[1], questions[2], questions[3], questions[4], questions[5]]
+      };
+
+      const result = await addDailyQuestions(payload);
+      onQuestionAdded?.(result.questions || []);
+
+      // Reset
+      setQuestions({ 1: emptyQuestion(), 2: emptyQuestion(), 3: emptyQuestion(), 4: emptyQuestion(), 5: emptyQuestion() });
+      toast.success('Published 5 daily questions successfully');
     } catch (error) {
       setError('Failed to add question. Please try again.');
       console.error('Error adding question:', error);
+      toast.error(error?.message || 'Failed to add question');
     } finally {
       setLoading(false);
     }
@@ -85,7 +150,25 @@ const AdminQuestionForm = ({ onQuestionAdded }) => {
 
   return (
     <form className="admin-question-form" onSubmit={handleSubmit}>
-      <h2>Add New Daily Question</h2>
+      <h2>Add 5 Daily Questions (One per Level)</h2>
+
+      <div className="form-group">
+        <label htmlFor="date">Active Date</label>
+        <input type="date" id="date" value={date} onChange={(e) => setDate(e.target.value)} />
+      </div>
+
+      <div className="tabs">
+        {levelTabs.map(tab => (
+          <button
+            type="button"
+            key={tab.id}
+            className={`tab ${activeTab === tab.id ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.id}️⃣ {tab.name}
+          </button>
+        ))}
+      </div>
       
       {error && <div className="error-message">{error}</div>}
       
@@ -94,38 +177,21 @@ const AdminQuestionForm = ({ onQuestionAdded }) => {
         <input
           type="text"
           id="title"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
+          value={questions[activeTab].title}
+          onChange={(e) => handleChange('title', e.target.value)}
           required
           placeholder="e.g., Binary Search Implementation"
         />
       </div>
 
-      <div className="form-group">
-        <label htmlFor="difficulty">Difficulty Level</label>
-        <select
-          id="difficulty"
-          name="difficulty"
-          value={formData.difficulty}
-          onChange={handleChange}
-          required
-        >
-          {difficultyLevels.map(level => (
-            <option key={level.value} value={level.value}>
-              {level.emoji} {level.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Difficulty is implied by tab (level) */}
 
       <div className="form-group">
         <label htmlFor="description">Question Description</label>
         <textarea
           id="description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
+          value={questions[activeTab].description}
+          onChange={(e) => handleChange('description', e.target.value)}
           required
           placeholder="Detailed problem description with examples"
           rows="6"
@@ -133,32 +199,19 @@ const AdminQuestionForm = ({ onQuestionAdded }) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="sampleInput">Sample Input</label>
+        <label htmlFor="constraints">Constraints</label>
         <textarea
-          id="sampleInput"
-          name="sampleInput"
-          value={formData.sampleInput}
-          onChange={handleChange}
-          placeholder="Example input format"
-          rows="2"
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="sampleOutput">Sample Output</label>
-        <textarea
-          id="sampleOutput"
-          name="sampleOutput"
-          value={formData.sampleOutput}
-          onChange={handleChange}
-          placeholder="Expected output format"
-          rows="2"
+          id="constraints"
+          value={questions[activeTab].constraints}
+          onChange={(e) => handleChange('constraints', e.target.value)}
+          placeholder="Constraints for the problem"
+          rows="3"
         />
       </div>
 
       <div className="form-group">
         <label>Hints</label>
-        {formData.hints.map((hint, index) => (
+        {questions[activeTab].hints.map((hint, index) => (
           <div key={index} className="hint-input">
             <input
               type="text"
@@ -166,7 +219,7 @@ const AdminQuestionForm = ({ onQuestionAdded }) => {
               onChange={(e) => handleHintChange(index, e.target.value)}
               placeholder={`Hint ${index + 1}`}
             />
-            {formData.hints.length > 1 && (
+            {questions[activeTab].hints.length > 1 && (
               <button 
                 type="button"
                 onClick={() => removeHint(index)}
@@ -187,16 +240,33 @@ const AdminQuestionForm = ({ onQuestionAdded }) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="solution">Solution</label>
-        <textarea
-          id="solution"
-          name="solution"
-          value={formData.solution}
-          onChange={handleChange}
-          placeholder="Provide a complete solution with explanations"
-          rows="8"
-          required
-        />
+        <label>Test Cases</label>
+        {questions[activeTab].testCases.map((tc, idx) => (
+          <div key={idx} className="testcase-row">
+            <input
+              type="text"
+              placeholder="Input"
+              value={tc.input}
+              onChange={(e) => handleTestCaseChange(idx, 'input', e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Expected Output"
+              value={tc.expectedOutput}
+              onChange={(e) => handleTestCaseChange(idx, 'expectedOutput', e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Explanation (optional)"
+              value={tc.explanation}
+              onChange={(e) => handleTestCaseChange(idx, 'explanation', e.target.value)}
+            />
+            {questions[activeTab].testCases.length > 1 && (
+              <button type="button" className="remove-tc" onClick={() => removeTestCase(idx)}>✕</button>
+            )}
+          </div>
+        ))}
+        <button type="button" className="add-tc" onClick={addTestCase}>+ Add Test Case</button>
       </div>
 
       <button 
@@ -204,7 +274,7 @@ const AdminQuestionForm = ({ onQuestionAdded }) => {
         className="submit-button"
         disabled={loading}
       >
-        {loading ? 'Adding Question...' : 'Add Question'}
+        {loading ? 'Publishing...' : 'Publish 5 Daily Questions'}
       </button>
     </form>
   );

@@ -65,92 +65,34 @@
 
 // export default StreakPage;
 
-import React, { useState } from "react";
-import "./QuestionDescription.css";
-import "./CodeEditor.css";
+import React from "react";
+import { Link } from "react-router-dom";
+import StreakStatusCard from "./StreakStatusCard";
+import UserStreakQuestionCard from "./UserStreakQuestionCard";
+import Leaderboard from "./Leaderboard";
+import "./StreakPage.css";
 
 const StreakPage = () => {
-  const [language, setLanguage] = useState("JavaScript");
-  const [code, setCode] = useState("// Write your code here...");
-  const [output, setOutput] = useState("");
-
-  const question = {
-    title: "Two Sum",
-    description: `Given an array of integers nums and an integer target, 
-find the indices of the two numbers such that they add up to target.`,
-    example: `
-Example 1:
-Input: nums = [2,7,11,15], target = 9
-Output: [0,1]
-Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
-
-Example 2:
-Input: nums = [3,2,4], target = 6
-Output: [1,2]
-    `,
-    constraints: `
-Constraints:
-- 2 <= nums.length <= 10^4
-- -10^9 <= nums[i] <= 10^9
-- -10^9 <= target <= 10^9
-- Only one valid answer exists.
-    `,
-  };
-
-  const handleRun = () => {
-    setOutput("✅ Code executed successfully!\nOutput: [0, 1]");
-  };
-
-  const handleSubmit = () => {
-    setOutput("🎯 All test cases passed! You earned +1 streak 🔥");
-  };
-
   return (
-    <div className="streak-question-container">
-      {/* LEFT SIDE: QUESTION */}
-      <div className="question-left">
-        <h2 className="question-title">{question.title}</h2>
-        <p className="question-description">{question.description}</p>
-        <pre className="question-example">{question.example}</pre>
-        <pre className="question-constraints">{question.constraints}</pre>
+    <div className="streak-page">
+      <div className="streak-header">
+        <div>
+          <h1>🔥 Daily Streak Challenge</h1>
+          <p>Solve today’s problem, keep your streak alive, and climb the leaderboard.</p>
+        </div>
+        <Link to="/streak/leaderboard" className="leaderboard-link">Full Leaderboard →</Link>
       </div>
-
-      {/* RIGHT SIDE: CODE EDITOR */}
-      <div className="question-right">
-        <div className="editor-header">
-          <h3>Code Editor 💻</h3>
-          <select
-            className="language-select"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-          >
-            <option>JavaScript</option>
-            <option>Python</option>
-            <option>Java</option>
-            <option>C++</option>
-          </select>
+      <div className="streak-grid">
+        <div className="main-column">
+          <StreakStatusCard />
+          <UserStreakQuestionCard />
         </div>
-
-        <textarea
-          className="code-editor"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          spellCheck="false"
-        ></textarea>
-
-        <div className="editor-buttons">
-          <button className="run-btn" onClick={handleRun}>
-            Run Code
-          </button>
-          <button className="submit-btn" onClick={handleSubmit}>
-            Submit
-          </button>
-        </div>
-
-        <div className="editor-output">
-          <h4>Console Output:</h4>
-          <pre>{output}</pre>
-        </div>
+        <aside className="sidebar-column">
+          <div className="sidebar-card">
+            <h3>🏆 Today’s Top Streakers</h3>
+            <Leaderboard embedMode={true} />
+          </div>
+        </aside>
       </div>
     </div>
   );

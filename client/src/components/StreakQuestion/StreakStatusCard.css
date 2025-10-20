@@ -1,31 +1,120 @@
-.streak-status {
+.streak-status-card {
   background: linear-gradient(135deg, #1d4ed8, #3b82f6);
   color: white;
   padding: 20px;
   border-radius: 16px;
-  margin: 20px auto;
-  width: 90%;
-  max-width: 600px;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.25);
 }
 
-.streak-status h3 {
-  font-size: 1.4rem;
-  margin-bottom: 8px;
+[data-theme="dark"] .streak-status-card {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
 }
 
-.streak-status p {
-  font-size: 1rem;
+.stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.stats-header h2 {
+  color: white;
+}
+
+.user-name { 
   opacity: 0.9;
+  color: white;
 }
 
-@media (max-width: 768px) {
-  .streak-status {
-    padding: 15px;
-  }
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
 
-  .streak-status h3 {
-    font-size: 1.2rem;
-  }
+.stat-box {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.stat-box.primary { background: rgba(255,255,255,0.18); }
+.stat-icon { font-size: 20px; }
+.stat-label { 
+  margin: 0; 
+  opacity: 0.85; 
+  font-size: 0.9rem;
+  color: white;
+}
+.stat-value { 
+  margin: 0; 
+  font-weight: 700;
+  color: white;
+}
+
+.level-progress { margin-top: 14px; }
+.progress-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+}
+.progress-header h3,
+.progress-header span {
+  color: white;
+}
+.progress-bar { 
+  height: 10px; 
+  border-radius: 999px; 
+  background: rgba(255,255,255,0.25); 
+  overflow: hidden;
+  margin-top: 8px;
+}
+.progress-fill { height: 100%; border-radius: 999px; }
+.progress-text { 
+  margin: 6px 0 0 0; 
+  opacity: 0.95;
+  color: white;
+}
+
+.badges-section { margin-top: 14px; }
+.badges-section h3 {
+  color: white;
+}
+.badges-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { 
+  background: rgba(255,255,255,0.12); 
+  border: 1px solid rgba(255,255,255,0.24); 
+  border-radius: 999px; 
+  padding: 6px 10px; 
+  display: inline-flex; 
+  gap: 6px; 
+  align-items: center;
+}
+.badge-name { 
+  font-size: 0.9rem;
+  color: white;
+}
+
+.last-activity { 
+  margin-top: 10px; 
+  opacity: 0.9; 
+  font-size: 0.95rem;
+  color: white;
+}
+
+.streak-status.loading,
+.streak-status.error {
+  background: var(--background-secondary);
+  color: var(--text-primary);
+  padding: 20px;
+  text-align: center;
+  border-radius: 16px;
+}
+
+@media (max-width: 680px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
 }

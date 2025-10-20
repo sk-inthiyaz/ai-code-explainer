@@ -1,12 +1,14 @@
 .learnhub-container {
   padding: 40px;
   text-align: center;
+  background: var(--background-primary);
+  min-height: 100vh;
 }
 
 .learnhub-title {
   font-size: 2rem;
   margin-bottom: 30px;
-  color: #2c3e50;
+  color: var(--text-primary);
 }
 
 .card-grid {
@@ -18,17 +20,30 @@
 }
 
 .learnhub-card {
-  background-color: #ffffff;
+  background-color: var(--background-secondary);
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(2,6,23,.06);
   padding: 25px;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .learnhub-card {
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
 }
 
 .learnhub-card:hover {
-  background-color: #f0f6ff;
+  background-color: var(--background-primary);
   transform: translateY(-5px);
+}
+
+.learnhub-card h3 {
+  color: var(--text-primary);
+}
+
+.learnhub-card p {
+  color: var(--text-secondary);
 }
 
 .card-icon {

@@ -100,3 +100,11 @@
   color: var(--error-text);
   margin-bottom: 20px;
 }
+
+.tabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.tab { border: 1px solid var(--border-color); background: var(--input-background); color: var(--text-primary); padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+.tab.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+.testcase-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px; margin-bottom: 8px; }
+.remove-tc { background: var(--error-color); color: white; border: none; border-radius: 8px; cursor: pointer; padding: 0 10px; }
+.add-tc { background: transparent; color: var(--primary-color); border: 1px dashed var(--primary-color); padding: 8px 12px; border-radius: 8px; cursor: pointer; }

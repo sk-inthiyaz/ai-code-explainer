@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Toaster } from 'react-hot-toast';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 // Components
@@ -25,6 +26,8 @@ import StartLearningMain from './components/startLearningComponent/data/StartLea
 import AdminDashboard from './components/pages/AdminDashboard';
 //StreakUserCard
 import StreakPage from "./components/StreakQuestion/StreakPage";
+import SolvePage from "./components/StreakQuestion/SolvePage";
+import Leaderboard from "./components/StreakQuestion/Leaderboard";
 
 // Styles
 import './index.css';
@@ -128,6 +131,7 @@ function App() {
     <Router>
       <AuthProvider>
         <div className={`app-container ${isDark ? 'dark' : 'light'}`}>
+          <Toaster position="top-right" gutter={8} toastOptions={{ duration: 3000 }} />
           <Navbar isDark={isDark} toggleDarkMode={toggleDarkMode} />
           <main>
             <Routes>
@@ -199,7 +203,30 @@ function App() {
                   </PrivateRoute>
                 }
               />
-              <Route path="/streak" element={<StreakPage />} />
+              <Route 
+                path="/streak" 
+                element={
+                  <PrivateRoute>
+                    <StreakPage />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/streak/solve" 
+                element={
+                  <PrivateRoute>
+                    <SolvePage />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/streak/leaderboard" 
+                element={
+                  <PrivateRoute>
+                    <Leaderboard />
+                  </PrivateRoute>
+                } 
+              />
             </Routes>
           </main>
         </div>

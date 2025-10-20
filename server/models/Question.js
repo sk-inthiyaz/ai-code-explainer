@@ -23,8 +23,16 @@ const questionSchema = new mongoose.Schema({
   },
   difficulty: {
     type: String,
-    enum: ['easy', 'medium', 'hard'],
+    enum: ['easy', 'medium', 'hard', 'mid-easy', 'mix'],
     required: true
+  },
+  category: {
+    type: String,
+    required: false
+  },
+  hints: {
+    type: [String],
+    default: []
   },
   testCases: [testCaseSchema],
   createdAt: {

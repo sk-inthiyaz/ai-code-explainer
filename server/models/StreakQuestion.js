@@ -1,106 +1,109 @@
-// const mongoose = require('mongoose');
-
-// const streakQuestionSchema = new mongoose.Schema({
-//   title: {
-//     type: String,
-//     required: true,
-//     trim: true
-//   },
-//   difficulty: {
-//     type: String,
-//     required: true,
-//     enum: ['easy', 'medium', 'medium-easy', 'hard', 'mix'],
-//     default: 'easy'
-//   },
-//   description: {
-//     type: String,
-//     required: true
-//   },
-//   sampleInput: {
-//     type: String,
-//     required: false
-//   },
-//   sampleOutput: {
-//     type: String,
-//     required: false
-//   },
-//   hints: [{
-//     type: String,
-//     required: false
-//   }],
-//   solution: {
-//     type: String,
-//     required: true
-//   },
-//   testCases: [{
-//     input: String,
-//     expectedOutput: String,
-//     isHidden: {
-//       type: Boolean,
-//       default: false
-//     }
-//   }],
-//   submissions: [{
-//     userId: {
-//       type: mongoose.Schema.Types.ObjectId,
-//       ref: 'User'
-//     },
-//     submittedAt: {
-//       type: Date,
-//       default: Date.now
-//     },
-//     status: {
-//       type: String,
-//       enum: ['passed', 'failed', 'partial'],
-//       required: true
-//     },
-//     code: String
-//   }],
-//   activeDate: {
-//     type: Date,
-//     required: true,
-//     default: Date.now
-//   },
-//   difficultyLevel: {
-//     type: Number,
-//     required: true,
-//     min: 1,
-//     max: 5,
-//     default: 1
-//   }
-// }, {
-//   timestamps: true
-// });
-
-// // Add indexes for better query performance
-// streakQuestionSchema.index({ activeDate: 1 });
-// streakQuestionSchema.index({ difficulty: 1 });
-// streakQuestionSchema.index({ difficultyLevel: 1 });
-
-// module.exports = mongoose.model('StreakQuestion', streakQuestionSchema);
-
-
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const streakQuestionSchema = new mongoose.Schema({
+  // Level mapping: 1=Easy, 2=Mid, 3=Mid-Easy, 4=Hard, 5=Mix
   level: {
-    type: String,
-    enum: ["Easy", "Mid", "Mid-Easy", "Hard", "Mix"],
+    type: Number,
     required: true,
+    min: 1,
+    max: 5,
+    enum: [1, 2, 3, 4, 5]
   },
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  constraints: { type: String },
-  testCases: [
-    {
-      input: String,
-      output: String,
+  levelName: {
+    type: String,
+    required: true,
+    enum: ['Easy', 'Mid', 'Mid-Easy', 'Hard', 'Mix']
+  },
+  title: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  constraints: {
+    type: String,
+    required: false
+  },
+  hints: [{
+    type: String
+  }],
+  starterCode: {
+    type: String,
+    default: '// Write your code here...'
+  },
+  testCases: [{
+    input: {
+      type: String,
+      required: true
     },
-  ],
-  date: {
+    expectedOutput: {
+      type: String,
+      required: true
+    },
+    explanation: String,
+    isHidden: {
+      type: Boolean,
+      default: false
+    }
+  }],
+  // Date for which this question is active (stored as YYYY-MM-DD)
+  activeDate: {
     type: Date,
-    default: Date.now,
+    required: true,
+    index: true
   },
+  submissions: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    code: String,
+    status: {
+      type: String,
+      enum: ['passed', 'failed', 'partial'],
+      required: true
+    },
+    submittedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  solvedBy: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
+}, {
+  timestamps: true
 });
 
-export default mongoose.model("StreakQuestion", streakQuestionSchema);
+// Compound index: ensure only ONE question per level per day
+streakQuestionSchema.index({ activeDate: 1, level: 1 }, { unique: true });
+
+// Helper method to get level number from name
+streakQuestionSchema.statics.getLevelNumber = function(levelName) {
+  const levelMap = {
+    'Easy': 1,
+    'Mid': 2,
+    'Mid-Easy': 3,
+    'Hard': 4,
+    'Mix': 5
+  };
+  return levelMap[levelName] || 1;
+};
+
+// Helper method to get level name from number
+streakQuestionSchema.statics.getLevelName = function(levelNumber) {
+  const nameMap = {
+    1: 'Easy',
+    2: 'Mid',
+    3: 'Mid-Easy',
+    4: 'Hard',
+    5: 'Mix'
+  };
+  return nameMap[levelNumber] || 'Easy';
+};
+
+module.exports = mongoose.model('StreakQuestion', streakQuestionSchema);

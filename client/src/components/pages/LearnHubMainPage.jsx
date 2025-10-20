@@ -46,7 +46,7 @@ const LearnHubMainPage = () => {
 
   return (
     <div className="learnhub-container">
-      <h2 className="learnhub-title">� Welcome to Coding Hub</h2>
+  <h2 className="learnhub-title">🎓 Welcome to Coding Hub</h2>
       <div className="card-grid">
         {cards.map((card, index) => (
           <div
