@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Editor from '@monaco-editor/react';
 import toast from 'react-hot-toast';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './SolvePage.css';
@@ -7,9 +8,10 @@ const SolvePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [questionData, setQuestionData] = useState(location.state || null);
-  const [language, setLanguage] = useState('JavaScript');
+  const [language, setLanguage] = useState('javascript');
   const [code, setCode] = useState('// Write your code here...');
-  const [loading, setLoading] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [runResults, setRunResults] = useState(null);
   const [submitResults, setSubmitResults] = useState(null);
   const [activeTab, setActiveTab] = useState('testcases'); // testcases or results
@@ -18,6 +20,9 @@ const SolvePage = () => {
     // If page is refreshed, fetch question again from API
     if (!questionData) {
       fetchToday();
+    } else {
+      // Load template for initial language
+      loadTemplateForLanguage('javascript');
     }
   }, []);
 
@@ -30,6 +35,8 @@ const SolvePage = () => {
       if (res.ok) {
         const data = await res.json();
         setQuestionData(data);
+        // Load initial template after fetching question
+        loadTemplateForLanguage('javascript', data.question);
       }
     } catch (e) {
       console.error('Failed to fetch today question');
@@ -37,9 +44,24 @@ const SolvePage = () => {
     }
   };
 
+  const loadTemplateForLanguage = (lang, questionOverride = null) => {
+    const question = questionOverride || questionData?.question;
+    if (!question) return;
+    
+    const templates = question.codeTemplate || {};
+    const template = templates[lang] || templates.javascript || '// Write your code here...';
+    setCode(template);
+  };
+
+  const handleLanguageChange = (e) => {
+    const newLang = e.target.value.toLowerCase();
+    setLanguage(newLang);
+    loadTemplateForLanguage(newLang);
+  };
+
   const handleRun = async () => {
     if (!questionData?.question?._id) return;
-    setLoading(true);
+    setIsRunning(true);
     setActiveTab('results');
     setSubmitResults(null); // Clear previous submit results
     
@@ -68,13 +90,13 @@ const SolvePage = () => {
     } catch (e) {
       toast.error('Failed to run code');
     } finally {
-      setLoading(false);
+      setIsRunning(false);
     }
   };
 
   const handleSubmit = async () => {
     if (!questionData?.question?._id) return;
-    setLoading(true);
+    setIsSubmitting(true);
     setActiveTab('results');
     setRunResults(null); // Clear previous run results
     
@@ -104,7 +126,7 @@ const SolvePage = () => {
     } catch (e) {
       toast.error('Submission failed');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -311,38 +333,50 @@ const SolvePage = () => {
             <h3>Code Editor</h3>
             <select 
               value={language} 
-              onChange={(e) => setLanguage(e.target.value)}
+              onChange={handleLanguageChange}
               className="language-selector"
             >
-              <option>JavaScript</option>
-              <option>Python</option>
-              <option>Java</option>
-              <option>C++</option>
+              <option value="javascript">JavaScript</option>
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+              <option value="cpp">C++</option>
             </select>
           </div>
 
-          <textarea
-            className="code-editor"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="Write your code here..."
-            spellCheck={false}
-          />
+          <div className="code-editor-container" style={{ height: '420px', border: '1px solid #2d2d2d', borderRadius: 8, overflow: 'hidden' }}>
+            <Editor
+              height="100%"
+              defaultLanguage={language === 'cpp' ? 'cpp' : language}
+              language={language === 'cpp' ? 'cpp' : language}
+              theme="vs-dark"
+              value={code}
+              onChange={(value) => setCode(value ?? '')}
+              options={{
+                minimap: { enabled: false },
+                fontSize: 14,
+                lineNumbers: 'on',
+                automaticLayout: true,
+                scrollBeyondLastLine: false,
+                wordWrap: 'on',
+                smoothScrolling: true
+              }}
+            />
+          </div>
 
           <div className="editor-actions">
             <button
               onClick={handleRun}
-              disabled={loading}
+              disabled={isRunning || isSubmitting}
               className="run-button"
             >
-              {loading ? 'Running...' : '▶ Run'}
+              {isRunning ? 'Running...' : '▶ Run'}
             </button>
             <button
               onClick={handleSubmit}
-              disabled={loading}
+              disabled={isRunning || isSubmitting}
               className="submit-button"
             >
-              {loading ? 'Submitting...' : 'Submit'}
+              {isSubmitting ? 'Submitting...' : 'Submit'}
             </button>
           </div>
         </div>

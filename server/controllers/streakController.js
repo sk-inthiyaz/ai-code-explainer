@@ -1,6 +1,7 @@
 const StreakQuestion = require("../models/StreakQuestion");
 const User = require("../models/User");
 const { runCodeInDocker } = require("../utils/dockerRunner");
+const { wrapCodeWithHarness } = require("../utils/codeHarness");
 
 // ✅ Admin: Add 5 streak questions for a specific date (one per level)
 const addDailyQuestions = async (req, res) => {
@@ -239,7 +240,11 @@ const runCode = async (req, res) => {
     for (let index = 0; index < publicTestCases.length; index++) {
       const testCase = publicTestCases[index];
       try {
-        const { stdout, stderr, exitCode } = await runCodeInDocker(code, req.body.language?.toLowerCase() || 'javascript', testCase.input);
+        // Wrap user code with test harness (LeetCode style)
+        const language = req.body.language?.toLowerCase() || 'javascript';
+        const wrappedCode = wrapCodeWithHarness(code, language, testCase);
+        
+        const { stdout, stderr, exitCode } = await runCodeInDocker(wrappedCode, language, testCase.input);
         const actualOutput = stdout || stderr;
         const passedTest = (actualOutput.trim() === String(testCase.expectedOutput).trim());
         const result = {
@@ -337,7 +342,11 @@ const submitSolution = async (req, res) => {
     for (let index = 0; index < question.testCases.length; index++) {
       const testCase = question.testCases[index];
       try {
-        const { stdout, stderr, exitCode } = await runCodeInDocker(code, req.body.language?.toLowerCase() || 'javascript', testCase.input);
+        // Wrap user code with test harness (LeetCode style)
+        const language = req.body.language?.toLowerCase() || 'javascript';
+        const wrappedCode = wrapCodeWithHarness(code, language, testCase);
+        
+        const { stdout, stderr, exitCode } = await runCodeInDocker(wrappedCode, language, testCase.input);
         const actualOutput = stdout || stderr;
         const passedTest = (actualOutput.trim() === String(testCase.expectedOutput).trim());
         const result = {
@@ -519,7 +528,47 @@ const getLeaderboard = async (req, res) => {
   }
 };
 
-// 📊 Admin stats dashboard
+// � Get paginated solved history for current user
+const getSolvedHistory = async (req, res) => {
+  try {
+    const userId = req.user?._id || req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const page = Math.max(parseInt(req.query.page || '1', 10), 1);
+    const pageSize = Math.min(Math.max(parseInt(req.query.pageSize || '10', 10), 1), 50);
+
+    const user = await User.findById(userId)
+      .populate('completedQuestions.questionId', 'title levelName activeDate');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Sort in-memory by completedAt desc (array is small per user)
+    const sorted = [...(user.completedQuestions || [])]
+      .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+
+    const total = sorted.length;
+    const totalPages = Math.max(Math.ceil(total / pageSize), 1);
+    const start = (page - 1) * pageSize;
+    const items = sorted.slice(start, start + pageSize);
+
+    res.json({
+      page,
+      pageSize,
+      total,
+      totalPages,
+      items
+    });
+  } catch (error) {
+    console.error('Error fetching solved history:', error);
+    res.status(500).json({ message: 'Failed to fetch history', error: error.message });
+  }
+};
+
+// �📊 Admin stats dashboard
 const getAdminStats = async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();
@@ -577,5 +626,6 @@ module.exports = {
   getLeaderboard,
   getAdminStats,
   updateStreakQuestion,
-  deleteStreakQuestion
+  deleteStreakQuestion,
+  getSolvedHistory
 };

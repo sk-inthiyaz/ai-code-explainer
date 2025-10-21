@@ -11,7 +11,8 @@ const {
   getLeaderboard,
   getAdminStats,
   updateStreakQuestion,
-  deleteStreakQuestion
+  deleteStreakQuestion,
+  getSolvedHistory
 } = require("../controllers/streakController");
 const { auth } = require("../middleware/auth");
 const isAdmin = require("../middleware/isAdmin");
@@ -74,6 +75,9 @@ router.get("/stats", auth, getUserStreakStats);
 
 // Get specific user's streak stats (can be used for profile viewing)
 router.get("/stats/:userId", auth, getUserStreakStats);
+
+// Get current user's solved history (paginated)
+router.get("/history", auth, getSolvedHistory);
 
 // ============================================
 // 🌐 PUBLIC ROUTES

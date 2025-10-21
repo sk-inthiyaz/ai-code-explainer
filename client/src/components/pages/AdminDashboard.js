@@ -61,21 +61,26 @@ const AdminDashboard = () => {
     try {
       const text = await file.text();
       const json = JSON.parse(text);
-      
-      // Validate JSON structure
-      if (!json.questions || !Array.isArray(json.questions)) {
+
+      // Accept both shapes: { questions: [...] } OR [ ... ]
+      let normalized = null;
+      if (json && Array.isArray(json.questions)) {
+        normalized = { questions: json.questions };
+      } else if (Array.isArray(json)) {
+        normalized = { questions: json };
+      } else {
         throw new Error('JSON must contain a questions array');
       }
 
       // Validate each question
-      json.questions.forEach((question, index) => {
+      normalized.questions.forEach((question, index) => {
         if (!question.title || !question.description || 
             !question.difficulty || !Array.isArray(question.testCases)) {
           throw new Error(`Invalid question format at index ${index}`);
         }
       });
 
-      setJsonPreview(json);
+      setJsonPreview(normalized);
       setError(null);
       toast.success('JSON file validated successfully!');
     } catch (error) {

@@ -1,0 +1,124 @@
+{
+  "questions": [
+    {
+      "level": 1,
+      "activeDate": "2025-10-21",
+      "title": "Two Sum",
+      "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+      "constraints": "2 <= nums.length <= 10^4\n-10^9 <= nums[i] <= 10^9\n-10^9 <= target <= 10^9\nOnly one valid answer exists.",
+      "hints": [
+        "Use a hash map to store value to index mapping.",
+        "Check if target - nums[i] exists in the map."
+      ],
+      "codeTemplate": {
+        "java": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        // Write your solution here\n    }\n}"
+      },
+      "functionSignature": {
+        "name": "twoSum",
+        "params": ["int[] nums", "int target"],
+        "returnType": "int[]"
+      },
+      "testCases": [
+        { "input": "[2,7,11,15]\n9", "expectedOutput": "[0,1]", "explanation": "nums[0] + nums[1] == 9", "isHidden": false },
+        { "input": "[3,2,4]\n6", "expectedOutput": "[1,2]", "explanation": "nums[1] + nums[2] == 6", "isHidden": false },
+        { "input": "[3,3]\n6", "expectedOutput": "[0,1]", "explanation": "nums[0] + nums[1] == 6", "isHidden": true }
+      ]
+    },
+    {
+      "level": 2,
+      "activeDate": "2025-10-21",
+      "title": "Reverse Integer",
+      "description": "Given a signed 32-bit integer x, return x with its digits reversed. If reversing x causes the value to go outside the signed 32-bit integer range, return 0.",
+      "constraints": "-2^31 <= x <= 2^31 - 1",
+      "hints": [
+        "Pop and push digits & check for overflow.",
+        "Negative numbers should be handled."
+      ],
+      "codeTemplate": {
+        "java": "class Solution {\n    public int reverse(int x) {\n        // Write your solution here\n    }\n}"
+      },
+      "functionSignature": {
+        "name": "reverse",
+        "params": ["int x"],
+        "returnType": "int"
+      },
+      "testCases": [
+        { "input": "123", "expectedOutput": "321", "explanation": "Reverse of 123 is 321", "isHidden": false },
+        { "input": "-123", "expectedOutput": "-321", "explanation": "Reverse of -123 is -321", "isHidden": false },
+        { "input": "120", "expectedOutput": "21", "explanation": "Reverse of 120 is 21", "isHidden": true }
+      ]
+    },
+    {
+      "level": 3,
+      "activeDate": "2025-10-21",
+      "title": "Palindrome Number",
+      "description": "Given an integer x, return true if x is a palindrome, and false otherwise.",
+      "constraints": "-2^31 <= x <= 2^31 - 1",
+      "hints": [
+        "Negative numbers are not palindrome.",
+        "Reverse half of the number."
+      ],
+      "codeTemplate": {
+        "java": "class Solution {\n    public boolean isPalindrome(int x) {\n        // Write your solution here\n    }\n}"
+      },
+      "functionSignature": {
+        "name": "isPalindrome",
+        "params": ["int x"],
+        "returnType": "boolean"
+      },
+      "testCases": [
+        { "input": "121", "expectedOutput": "true", "explanation": "121 is a palindrome", "isHidden": false },
+        { "input": "-121", "expectedOutput": "false", "explanation": "Negative numbers are not palindrome", "isHidden": false },
+        { "input": "10", "expectedOutput": "false", "explanation": "10 is not a palindrome", "isHidden": true }
+      ]
+    },
+    {
+      "level": 4,
+      "activeDate": "2025-10-21",
+      "title": "Roman to Integer",
+      "description": "Given a roman numeral, convert it to an integer.",
+      "constraints": "1 <= s.length <= 15\ns contains only the characters ('I', 'V', 'X', 'L', 'C', 'D', 'M')",
+      "hints": [
+        "Process from left to right.",
+        "If a smaller value precedes a larger value, subtract it."
+      ],
+      "codeTemplate": {
+        "java": "class Solution {\n    public int romanToInt(String s) {\n        // Write your solution here\n    }\n}"
+      },
+      "functionSignature": {
+        "name": "romanToInt",
+        "params": ["String s"],
+        "returnType": "int"
+      },
+      "testCases": [
+        { "input": "III", "expectedOutput": "3", "explanation": "III = 3", "isHidden": false },
+        { "input": "IV", "expectedOutput": "4", "explanation": "IV = 4", "isHidden": false },
+        { "input": "IX", "expectedOutput": "9", "explanation": "IX = 9", "isHidden": true }
+      ]
+    },
+    {
+      "level": 5,
+      "activeDate": "2025-10-21",
+      "title": "Longest Common Prefix",
+      "description": "Write a function to find the longest common prefix string amongst an array of strings. If there is no common prefix, return an empty string \"\".",
+      "constraints": "1 <= strs.length <= 200\n0 <= strs[i].length <= 200",
+      "hints": [
+        "Horizontal scanning is efficient.",
+        "Compare prefixes one by one."
+      ],
+      "codeTemplate": {
+        "java": "class Solution {\n    public String longestCommonPrefix(String[] strs) {\n        // Write your solution here\n    }\n}"
+      },
+      "functionSignature": {
+        "name": "longestCommonPrefix",
+        "params": ["String[] strs"],
+        "returnType": "String"
+      },
+      "testCases": [
+        { "input": "[\"flower\",\"flow\",\"flight\"]", "expectedOutput": "fl", "explanation": "Common prefix is 'fl'", "isHidden": false },
+        { "input": "[\"dog\",\"racecar\",\"car\"]", "expectedOutput": "", "explanation": "No common prefix", "isHidden": false },
+        { "input": "[\"interspecies\",\"interstellar\",\"interstate\"]", "expectedOutput": "inters", "explanation": "Common prefix is 'inters'", "isHidden": true }
+      ]
+    }
+  ]
+}

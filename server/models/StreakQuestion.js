@@ -34,6 +34,17 @@ const streakQuestionSchema = new mongoose.Schema({
     type: String,
     default: '// Write your code here...'
   },
+  codeTemplate: {
+    javascript: { type: String, default: '/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nfunction twoSum(nums, target) {\n    // Write your solution here\n}\n' },
+    python: { type: String, default: 'class Solution:\n    def twoSum(self, nums, target):\n        """\n        :type nums: List[int]\n        :type target: int\n        :rtype: List[int]\n        """\n        # Write your solution here\n        pass\n' },
+    java: { type: String, default: 'class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        // Write your solution here\n        \n    }\n}\n' },
+    cpp: { type: String, default: 'class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        // Write your solution here\n        \n    }\n};\n' }
+  },
+  functionSignature: {
+    name: { type: String, default: 'twoSum' },
+    params: [{ type: String }],
+    returnType: { type: String, default: 'array' }
+  },
   testCases: [{
     input: {
       type: String,

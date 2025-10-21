@@ -28,6 +28,7 @@ import AdminDashboard from './components/pages/AdminDashboard';
 import StreakPage from "./components/StreakQuestion/StreakPage";
 import SolvePage from "./components/StreakQuestion/SolvePage";
 import Leaderboard from "./components/StreakQuestion/Leaderboard";
+import StreakHistory from "./components/StreakQuestion/StreakHistory";
 
 // Styles
 import './index.css';
@@ -224,6 +225,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <Leaderboard />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/streak/history" 
+                element={
+                  <PrivateRoute>
+                    <StreakHistory />
                   </PrivateRoute>
                 } 
               />

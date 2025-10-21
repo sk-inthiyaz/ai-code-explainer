@@ -119,17 +119,8 @@
 }
 
 .constraints {
-  background: var(--code-background, #f8f9fa);
-  padding: 12px;
-  border-radius: 4px;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
-  white-space: pre-wrap;
-  color: var(--text-secondary, #5a6c7d);
-}
-
-.problem-section ul {
-  padding-left: 20px;
+  /* Replaced by Monaco editor */
+  display: none;
 }
 
 .problem-section ul li {

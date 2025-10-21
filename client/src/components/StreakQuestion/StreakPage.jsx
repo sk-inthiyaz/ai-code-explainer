@@ -65,7 +65,7 @@
 
 // export default StreakPage;
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import StreakStatusCard from "./StreakStatusCard";
 import UserStreakQuestionCard from "./UserStreakQuestionCard";
@@ -73,6 +73,32 @@ import Leaderboard from "./Leaderboard";
 import "./StreakPage.css";
 
 const StreakPage = () => {
+  const [solved, setSolved] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchSolved = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch('http://localhost:5000/api/streak/stats', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setSolved(data.completedQuestions || []);
+        } else {
+          setError(data.message || 'Failed to load');
+        }
+      } catch (e) {
+        setError('Failed to load');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSolved();
+  }, []);
+
   return (
     <div className="streak-page">
       <div className="streak-header">
@@ -86,6 +112,37 @@ const StreakPage = () => {
         <div className="main-column">
           <StreakStatusCard />
           <UserStreakQuestionCard />
+          <div className="sidebar-card" style={{ marginTop: 16 }}>
+            <h3>✅ Solved Questions</h3>
+            {loading ? (
+              <p>Loading...</p>
+            ) : error ? (
+              <p className="error-text">{error}</p>
+            ) : solved.length === 0 ? (
+              <p className="muted">No solved questions yet.</p>
+            ) : (
+              <ul className="solved-list">
+                {solved.slice(0, 10).map((item, idx) => (
+                  <li key={idx} className="solved-item">
+                    <span className="dot" />
+                    <div className="solved-info">
+                      <div className="title-row">
+                        <span className="title">{item.questionId?.title || 'Question'}</span>
+                        <span className={`badge ${String(item.difficulty || '').toLowerCase()}`}>{item.difficulty || 'Level'}</span>
+                      </div>
+                      <div className="meta">{new Date(item.completedAt).toLocaleDateString()}</div>
+                    </div>
+                    {item.questionId?._id && (
+                      <Link className="view-link" to={{ pathname: '/streak/solve' }} state={{ question: item.questionId }}>View</Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div style={{ marginTop: 12 }}>
+              <Link to="/streak/history" className="leaderboard-link">View full history →</Link>
+            </div>
+          </div>
         </div>
         <aside className="sidebar-column">
           <div className="sidebar-card">

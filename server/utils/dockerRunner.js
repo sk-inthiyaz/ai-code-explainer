@@ -4,24 +4,25 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
 // Supported languages and their Docker images/commands
+// Using alpine variants for smaller size and faster pulls
 const languageConfigs = {
   javascript: {
-    image: 'node:20',
+    image: 'node:20-alpine',
     extension: 'js',
     runCmd: (filename) => `node /code/${filename}`
   },
   python: {
-    image: 'python:3.11',
+    image: 'python:3.11-alpine',
     extension: 'py',
     runCmd: (filename) => `python /code/${filename}`
   },
   java: {
-    image: 'openjdk:21',
+    image: 'openjdk:17-alpine',
     extension: 'java',
-    runCmd: (filename) => `javac /code/${filename} && java -cp /code ${filename.replace('.java', '')}`
+    runCmd: (filename) => `javac /code/${filename} && java -cp /code Main`
   },
   cpp: {
-    image: 'gcc:13',
+    image: 'gcc:latest',
     extension: 'cpp',
     runCmd: (filename) => `g++ /code/${filename} -o /code/a.out && /code/a.out`
   }
