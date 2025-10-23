@@ -70,7 +70,8 @@ async function runCodeInDocker(code, language, input, timeout = 5) {
 
   // Mount tempDir as /code in the container
   // -i keeps STDIN open so we can pipe input; wrap inner command in double quotes for cross-shell
-  const innerCmd = `timeout ${timeout}s ${config.runCmd(filename)}`;
+  // Use numeric seconds without suffix for compatibility with BusyBox (Alpine) and GNU timeout
+  const innerCmd = `timeout ${timeout} ${config.runCmd(filename)}`;
   const dockerCmd = [
     'docker run --rm -i',
     `-m 128m --cpus=0.5`,

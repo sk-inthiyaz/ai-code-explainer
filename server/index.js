@@ -19,6 +19,7 @@ const questionRoutes = require('./routes/questionRoutes');
 const testApiRoute = require('./routes/testApiRoute');
 const adminRoutes = require('./routes/adminRoutes');
 const streakRoutes = require('./routes/streakRoutes');
+const submissionRoutes = require('./routes/submissionRoutes');
 const app = express();
 
 // CORS Configuration
@@ -70,6 +71,7 @@ app.use('/api/questions', questionRoutes);
 app.use('/api/test', testApiRoute);
 app.use('/api/admin', adminRoutes);
 app.use('/api/streak', streakRoutes);
+app.use('/api', submissionRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running');

@@ -52,7 +52,8 @@ ${userCode}
 
 const fs = require('fs');
 const input = fs.readFileSync(0, 'utf8').trim();
-const lines = input.split('\n');
+// Use regex for cross-platform newlines; escape backslashes in template string
+const lines = input.length ? input.split(/\\r?\\n/) : [];
 
 // Parse input - adjust based on problem format
 const nums = JSON.parse(lines[0]);
@@ -74,8 +75,8 @@ ${userCode}
 # Test harness
 import json
 import sys
-
-data = sys.stdin.read().strip().split('\n')
+# Use splitlines() to handle different newline formats without embedding escape sequences
+data = sys.stdin.read().splitlines()
 nums = json.loads(data[0]) if len(data) > 0 else []
 target = int(data[1]) if len(data) > 1 else 0
 
@@ -83,7 +84,7 @@ target = int(data[1]) if len(data) > 1 else 0
 result = ${callsViaSolution ? 'Solution().' + functionName + '(nums, target)' : functionName + '(nums, target)'}
 
 # Print result as JSON
-print(json.dumps(result))
+print(json.dumps(result, separators=(',',':')))
 `;
 }
 

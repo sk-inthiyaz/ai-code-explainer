@@ -1,7 +1,54 @@
 const StreakQuestion = require("../models/StreakQuestion");
 const User = require("../models/User");
+const Submission = require("../models/Submission");
 const { runCodeInDocker } = require("../utils/dockerRunner");
 const { wrapCodeWithHarness } = require("../utils/codeHarness");
+const { saveCode } = require("../utils/storageService");
+
+// Helper: robust comparison of expected vs actual outputs
+function normalizeExpected(expected) {
+  if (expected === null || expected === undefined) return null;
+  try {
+    if (typeof expected === 'string') {
+      const trimmed = expected.trim();
+      // Try JSON parse if it looks like JSON/number
+      if (/^[\[{]/.test(trimmed) || /^-?\d+(?:\.\d+)?$/.test(trimmed)) {
+        return JSON.parse(trimmed);
+      }
+      return trimmed;
+    }
+    // Array/object/number/boolean
+    return expected;
+  } catch {
+    return String(expected).trim();
+  }
+}
+
+function normalizeActual(actual) {
+  if (actual === null || actual === undefined) return '';
+  const s = String(actual).trim();
+  try {
+    // Try parse arrays/objects/numbers
+    if (/^[\[{]/.test(s) || /^-?\d+(?:\.\d+)?$/.test(s)) {
+      return JSON.parse(s);
+    }
+  } catch {}
+  return s;
+}
+
+function outputsEqual(expectedRaw, actualRaw) {
+  const e = normalizeExpected(expectedRaw);
+  const a = normalizeActual(actualRaw);
+  // Deep compare by JSON stringification for objects/arrays
+  if (typeof e === 'object' && e !== null) {
+    try {
+      return JSON.stringify(e) === JSON.stringify(a);
+    } catch {
+      return false;
+    }
+  }
+  return String(e) === String(a);
+}
 
 // ✅ Admin: Add 5 streak questions for a specific date (one per level)
 const addDailyQuestions = async (req, res) => {
@@ -244,9 +291,9 @@ const runCode = async (req, res) => {
         const language = req.body.language?.toLowerCase() || 'javascript';
         const wrappedCode = wrapCodeWithHarness(code, language, testCase);
         
-        const { stdout, stderr, exitCode } = await runCodeInDocker(wrappedCode, language, testCase.input);
-        const actualOutput = stdout || stderr;
-        const passedTest = (actualOutput.trim() === String(testCase.expectedOutput).trim());
+  const { stdout, stderr, exitCode } = await runCodeInDocker(wrappedCode, language, testCase.input);
+  const actualOutput = stdout || stderr;
+  const passedTest = outputsEqual(testCase.expectedOutput, actualOutput);
         const result = {
           testCase: index + 1,
           passed: passedTest,
@@ -346,9 +393,9 @@ const submitSolution = async (req, res) => {
         const language = req.body.language?.toLowerCase() || 'javascript';
         const wrappedCode = wrapCodeWithHarness(code, language, testCase);
         
-        const { stdout, stderr, exitCode } = await runCodeInDocker(wrappedCode, language, testCase.input);
-        const actualOutput = stdout || stderr;
-        const passedTest = (actualOutput.trim() === String(testCase.expectedOutput).trim());
+  const { stdout, stderr, exitCode } = await runCodeInDocker(wrappedCode, language, testCase.input);
+  const actualOutput = stdout || stderr;
+  const passedTest = outputsEqual(testCase.expectedOutput, actualOutput);
         const result = {
           testCase: index + 1,
           passed: passedTest,
@@ -411,6 +458,29 @@ const submitSolution = async (req, res) => {
 
       await user.save();
 
+      // Save accepted submission to storage
+      const language = req.body.language?.toLowerCase() || 'javascript';
+      const submissionId = require('crypto').randomUUID();
+      const storageKey = await saveCode(
+        String(userId),
+        String(question._id),
+        submissionId,
+        code,
+        language
+      );
+
+      // Store submission metadata in DB
+      const submission = new Submission({
+        _id: submissionId,
+        userId,
+        problemId: question._id,
+        language,
+        status: 'accepted',
+        runtimeMs: null, // TODO: track runtime if needed
+        storageKey
+      });
+      await submission.save();
+
       return res.json({
         success: true,
         message: `🎉 Accepted! All ${totalCases} test cases passed!`,
@@ -418,6 +488,7 @@ const submitSolution = async (req, res) => {
         passedCount: passed,
         totalCount: totalCases,
         testResults,
+        submissionId, // Return for frontend reference
         streak: {
           current: user.streak.currentStreak,
           longest: user.streak.longestStreak

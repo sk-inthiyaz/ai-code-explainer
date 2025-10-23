@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Leaderboard.css';
 
-const Leaderboard = ({ embedMode = false }) => {
+const Leaderboard = ({ embedMode = false, limit = 10 }) => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -11,7 +11,7 @@ const Leaderboard = ({ embedMode = false }) => {
       try {
         const res = await fetch('http://localhost:5000/api/streak/leaderboard');
         const data = await res.json();
-        const limited = embedMode ? (Array.isArray(data) ? data.slice(0, 10) : []) : (Array.isArray(data) ? data : []);
+        const limited = embedMode ? (Array.isArray(data) ? data.slice(0, limit) : []) : (Array.isArray(data) ? data : []);
         setRows(limited);
       } catch (e) {
         setRows([]);
@@ -19,7 +19,7 @@ const Leaderboard = ({ embedMode = false }) => {
         setLoading(false);
       }
     })();
-  }, [embedMode]);
+  }, [embedMode, limit]);
 
   if (loading) return <div className="leaderboard-loading">Loading...</div>;
 
