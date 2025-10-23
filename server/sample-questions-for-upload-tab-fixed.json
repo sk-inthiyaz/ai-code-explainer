@@ -1,75 +1,81 @@
 {
   "questions": [
     {
-      "title": "Two Sum",
-      "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+      "title": "Find Single Number",
+      "description": "Given a non-empty array of integers nums, every element appears twice except for one. Find that single one.",
       "difficulty": "easy",
       "category": "Arrays",
       "hints": [
-        "Use a hash map to store the numbers you've seen",
-        "For each number, check if (target - current) exists"
+        "Use XOR property: a ^ a = 0 and a ^ 0 = a",
+        "Iterate once through the array and XOR all elements"
       ],
       "testCases": [
-        { "input": "[2,7,11,15]\n9", "expectedOutput": "[0,1]" },
-        { "input": "[3,2,4]\n6", "expectedOutput": "[1,2]" },
-        { "input": "[3,3]\n6", "expectedOutput": "[0,1]" }
+        { "input": "[2,2,1]", "expectedOutput": "1" },
+        { "input": "[4,1,2,1,2]", "expectedOutput": "4" },
+        { "input": "[1]", "expectedOutput": "1" }
       ]
     },
     {
-      "title": "Reverse String",
-      "description": "Write a function that reverses a string.",
-      "difficulty": "easy",
+      "title": "Valid Palindrome",
+      "description": "Given a string s, return true if it is a palindrome, or false otherwise. Ignore non-alphanumeric characters and consider lowercase only.",
+      "difficulty": "mid-easy",
       "category": "Strings",
       "hints": [
-        "Use two pointers approach",
-        "Swap from both ends"
+        "Use two-pointer approach from both ends",
+        "Filter only alphanumeric characters before checking"
       ],
       "testCases": [
-        { "input": "hello", "expectedOutput": "olleh" },
-        { "input": "world", "expectedOutput": "dlrow" }
+        { "input": "\"A man, a plan, a canal: Panama\"", "expectedOutput": "true" },
+        { "input": "\"race a car\"", "expectedOutput": "false" },
+        { "input": "\" \"", "expectedOutput": "true" }
       ]
     },
     {
-      "title": "Valid Parentheses",
-      "description": "Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
-      "difficulty": "mid-easy",
-      "category": "Stack",
+      "title": "Product of Array Except Self",
+      "description": "Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i]. You must write an algorithm that runs in O(n) and without using division.",
+      "difficulty": "medium",
+      "category": "Arrays",
       "hints": [
-        "Use a stack data structure",
-        "Push opening brackets, pop for closing"
+        "Use prefix and suffix product arrays",
+        "Multiply prefix[i] * suffix[i] to get final result"
       ],
       "testCases": [
-        { "input": "()", "expectedOutput": "true" },
-        { "input": "()[]{}", "expectedOutput": "true" },
-        { "input": "(]", "expectedOutput": "false" }
+        { "input": "[1,2,3,4]", "expectedOutput": "[24,12,8,6]" },
+        { "input": "[-1,1,0,-3,3]", "expectedOutput": "[0,0,9,0,0]" }
       ]
     },
     {
-      "title": "Merge Two Sorted Lists",
-      "description": "Merge two sorted linked lists and return it as a sorted list.",
+      "title": "Word Ladder",
+      "description": "Given two words, beginWord and endWord, and a dictionary wordList, return the length of the shortest transformation sequence from beginWord to endWord, such that only one letter can be changed at a time and each transformed word must exist in the wordList.",
       "difficulty": "hard",
-      "category": "Linked Lists",
+      "category": "Graphs",
       "hints": [
-        "Use a dummy node",
-        "Compare values and link the smaller one"
+        "Use BFS starting from beginWord",
+        "For each word, generate all possible one-letter variations"
       ],
       "testCases": [
-        { "input": "[1,2,4]\n[1,3,4]", "expectedOutput": "[1,1,2,3,4,4]" },
-        { "input": "[]\n[]", "expectedOutput": "[]" }
+        {
+          "input": "\"hit\"\n\"cog\"\n[\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]",
+          "expectedOutput": "5"
+        },
+        {
+          "input": "\"hit\"\n\"cog\"\n[\"hot\",\"dot\",\"dog\",\"lot\",\"log\"]",
+          "expectedOutput": "0"
+        }
       ]
     },
     {
-      "title": "Binary Tree Traversal",
-      "description": "Given the root of a binary tree, return the inorder traversal of its nodes' values.",
+      "title": "Boundary Traversal of Binary Tree",
+      "description": "Given a binary tree, return the boundary traversal of the tree in an anti-clockwise direction starting from the root.",
       "difficulty": "mix",
       "category": "Trees",
       "hints": [
-        "Use recursion: left, root, right",
-        "Or use stack for iterative"
+        "Combine left boundary, leaf nodes, and right boundary in reverse",
+        "Be careful to avoid duplicates"
       ],
       "testCases": [
-        { "input": "[1,null,2,3]", "expectedOutput": "[1,3,2]" },
-        { "input": "[]", "expectedOutput": "[]" }
+        { "input": "[20,8,22,4,12,null,25,10,14]", "expectedOutput": "[20,8,4,10,14,25,22]" },
+        { "input": "[1,2,3,4,5,6,null,null,null,7,8]", "expectedOutput": "[1,2,4,7,8,6,3]" }
       ]
     }
   ]

@@ -63,15 +63,21 @@ async function runCodeInDocker(code, language, input, timeout = 5) {
   ensureDir(tempDir);
 
   // Java must have class name matching file name; we'll enforce Main.java
+  // For C++, use unique output name to avoid caching issues
   const baseName = (lang === 'java') ? 'Main' : uuidv4();
   const filename = `${baseName}.${config.extension}`;
+  const outfileName = (lang === 'cpp') ? `${baseName}.out` : 'a.out'; // Use unique name for C++
   const filepath = path.join(tempDir, filename);
+  const outpath = path.join(tempDir, outfileName);
   fs.writeFileSync(filepath, code);
 
   // Mount tempDir as /code in the container
   // -i keeps STDIN open so we can pipe input; wrap inner command in double quotes for cross-shell
   // Use numeric seconds without suffix for compatibility with BusyBox (Alpine) and GNU timeout
-  const innerCmd = `timeout ${timeout} ${config.runCmd(filename)}`;
+  const cppRunCmd = (lang === 'cpp') ? 
+    `g++ /code/${filename} -o /code/${outfileName} && /code/${outfileName}` :
+    config.runCmd(filename);
+  const innerCmd = `timeout ${timeout} ${cppRunCmd}`;
   const dockerCmd = [
     'docker run --rm -i',
     `-m 128m --cpus=0.5`,
@@ -83,8 +89,11 @@ async function runCodeInDocker(code, language, input, timeout = 5) {
 
   return new Promise((resolve) => {
     const child = exec(dockerCmd, { maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
-      // Clean up temp file
+      // Clean up temp files (both source and compiled output for C++)
       try { fs.unlinkSync(filepath); } catch {}
+      if (lang === 'cpp') {
+        try { fs.unlinkSync(outpath); } catch {}
+      }
       resolve({
         stdout: stdout.trim(),
         stderr: stderr.trim(),

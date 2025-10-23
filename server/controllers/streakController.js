@@ -80,6 +80,8 @@ const addDailyQuestions = async (req, res) => {
         hints: q.hints || [],
         starterCode: q.starterCode || '// Write your code here...',
         testCases: q.testCases,
+        functionSignature: q.functionSignature || { name: 'solution', params: [], returnType: 'any' },
+        codeTemplate: q.codeTemplate || {},
         activeDate: activeDate
       });
 
@@ -115,7 +117,9 @@ const updateStreakQuestion = async (req, res) => {
       starterCode,
       testCases,
       activeDate,
-      levelName
+      levelName,
+      functionSignature,
+      codeTemplate
     } = req.body;
 
     const update = {};
@@ -125,6 +129,8 @@ const updateStreakQuestion = async (req, res) => {
     if (Array.isArray(hints)) update.hints = hints;
     if (starterCode !== undefined) update.starterCode = starterCode;
     if (Array.isArray(testCases)) update.testCases = testCases;
+    if (functionSignature) update.functionSignature = functionSignature;
+    if (codeTemplate) update.codeTemplate = codeTemplate;
     if (activeDate) {
       const d = new Date(activeDate);
       d.setHours(0, 0, 0, 0);
@@ -173,7 +179,7 @@ const deleteStreakQuestion = async (req, res) => {
 // ✅ Admin: Add a single streak question
 const addStreakQuestion = async (req, res) => {
   try {
-    const { levelName, title, description, constraints, testCases, hints, starterCode, activeDate } = req.body;
+    const { levelName, title, description, constraints, testCases, hints, starterCode, activeDate, functionSignature, codeTemplate } = req.body;
 
     const level = StreakQuestion.getLevelNumber(levelName);
     const date = new Date(activeDate || Date.now());
@@ -188,6 +194,8 @@ const addStreakQuestion = async (req, res) => {
       hints: hints || [],
       starterCode: starterCode || '// Write your code here...',
       testCases,
+      functionSignature: functionSignature || { name: 'solution', params: [], returnType: 'any' },
+      codeTemplate: codeTemplate || {},
       activeDate: date
     });
 
@@ -289,7 +297,9 @@ const runCode = async (req, res) => {
       try {
         // Wrap user code with test harness (LeetCode style)
         const language = req.body.language?.toLowerCase() || 'javascript';
-        const wrappedCode = wrapCodeWithHarness(code, language, testCase);
+        const wrappedCode = wrapCodeWithHarness(code, language, testCase, {
+          functionSignature: question.functionSignature
+        });
         
   const { stdout, stderr, exitCode } = await runCodeInDocker(wrappedCode, language, testCase.input);
   const actualOutput = stdout || stderr;
@@ -391,7 +401,9 @@ const submitSolution = async (req, res) => {
       try {
         // Wrap user code with test harness (LeetCode style)
         const language = req.body.language?.toLowerCase() || 'javascript';
-        const wrappedCode = wrapCodeWithHarness(code, language, testCase);
+        const wrappedCode = wrapCodeWithHarness(code, language, testCase, {
+          functionSignature: question.functionSignature
+        });
         
   const { stdout, stderr, exitCode } = await runCodeInDocker(wrappedCode, language, testCase.input);
   const actualOutput = stdout || stderr;

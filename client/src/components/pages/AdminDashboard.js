@@ -72,11 +72,19 @@ const AdminDashboard = () => {
         throw new Error('JSON must contain a questions array');
       }
 
-      // Validate each question
+      // Validate each question - support both formats (regular or streak)
       normalized.questions.forEach((question, index) => {
-        if (!question.title || !question.description || 
-            !question.difficulty || !Array.isArray(question.testCases)) {
+        // Check required common fields
+        if (!question.title || !question.description || !Array.isArray(question.testCases)) {
           throw new Error(`Invalid question format at index ${index}`);
+        }
+        
+        // Check for either regular question format OR streak question format
+        const isRegularFormat = question.difficulty !== undefined;
+        const isStreakFormat = question.functionSignature !== undefined || question.level !== undefined;
+        
+        if (!isRegularFormat && !isStreakFormat) {
+          throw new Error(`Invalid question format at index ${index} - missing 'difficulty' or 'functionSignature'`);
         }
       });
 
@@ -95,14 +103,40 @@ const AdminDashboard = () => {
     if (!jsonPreview) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/questions/bulk-import', {
+      // Detect question type: check if it's streak format (has functionSignature or level)
+      const firstQuestion = jsonPreview.questions[0];
+      const isStreakFormat = firstQuestion && (firstQuestion.functionSignature || firstQuestion.level !== undefined);
+      
+      let endpoint = 'http://localhost:5000/api/questions/bulk-import';
+      let payload = jsonPreview;
+      
+      if (isStreakFormat) {
+        // For streak questions, support both:
+        // - Single question: use /api/streak/admin/add (single question endpoint)
+        // - Exactly 5 questions: use /api/streak/admin/daily (batch endpoint)
+        if (jsonPreview.questions.length === 1) {
+          // Single question upload
+          endpoint = 'http://localhost:5000/api/streak/admin/add';
+          payload = jsonPreview.questions[0];
+        } else if (jsonPreview.questions.length === 5) {
+          // Batch of 5 questions for today
+          endpoint = 'http://localhost:5000/api/streak/admin/daily';
+          payload = {
+            date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
+            questions: jsonPreview.questions
+          };
+        } else {
+          throw new Error('Streak questions must have either 1 question or exactly 5 questions (one per level)');
+        }
+      }
+      
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        // jsonPreview already has the shape { questions: [...] }
-        body: JSON.stringify(jsonPreview)
+        body: JSON.stringify(payload)
       });
 
       const result = await response.json();
@@ -124,8 +158,14 @@ const AdminDashboard = () => {
       setJsonPreview(null);
       setError(null);
       
-      // Show different message if streak was auto-published
-      if (result.streakPublished) {
+      // Show different message based on question type
+      if (isStreakFormat) {
+        if (jsonPreview.questions.length === 1) {
+          toast.success(`✅ Streak question uploaded successfully!`);
+        } else {
+          toast.success(`🔥 5 streak questions uploaded successfully for today!`);
+        }
+      } else if (result.streakPublished) {
         toast.success(`✅ ${imported.length} questions imported and published to today's streak!`);
       } else if (imported.length >= 5) {
         toast.success(`✅ ${imported.length} questions imported! (Today's streak already exists)`);
