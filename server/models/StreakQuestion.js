@@ -66,6 +66,12 @@ const streakQuestionSchema = new mongoose.Schema({
     required: true,
     index: true
   },
+  // Expiration date/time (defaults to 11:59 PM of activeDate)
+  expirationDate: {
+    type: Date,
+    required: false,
+    index: true
+  },
   submissions: [{
     userId: {
       type: mongoose.Schema.Types.ObjectId,

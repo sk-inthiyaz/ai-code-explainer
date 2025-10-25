@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Editor from '@monaco-editor/react';
 import './StreakPage.css';
 
 const StreakHistory = () => {
@@ -9,6 +10,58 @@ const StreakHistory = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewingCode, setViewingCode] = useState(null); // { code, language, title }
+  const [loadingCode, setLoadingCode] = useState(false);
+
+  const closeModal = () => {
+    setViewingCode(null);
+  };
+
+  const handleViewCode = async (problemId, title) => {
+    setLoadingCode(true);
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Fetch latest accepted submission
+      const subRes = await fetch(
+        `http://localhost:5000/api/problems/${problemId}/submissions/latest?status=accepted`,
+        { headers: { 'Authorization': `Bearer ${token}` } }
+      );
+      
+      if (!subRes.ok) {
+        alert('No accepted submission found');
+        setLoadingCode(false);
+        return;
+      }
+      
+      const submission = await subRes.json();
+      
+      // Fetch presigned URL for code
+      const codeRes = await fetch(
+        `http://localhost:5000/api/submissions/${submission._id}/code`,
+        { headers: { 'Authorization': `Bearer ${token}` } }
+      );
+      
+      if (!codeRes.ok) {
+        alert('Failed to get code URL');
+        setLoadingCode(false);
+        return;
+      }
+      
+      const { signedUrl, language } = await codeRes.json();
+      
+      // Fetch actual code from signed URL
+      const codeTextRes = await fetch(signedUrl);
+      const codeText = await codeTextRes.text();
+      
+      setViewingCode({ code: codeText, language, title });
+    } catch (err) {
+      console.error('Error viewing code:', err);
+      alert('Failed to load code');
+    } finally {
+      setLoadingCode(false);
+    }
+  };
 
   const load = async (p = 1) => {
     setLoading(true);
@@ -56,12 +109,21 @@ const StreakHistory = () => {
                 <div className="solved-info">
                   <div className="title-row">
                     <span className="title">{item.questionId?.title || 'Question'}</span>
-                    <span className={`badge ${String(item.difficulty || '').toLowerCase()}`}>{item.difficulty || 'Level'}</span>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <span className={`badge ${String(item.questionId?.difficulty || item.difficulty || '').toLowerCase()}`}>{item.questionId?.difficulty || item.difficulty || 'Level'}</span>
+                      <span className={`badge language-badge ${String(item.questionId?.language || item.language || 'javascript').toLowerCase()}`}>{item.questionId?.language || item.language || 'JavaScript'}</span>
+                    </div>
                   </div>
                   <div className="meta">{new Date(item.completedAt).toLocaleString()}</div>
                 </div>
                 {item.questionId?._id && (
-                  <Link className="view-link" to={{ pathname: '/streak/solve' }} state={{ question: item.questionId }}>View</Link>
+                  <button 
+                    className="view-link" 
+                    onClick={() => handleViewCode(item.questionId._id, item.questionId.title)}
+                    disabled={loadingCode}
+                  >
+                    View
+                  </button>
                 )}
               </li>
             ))}
@@ -74,6 +136,33 @@ const StreakHistory = () => {
           <button disabled={page >= totalPages} onClick={() => load(page + 1)}>Next</button>
         </div>
       </div>
+
+      {/* Code viewer modal */}
+      {viewingCode && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>📄 {viewingCode.title} - Accepted Solution</h3>
+              <button className="modal-close" onClick={closeModal}>&times;</button>
+            </div>
+            <div className="modal-body">
+              <Editor
+                height="500px"
+                language={viewingCode.language === 'cpp' ? 'cpp' : viewingCode.language}
+                value={viewingCode.code}
+                theme="vs-dark"
+                options={{
+                  readOnly: true,
+                  minimap: { enabled: false },
+                  fontSize: 14,
+                  lineNumbers: 'on',
+                  scrollBeyondLastLine: false
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

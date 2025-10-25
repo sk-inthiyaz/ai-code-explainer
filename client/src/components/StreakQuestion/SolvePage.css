@@ -243,13 +243,13 @@
 }
 
 .result-summary.success {
-  background: #d4edda;
-  border-color: #28a745;
+  background: #e8f5e9;
+  border-color: #0f9d58;
 }
 
 .result-summary.error {
-  background: #f8d7da;
-  border-color: #dc3545;
+  background: #ffebee;
+  border-color: #d32f2f;
 }
 
 .result-header h3 {
@@ -259,11 +259,11 @@
 }
 
 .result-summary.success .result-header h3 {
-  color: #155724;
+  color: #0f9d58;
 }
 
 .result-summary.error .result-header h3 {
-  color: #721c24;
+  color: #d32f2f;
 }
 
 .result-count {

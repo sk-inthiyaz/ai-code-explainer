@@ -58,7 +58,12 @@ const userSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
     },
-    difficulty: String
+    difficulty: String,
+    language: {
+      type: String,
+      enum: ['javascript', 'python', 'java', 'cpp'],
+      default: 'javascript'
+    }
   }],
   createdAt: {
     type: Date,

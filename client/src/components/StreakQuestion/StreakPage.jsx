@@ -72,6 +72,7 @@ import UserStreakQuestionCard from "./UserStreakQuestionCard";
 import Leaderboard from "./Leaderboard";
 import Editor from "@monaco-editor/react";
 import "./StreakPage.css";
+import leftArrow from '../images/left-arrow (1).png';
 
 const StreakPage = () => {
   const [solved, setSolved] = useState([]);
@@ -152,14 +153,21 @@ const StreakPage = () => {
 
   return (
     <div className="streak-page">
-      <div className="streak-header">
-        <div>
-          <h1>🔥 Daily Streak Challenge</h1>
-          <p>Solve today’s problem, keep your streak alive, and climb the leaderboard.</p>
+      {/* Centered content */}
+      <div className="streak-container">
+        <div className="streak-header">
+          <div className="title-row-header">
+            <Link to="/LearnHub" className="btn-back">
+              <img src={leftArrow} alt="Back" style={{ width: 24, height: 24, verticalAlign: 'middle' }} />
+            </Link>
+            <h1>🔥 Daily Streak Challenge</h1>
+          </div>
+          <p>Solve today's problem, keep your streak alive, and climb the leaderboard.</p>
+          <Link to="/streak/leaderboard" className="btn-leaderboard">
+            Full Leaderboard →
+          </Link>
         </div>
-        <Link to="/streak/leaderboard" className="leaderboard-link">Full Leaderboard →</Link>
-      </div>
-      <div className="streak-grid">
+        <div className="streak-grid">
         <div className="main-column">
           <StreakStatusCard />
           <UserStreakQuestionCard />
@@ -235,6 +243,7 @@ const StreakPage = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };

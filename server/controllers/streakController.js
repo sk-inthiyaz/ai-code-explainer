@@ -4,6 +4,36 @@ const Submission = require("../models/Submission");
 const { runCodeInDocker } = require("../utils/dockerRunner");
 const { wrapCodeWithHarness } = require("../utils/codeHarness");
 const { saveCode } = require("../utils/storageService");
+const { formatErrorForDisplay } = require("../utils/errorParser");
+
+// ⏰ Helper: Parse date string in YYYY-MM-DD format to local date at 00:00:00
+function parseLocalDate(dateString) {
+  if (!dateString) return new Date();
+  
+  try {
+    const [year, month, day] = dateString.split('-');
+    if (!year || !month || !day) throw new Error('Invalid date format');
+    
+    // Create date in LOCAL timezone (not UTC)
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), 0, 0, 0, 0);
+    return date;
+  } catch (err) {
+    console.error(`Error parsing date ${dateString}:`, err);
+    // Fallback to today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  }
+}
+
+// ⏰ Helper: Get today's date in YYYY-MM-DD format (local timezone)
+function getTodayDateString() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 // Helper: robust comparison of expected vs actual outputs
 function normalizeExpected(expected) {
@@ -51,9 +81,10 @@ function outputsEqual(expectedRaw, actualRaw) {
 }
 
 // ✅ Admin: Add 5 streak questions for a specific date (one per level)
+// Questions are active from 00:00 to 23:59 of the specified date
 const addDailyQuestions = async (req, res) => {
   try {
-    const { date, questions } = req.body; // questions should be an array of 5 questions
+    const { date, questions, replaceExisting } = req.body; // questions should be an array of 5 questions
 
     if (!questions || questions.length !== 5) {
       return res.status(400).json({ 
@@ -61,8 +92,31 @@ const addDailyQuestions = async (req, res) => {
       });
     }
 
-    const activeDate = new Date(date || Date.now());
-    activeDate.setHours(0, 0, 0, 0);
+    // Parse date in local timezone using helper
+    const activeDate = parseLocalDate(date || getTodayDateString());
+    
+    // Set expiration to end of day (11:59:59 PM)
+    const expirationDate = new Date(activeDate);
+    expirationDate.setHours(23, 59, 59, 999);
+
+    console.log(`Adding questions for date: ${activeDate.toDateString()}`);
+    console.log(`Expiration date: ${expirationDate.toDateString()} ${expirationDate.toTimeString()}`);
+    console.log(`Date to filter: activeDate = ${activeDate.toISOString()}`);
+
+    // If replaceExisting is true, delete old questions for this date first
+    if (replaceExisting) {
+      const deleted = await StreakQuestion.deleteMany({ activeDate });
+      console.log(`Deleted ${deleted.deletedCount} existing questions for date: ${activeDate.toDateString()}`);
+    } else {
+      // Check if ANY question exists for this date
+      const existingQuestions = await StreakQuestion.find({ activeDate });
+      if (existingQuestions.length > 0) {
+        const existingLevel = existingQuestions[0].levelName;
+        return res.status(400).json({ 
+          message: `Question already exists for ${existingLevel} level on ${activeDate.toDateString()}. Use replaceExisting: true to overwrite.`
+        });
+      }
+    }
 
     // Create all 5 questions
     const savedQuestions = [];
@@ -82,7 +136,8 @@ const addDailyQuestions = async (req, res) => {
         testCases: q.testCases,
         functionSignature: q.functionSignature || { name: 'solution', params: [], returnType: 'any' },
         codeTemplate: q.codeTemplate || {},
-        activeDate: activeDate
+        activeDate: activeDate,
+        expirationDate: expirationDate
       });
 
       const saved = await newQuestion.save();
@@ -92,15 +147,12 @@ const addDailyQuestions = async (req, res) => {
     res.status(201).json({
       message: "5 daily questions added successfully!",
       date: activeDate,
+      expiresAt: expirationDate,
+      note: "Questions will automatically expire at 11:59 PM and refresh at 12:00 AM",
       questions: savedQuestions
     });
   } catch (error) {
     console.error("Error adding daily questions:", error);
-    if (error.code === 11000) {
-      return res.status(400).json({ 
-        message: "Questions already exist for this date and level" 
-      });
-    }
     res.status(500).json({ message: "Failed to add questions", error: error.message });
   }
 };
@@ -229,8 +281,12 @@ const getTodayQuestionForUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Get today's date in local timezone
+    const today = parseLocalDate(getTodayDateString());
+    
+    const now = new Date();
+
+    console.log(`Fetching question for today: ${today.toDateString()} (${today.toISOString()}), user level: ${user.level}`);
 
     // Get question matching user's current level
     const question = await StreakQuestion.findOne({
@@ -239,10 +295,23 @@ const getTodayQuestionForUser = async (req, res) => {
     }).select('-submissions'); // Don't send other users' submissions
 
     if (!question) {
+      console.log(`No question found for date ${today.toDateString()} and level ${user.level}`);
       return res.status(404).json({ 
         message: "No question available for your level today",
         userLevel: user.level,
-        levelName: StreakQuestion.getLevelName(user.level)
+        levelName: StreakQuestion.getLevelName(user.level),
+        debug: {
+          todayDate: today.toDateString(),
+          userLevel: user.level
+        }
+      });
+    }
+
+    // Check if question has expired (past 11:59 PM)
+    if (question.expirationDate && now > question.expirationDate) {
+      return res.status(410).json({ 
+        message: "Today's question has expired. Check back tomorrow!",
+        expiredAt: question.expirationDate
       });
     }
 
@@ -255,7 +324,8 @@ const getTodayQuestionForUser = async (req, res) => {
       levelName: StreakQuestion.getLevelName(user.level),
       alreadySolved,
       currentStreak: user.streak.currentStreak,
-      longestStreak: user.streak.longestStreak
+      longestStreak: user.streak.longestStreak,
+      expiresAt: question.expirationDate
     });
   } catch (error) {
     console.error("Error fetching today's question:", error);
@@ -291,19 +361,48 @@ const runCode = async (req, res) => {
     let failed = 0;
     const testResults = [];
     let firstFailedCase = null;
+    let compileError = null;
+    
+    // Get language once before loop
+    const runLanguage = req.body.language?.toLowerCase() || 'javascript';
 
     for (let index = 0; index < publicTestCases.length; index++) {
       const testCase = publicTestCases[index];
       try {
         // Wrap user code with test harness (LeetCode style)
-        const language = req.body.language?.toLowerCase() || 'javascript';
-        const wrappedCode = wrapCodeWithHarness(code, language, testCase, {
+        const wrappedCode = wrapCodeWithHarness(code, runLanguage, testCase, {
           functionSignature: question.functionSignature
         });
         
-  const { stdout, stderr, exitCode } = await runCodeInDocker(wrappedCode, language, testCase.input);
-  const actualOutput = stdout || stderr;
-  const passedTest = outputsEqual(testCase.expectedOutput, actualOutput);
+        const { stdout, stderr, exitCode } = await runCodeInDocker(wrappedCode, runLanguage, testCase.input);
+        
+        // Check if there's a compilation/runtime error
+        if (stderr && stderr.trim()) {
+          // Format error for display
+          if (!compileError) {
+            compileError = formatErrorForDisplay(stderr, runLanguage, code);
+          }
+          
+          const result = {
+            testCase: index + 1,
+            passed: false,
+            input: testCase.input,
+            expectedOutput: testCase.expectedOutput,
+            actualOutput: stderr,
+            error: true,
+            errorMessage: compileError.errorMessage,
+            explanation: testCase.explanation
+          };
+          failed++;
+          testResults.push(result);
+          if (!firstFailedCase) {
+            firstFailedCase = result;
+          }
+          continue;
+        }
+        
+        const actualOutput = stdout || '';
+        const passedTest = outputsEqual(testCase.expectedOutput, actualOutput);
         const result = {
           testCase: index + 1,
           passed: passedTest,
@@ -329,6 +428,8 @@ const runCode = async (req, res) => {
           input: testCase.input,
           expectedOutput: testCase.expectedOutput,
           actualOutput: err.message,
+          error: true,
+          errorMessage: err.message,
           explanation: testCase.explanation
         };
         testResults.push(result);
@@ -351,11 +452,15 @@ const runCode = async (req, res) => {
     } else {
       return res.json({
         success: false,
-        message: `✗ ${passed}/${totalPublicCases} public test cases passed`,
+        message: compileError 
+          ? `❌ Compilation/Runtime Error - ${compileError.errorType}`
+          : `✗ ${passed}/${totalPublicCases} public test cases passed`,
         passedCount: passed,
         totalCount: totalPublicCases,
         testResults,
-        firstFailedCase
+        firstFailedCase,
+        compileError: compileError ? compileError.errorMessage : null,
+        hasCompileError: !!compileError
       });
     }
   } catch (error) {
@@ -380,11 +485,22 @@ const submitSolution = async (req, res) => {
     if (!question) {
       return res.status(404).json({ message: "Question not found" });
     }
-
+    
+    // Check if question has expired (past 11:59 PM)
+    const now = new Date();
+    if (question.expirationDate && now > question.expirationDate) {
+      return res.status(410).json({ 
+        success: false,
+        message: "This question has expired. Check back tomorrow for new questions!",
+        expiredAt: question.expirationDate
+      });
+    }
+    
     // Check if user already solved this question today
-    const alreadySolved = question.solvedBy.includes(userId);
+    const alreadySolved = question.solvedBy.some(id => String(id) === String(userId));
     if (alreadySolved) {
       return res.status(400).json({ 
+        success: false,
         message: "You've already solved today's question!",
         streak: user.streak.currentStreak
       });
@@ -395,19 +511,48 @@ const submitSolution = async (req, res) => {
     let failed = 0;
     const testResults = [];
     let firstFailedCase = null;
+    let compileError = null;
 
+    // Get language once before loop
+    const submissionLanguage = req.body.language?.toLowerCase() || 'javascript';
+    
     for (let index = 0; index < question.testCases.length; index++) {
       const testCase = question.testCases[index];
       try {
         // Wrap user code with test harness (LeetCode style)
-        const language = req.body.language?.toLowerCase() || 'javascript';
-        const wrappedCode = wrapCodeWithHarness(code, language, testCase, {
+        const wrappedCode = wrapCodeWithHarness(code, submissionLanguage, testCase, {
           functionSignature: question.functionSignature
         });
         
-  const { stdout, stderr, exitCode } = await runCodeInDocker(wrappedCode, language, testCase.input);
-  const actualOutput = stdout || stderr;
-  const passedTest = outputsEqual(testCase.expectedOutput, actualOutput);
+        const { stdout, stderr, exitCode } = await runCodeInDocker(wrappedCode, submissionLanguage, testCase.input);
+        
+        // Check if there's a compilation/runtime error
+        if (stderr && stderr.trim()) {
+          // Format error for display
+          if (!compileError) {
+            compileError = formatErrorForDisplay(stderr, submissionLanguage, code);
+          }
+          
+          const result = {
+            testCase: index + 1,
+            passed: false,
+            input: testCase.input,
+            expectedOutput: testCase.expectedOutput,
+            actualOutput: stderr,
+            error: true,
+            errorMessage: compileError.errorMessage,
+            isPublic: !testCase.isHidden
+          };
+          failed++;
+          testResults.push(result);
+          if (!firstFailedCase) {
+            firstFailedCase = result;
+          }
+          continue;
+        }
+        
+        const actualOutput = stdout || '';
+        const passedTest = outputsEqual(testCase.expectedOutput, actualOutput);
         const result = {
           testCase: index + 1,
           passed: passedTest,
@@ -433,6 +578,8 @@ const submitSolution = async (req, res) => {
           input: testCase.input,
           expectedOutput: testCase.expectedOutput,
           actualOutput: err.message,
+          error: true,
+          errorMessage: err.message,
           isPublic: !testCase.isHidden
         };
         testResults.push(result);
@@ -465,20 +612,20 @@ const submitSolution = async (req, res) => {
       user.completedQuestions.push({
         questionId: question._id,
         difficulty: question.levelName,
+        language: submissionLanguage,
         completedAt: new Date()
       });
 
       await user.save();
 
       // Save accepted submission to storage
-      const language = req.body.language?.toLowerCase() || 'javascript';
       const submissionId = require('crypto').randomUUID();
       const storageKey = await saveCode(
         String(userId),
         String(question._id),
         submissionId,
         code,
-        language
+        submissionLanguage
       );
 
       // Store submission metadata in DB
@@ -486,7 +633,7 @@ const submitSolution = async (req, res) => {
         _id: submissionId,
         userId,
         problemId: question._id,
-        language,
+        language: submissionLanguage,
         status: 'accepted',
         runtimeMs: null, // TODO: track runtime if needed
         storageKey
@@ -514,11 +661,15 @@ const submitSolution = async (req, res) => {
       await question.save();
       return res.json({
         success: false,
-        message: `❌ Wrong Answer - ${passed}/${totalCases} test cases passed`,
+        message: compileError 
+          ? `❌ Compilation/Runtime Error - ${compileError.errorType}`
+          : `❌ Wrong Answer - ${passed}/${totalCases} test cases passed`,
         status,
         passedCount: passed,
         totalCount: totalCases,
         firstFailedCase, // Show the specific failed test case
+        compileError: compileError ? compileError.errorMessage : null,
+        hasCompileError: !!compileError,
         streak: {
           current: user.streak.currentStreak,
           longest: user.streak.longestStreak
@@ -623,7 +774,7 @@ const getSolvedHistory = async (req, res) => {
     const pageSize = Math.min(Math.max(parseInt(req.query.pageSize || '10', 10), 1), 50);
 
     const user = await User.findById(userId)
-      .populate('completedQuestions.questionId', 'title levelName activeDate');
+      .populate('completedQuestions.questionId');
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });

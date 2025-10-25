@@ -246,7 +246,27 @@ const SolvePage = () => {
                     </p>
                   </div>
                   
-                  {runResults.firstFailedCase && (
+                  {/* Show Compilation/Runtime Errors */}
+                  {runResults.hasCompileError && runResults.compileError && (
+                    <div className="compile-error-detail" style={{
+                      backgroundColor: '#fee',
+                      border: '2px solid #f44',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      marginTop: '12px',
+                      fontFamily: 'monospace',
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                      fontSize: '12px',
+                      color: '#c00',
+                      lineHeight: '1.5'
+                    }}>
+                      <h4 style={{ margin: '0 0 12px 0', color: '#900' }}>🔴 Compilation/Runtime Error</h4>
+                      <code>{runResults.compileError}</code>
+                    </div>
+                  )}
+                  
+                  {runResults.firstFailedCase && !runResults.hasCompileError && (
                     <div className="failed-case-detail">
                       <h4>❌ Test Case {runResults.firstFailedCase.testCase} Failed</h4>
                       <div className="failed-case-grid">
@@ -278,13 +298,37 @@ const SolvePage = () => {
               {submitResults && (
                 <div className={`result-summary ${submitResults.success ? 'success' : 'error'}`}>
                   <div className="result-header">
-                    <h3>{submitResults.success ? '✓ ' : '✗ '}{submitResults.message}</h3>
-                    <p className="result-count">
+                    {submitResults.success ? (
+                      <h3 style={{ color: '#0f9d58', margin: '0 0 8px 0' }}>✅ {submitResults.message}</h3>
+                    ) : (
+                      <h3 style={{ color: '#d32f2f', margin: '0 0 8px 0' }}>❌ {submitResults.message}</h3>
+                    )}
+                    <p className="result-count" style={{ color: submitResults.success ? '#0f9d58' : '#d32f2f' }}>
                       {submitResults.passedCount}/{submitResults.totalCount} test cases passed
                     </p>
                   </div>
                   
-                  {submitResults.firstFailedCase && (
+                  {/* Show Compilation/Runtime Errors */}
+                  {submitResults.hasCompileError && submitResults.compileError && (
+                    <div className="compile-error-detail" style={{
+                      backgroundColor: '#fee',
+                      border: '2px solid #f44',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      marginTop: '12px',
+                      fontFamily: 'monospace',
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                      fontSize: '12px',
+                      color: '#c00',
+                      lineHeight: '1.5'
+                    }}>
+                      <h4 style={{ margin: '0 0 12px 0', color: '#900' }}>🔴 Compilation/Runtime Error</h4>
+                      <code>{submitResults.compileError}</code>
+                    </div>
+                  )}
+                  
+                  {submitResults.firstFailedCase && !submitResults.hasCompileError && (
                     <div className="failed-case-detail">
                       <h4>
                         ❌ Test Case {submitResults.firstFailedCase.testCase}/{submitResults.totalCount} Failed

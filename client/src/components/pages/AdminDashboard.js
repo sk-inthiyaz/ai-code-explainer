@@ -121,8 +121,17 @@ const AdminDashboard = () => {
         } else if (jsonPreview.questions.length === 5) {
           // Batch of 5 questions for today
           endpoint = 'http://localhost:5000/api/streak/admin/daily';
+          
+          // Get today's date in local timezone (YYYY-MM-DD format)
+          const today = new Date();
+          const year = today.getFullYear();
+          const month = String(today.getMonth() + 1).padStart(2, '0');
+          const day = String(today.getDate()).padStart(2, '0');
+          const localDate = `${year}-${month}-${day}`;
+          
           payload = {
-            date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
+            date: localDate,
+            replaceExisting: true,  // Always replace existing questions to avoid duplicates
             questions: jsonPreview.questions
           };
         } else {
