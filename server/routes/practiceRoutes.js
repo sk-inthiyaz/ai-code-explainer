@@ -3,6 +3,34 @@ const router = express.Router();
 const axios = require('axios');
 const PracticeProblem = require('../models/PracticeProblem');
 const { GEMINI_URL, API_KEY } = require('../config/geminiConfig');
+const { auth } = require('../middleware/auth');
+const practiceController = require('../controllers/practiceController');
+
+// ===============================
+// NEW PRACTICE SYSTEM ROUTES
+// ===============================
+
+// List all practice problems with filters
+router.get('/problems', auth, practiceController.getProblems);
+
+// Get specific problem details
+router.get('/problems/:id', auth, practiceController.getProblemById);
+
+// Run code without saving (for editor practice)
+router.post('/editor/run', auth, practiceController.runCode);
+
+// Submit solution with full validation
+router.post('/problems/:id/submit', auth, practiceController.submitSolution);
+
+// Get user practice statistics
+router.get('/stats', auth, practiceController.getUserStats);
+
+// Get submission details
+router.get('/submissions/:submissionId', auth, practiceController.getSubmissionDetails);
+
+// ===============================
+// EXISTING AI ROUTES (KEPT)
+// ===============================
 
 // Generate 5 practice problems
 router.post('/generate', async (req, res) => {

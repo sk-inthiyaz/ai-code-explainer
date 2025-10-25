@@ -30,6 +30,12 @@ import SolvePage from "./components/StreakQuestion/SolvePage";
 import Leaderboard from "./components/StreakQuestion/Leaderboard";
 import StreakHistory from "./components/StreakQuestion/StreakHistory";
 
+// NEW: Interactive Practice Components
+import ProblemsList from './components/Practice/ProblemsList';
+import ProblemDetail from './components/Practice/ProblemDetail';
+import CodeEditorPractice from './components/Practice/CodeEditorPractice';
+import PracticeDashboard from './components/Practice/PracticeDashboard';
+
 // Styles
 import './index.css';
 import './styles/theme.css';
@@ -233,6 +239,40 @@ function App() {
                 element={
                   <PrivateRoute>
                     <StreakHistory />
+                  </PrivateRoute>
+                } 
+              />
+              
+              {/* NEW: Interactive Practice Routes */}
+              <Route 
+                path="/practice/problems" 
+                element={
+                  <PrivateRoute>
+                    <ProblemsList />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/practice/problems/:id" 
+                element={
+                  <PrivateRoute>
+                    <ProblemDetail />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/practice/editor" 
+                element={
+                  <PrivateRoute>
+                    <CodeEditorPractice />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/practice/dashboard" 
+                element={
+                  <PrivateRoute>
+                    <PracticeDashboard />
                   </PrivateRoute>
                 } 
               />

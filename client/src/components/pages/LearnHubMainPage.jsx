@@ -13,10 +13,22 @@ const LearnHubMainPage = () => {
       link: "/learnhub/topics",
     },
     {
+      icon: "�",
+      title: "Practice Problems",
+      desc: "Solve curated coding problems (Easy, Medium, Hard)",
+      link: "/practice/problems",
+    },
+    {
       icon: "💻",
-      title: "Interactive Coding Practice",
-      desc: "Master coding through hands-on practice and AI-powered guidance",
-      link: "/learnhub/practice",
+      title: "Code Editor Practice",
+      desc: "Write and test code with AI-powered feedback",
+      link: "/practice/editor",
+    },
+    {
+      icon: "�",
+      title: "My Practice Progress",
+      desc: "Track solved problems and submission history",
+      link: "/practice/dashboard",
     },
     {
       icon: "🐞",
@@ -29,12 +41,6 @@ const LearnHubMainPage = () => {
       title: "Code-to-Concept",
       desc: "Paste code and see what concepts it uses",
       link: "/learnhub/concepts",
-    },
-    {
-      icon: "📊",
-      title: "Progress Tracker",
-      desc: "Track topics completed and badges earned",
-      link: "/learnhub/progress",
     },
     {
       icon: "💬",
