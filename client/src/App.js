@@ -35,6 +35,8 @@ import ProblemsList from './components/Practice/ProblemsList';
 import ProblemDetail from './components/Practice/ProblemDetail';
 import CodeEditorPractice from './components/Practice/CodeEditorPractice';
 import PracticeDashboard from './components/Practice/PracticeDashboard';
+import InteractivePractice from './components/pages/InteractivePractice';
+import ProgressTrackerPage from './components/pages/ProgressTrackerPage';
 
 // Styles
 import './index.css';
@@ -245,6 +247,14 @@ function App() {
               
               {/* NEW: Interactive Practice Routes */}
               <Route 
+                path="/practice" 
+                element={
+                  <PrivateRoute>
+                    <InteractivePractice />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
                 path="/practice/problems" 
                 element={
                   <PrivateRoute>
@@ -273,6 +283,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <PracticeDashboard />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/progress" 
+                element={
+                  <PrivateRoute>
+                    <ProgressTrackerPage />
                   </PrivateRoute>
                 } 
               />

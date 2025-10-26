@@ -1,0 +1,28 @@
+.ip-container { padding: 40px; min-height: 100vh; background: var(--background-primary); }
+.ip-hero { 
+  max-width: 1100px; margin: 0 auto 24px; text-align: center; 
+  padding: 28px 20px; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(16,185,129,0.12));
+  border: 1px solid rgba(148,163,184,0.25);
+}
+.ip-hero h1 { margin: 0 0 6px; font-size: 2rem; color: var(--text-primary); }
+.ip-hero p { margin: 0; color: var(--text-secondary); }
+
+.ip-grid { 
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px; max-width: 1100px; margin: 0 auto;
+}
+.ip-card { 
+  background: var(--background-secondary); color: var(--text-primary);
+  border: 1px solid rgba(148,163,184,0.18); border-radius: 14px; padding: 24px;
+  box-shadow: 0 8px 24px rgba(2,6,23,.06); cursor: pointer;
+  transition: transform .2s ease, background-color .2s ease;
+}
+.ip-card:hover { background: var(--background-primary); transform: translateY(-4px); }
+.ip-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.ip-card-header h2 { margin: 0; font-size: 1.4rem; }
+.ip-icon { font-size: 1.8rem; }
+.ip-card ul { margin: 8px 0 16px 18px; color: var(--text-secondary); }
+.ip-card li { margin: 6px 0; }
+.ip-btn { background: var(--accent,#2563eb); color:#fff; border:0; padding:10px 16px; border-radius:8px; cursor:pointer; }
+.ip-btn:hover { opacity: .9; }

@@ -147,6 +147,13 @@ const runCode = async (req, res) => {
   try {
     const { code, language, testInput = '', problemId } = req.body;
 
+    console.log('[runCode] Request received:', {
+      language,
+      codeLength: code?.length,
+      hasTestInput: !!testInput,
+      problemId
+    });
+
     if (!code || !language) {
       return res.status(400).json({ message: 'Code and language are required' });
     }
@@ -179,19 +186,28 @@ const runCode = async (req, res) => {
       wrappedCode = code;
     }
 
+    console.log('[runCode] Executing in Docker:', { language, testInput });
+
     // Execute code in Docker
     const result = await runCodeInDocker(wrappedCode, language, testInput, 10);
     const executionTime = Date.now() - startTime;
 
+    console.log('[runCode] Docker result:', {
+      exitCode: result.exitCode,
+      stdoutLength: result.stdout?.length || 0,
+      stderrLength: result.stderr?.length || 0,
+      executionTime
+    });
+
     res.json({
       success: result.exitCode === 0,
-      output: result.stdout,
+      output: result.stdout || '',
       error: result.stderr ? formatErrorForDisplay(result.stderr, language) : null,
       executionTime
     });
 
   } catch (error) {
-    console.error('Error running code:', error);
+    console.error('[runCode] Error:', error);
     res.status(500).json({
       success: false,
       error: error.message || 'Code execution failed'

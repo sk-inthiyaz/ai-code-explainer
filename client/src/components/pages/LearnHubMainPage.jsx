@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./LearnHubMainPage.css";
-import UserStreakQuestionCard from "../StreakQuestion/UserStreakQuestionCard";
+
 const LearnHubMainPage = () => {
   const navigate = useNavigate();
 
@@ -13,22 +13,10 @@ const LearnHubMainPage = () => {
       link: "/learnhub/topics",
     },
     {
-      icon: "�",
-      title: "Practice Problems",
-      desc: "Solve curated coding problems (Easy, Medium, Hard)",
-      link: "/practice/problems",
-    },
-    {
-      icon: "💻",
-      title: "Code Editor Practice",
-      desc: "Write and test code with AI-powered feedback",
-      link: "/practice/editor",
-    },
-    {
-      icon: "�",
-      title: "My Practice Progress",
-      desc: "Track solved problems and submission history",
-      link: "/practice/dashboard",
+      icon: "🧠",
+      title: "Interactive Coding Practice",
+      desc: "Master coding through hands-on practice and AI-powered guidance",
+      link: "/practice",
     },
     {
       icon: "🐞",
@@ -37,22 +25,16 @@ const LearnHubMainPage = () => {
       link: "/streak",
     },
     {
-      icon: "✍️",
-      title: "Code-to-Concept",
-      desc: "Paste code and see what concepts it uses",
-      link: "/learnhub/concepts",
-    },
-    {
-      icon: "💬",
-      title: "Ask AI Doubts",
-      desc: "Type a code doubt and get an explanation",
-      link: "/learnhub/askai",
+      icon: "📈",
+      title: "Progress Tracker",
+      desc: "Track topics completed and badges earned",
+      link: "/progress",
     },
   ];
 
   return (
     <div className="learnhub-container">
-  <h2 className="learnhub-title">🎓 Welcome to Coding Hub</h2>
+      <h2 className="learnhub-title">🎓 Welcome to Coding Hub</h2>
       <div className="card-grid">
         {cards.map((card, index) => (
           <div

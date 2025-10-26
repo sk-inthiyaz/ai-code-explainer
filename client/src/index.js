@@ -4,6 +4,15 @@ import './index.css';
 import './styles/theme.css';
 import App from './App';
 
+// Suppress ResizeObserver error from Monaco Editor
+const resizeObserverErr = window.console.error;
+window.console.error = (...args) => {
+  if (args[0]?.includes?.('ResizeObserver loop')) {
+    return;
+  }
+  resizeObserverErr(...args);
+};
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <App />
