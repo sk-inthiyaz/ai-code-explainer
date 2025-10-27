@@ -24,6 +24,8 @@ import StartLearningMain from './components/startLearningComponent/data/StartLea
 //Streak realted
 // Admin Components
 import AdminDashboard from './components/pages/AdminDashboard';
+import AdminStreakDashboard from './components/StreakQuestion/AdminStreakDashboard';
+import AdminPanel from './components/StreakQuestion/AdminPanel';
 //StreakUserCard
 import StreakPage from "./components/StreakQuestion/StreakPage";
 import SolvePage from "./components/StreakQuestion/SolvePage";
@@ -35,6 +37,7 @@ import ProblemsList from './components/Practice/ProblemsList';
 import ProblemDetail from './components/Practice/ProblemDetail';
 import CodeEditorPractice from './components/Practice/CodeEditorPractice';
 import PracticeDashboard from './components/Practice/PracticeDashboard';
+import AdminPracticeProblems from './components/Practice/AdminPracticeProblems';
 import InteractivePractice from './components/pages/InteractivePractice';
 import ProgressTrackerPage from './components/pages/ProgressTrackerPage';
 
@@ -151,6 +154,22 @@ function App() {
                 element={
                   <PrivateRoute adminOnly={true}>
                     <AdminDashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route 
+                path="/admin/dashboard/streak" 
+                element={
+                  <PrivateRoute adminOnly={true}>
+                    <AdminStreakDashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route 
+                path="/admin/dashboard/practice-problems" 
+                element={
+                  <PrivateRoute adminOnly={true}>
+                    <AdminPracticeProblems />
                   </PrivateRoute>
                 }
               />

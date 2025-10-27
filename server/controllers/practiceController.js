@@ -2,7 +2,7 @@ const PracticeProblem = require('../models/PracticeProblem');
 const PracticeSubmission = require('../models/PracticeSubmission');
 const User = require('../models/User');
 const { runCodeInDocker } = require('../utils/dockerRunner');
-const { wrapCodeWithHarness } = require('../utils/codeHarness');
+const { wrapCodeWithHarness, formatInputForStdin } = require('../utils/codeHarness');
 const { formatErrorForDisplay } = require('../utils/errorParser');
 
 // Helper: Normalize expected/actual outputs for comparison
@@ -159,52 +159,104 @@ const runCode = async (req, res) => {
     }
 
     const startTime = Date.now();
-    let wrappedCode = code;
     let testCases = [];
+    let problem = null;
 
-    // If problemId provided, use its test cases and wrap code
+    // If problemId provided, fetch problem and test cases
     if (problemId) {
-      const problem = await PracticeProblem.findById(problemId);
+      problem = await PracticeProblem.findById(problemId);
       if (!problem) {
         return res.status(404).json({ message: 'Problem not found' });
       }
 
       // Use only visible test cases
       testCases = problem.testCases.filter(tc => !tc.isHidden);
-      
-      // Wrap code with test harness for first test case
-      if (testCases.length > 0) {
-        wrappedCode = wrapCodeWithHarness(
-          code,
-          language,
-          testCases[0],
-          { functionSignature: problem.functionSignature }
-        );
-      }
-    } else {
-      // Free-form code editor - run as-is
-      wrappedCode = code;
     }
 
-    console.log('[runCode] Executing in Docker:', { language, testInput });
+    // If we have test cases, run them all and show results
+    if (testCases.length > 0) {
+      const testResults = [];
+      let allPassed = true;
 
-    // Execute code in Docker
-    const result = await runCodeInDocker(wrappedCode, language, testInput, 10);
-    const executionTime = Date.now() - startTime;
+      for (let i = 0; i < testCases.length; i++) {
+        const testCase = testCases[i];
+        
+        try {
+          // Wrap code with test harness for this test case
+          const wrappedCode = wrapCodeWithHarness(
+            code,
+            language,
+            testCase,
+            { functionSignature: problem.functionSignature }
+          );
 
-    console.log('[runCode] Docker result:', {
-      exitCode: result.exitCode,
-      stdoutLength: result.stdout?.length || 0,
-      stderrLength: result.stderr?.length || 0,
-      executionTime
-    });
+          // Format input for stdin (convert single-line to multi-line)
+          const paramCount = problem.functionSignature?.params?.length || 2;
+          const formattedInput = formatInputForStdin(testCase.input, paramCount);
 
-    res.json({
-      success: result.exitCode === 0,
-      output: result.stdout || '',
-      error: result.stderr ? formatErrorForDisplay(result.stderr, language) : null,
-      executionTime
-    });
+          // Execute code in Docker with formatted input
+          const result = await runCodeInDocker(wrappedCode, language, formattedInput, 10);
+          
+          const actualOutput = result.stdout?.trim() || '';
+          const expectedOutput = testCase.expectedOutput?.trim() || '';
+          const passed = actualOutput === expectedOutput && result.exitCode === 0;
+          
+          if (!passed) allPassed = false;
+
+          testResults.push({
+            passed,
+            input: testCase.input,
+            expectedOutput: testCase.expectedOutput,
+            actualOutput: actualOutput || 'No output',
+            error: result.stderr ? formatErrorForDisplay(result.stderr, language).errorMessage : null
+          });
+
+        } catch (error) {
+          allPassed = false;
+          testResults.push({
+            passed: false,
+            input: testCase.input,
+            expectedOutput: testCase.expectedOutput,
+            actualOutput: '',
+            error: error.message || 'Execution failed'
+          });
+        }
+      }
+
+      const executionTime = Date.now() - startTime;
+      const passedCount = testResults.filter(t => t.passed).length;
+
+      return res.json({
+        success: allPassed,
+        testResults,
+        passedTests: passedCount,
+        totalTests: testResults.length,
+        message: allPassed 
+          ? 'All test cases passed!' 
+          : `${passedCount}/${testResults.length} test cases passed`,
+        executionTime
+      });
+
+    } else {
+      // Free-form code editor - run as-is without test cases
+      const wrappedCode = code;
+      const result = await runCodeInDocker(wrappedCode, language, testInput, 10);
+      const executionTime = Date.now() - startTime;
+
+      // Format error for display
+      let errorMessage = null;
+      if (result.stderr) {
+        const formattedError = formatErrorForDisplay(result.stderr, language);
+        errorMessage = formattedError.errorMessage || formattedError.fullError || result.stderr;
+      }
+
+      return res.json({
+        success: result.exitCode === 0,
+        output: result.stdout || '',
+        error: errorMessage,
+        executionTime
+      });
+    }
 
   } catch (error) {
     console.error('[runCode] Error:', error);
@@ -255,8 +307,12 @@ const submitSolution = async (req, res) => {
           { functionSignature: problem.functionSignature }
         );
 
-        // Execute in Docker
-        const result = await runCodeInDocker(wrappedCode, language, testCase.input, 10);
+        // Format input for stdin
+        const paramCount = problem.functionSignature?.params?.length || 2;
+        const formattedInput = formatInputForStdin(testCase.input, paramCount);
+
+        // Execute in Docker with formatted input
+        const result = await runCodeInDocker(wrappedCode, language, formattedInput, 10);
 
         const actualOutput = result.stdout.trim();
         const passed = result.exitCode === 0 && outputsEqual(testCase.expectedOutput, actualOutput);

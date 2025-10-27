@@ -126,19 +126,41 @@ const CodeEditorPractice = () => {
 
       const data = await res.json();
       
-      console.log('[Frontend] Response:', data);
+      console.log('[Frontend] Response:', JSON.stringify(data, null, 2));
       
-      // Handle both response formats: string error or object error
-      if (data.error && typeof data.error === 'object') {
-        setOutput({
-          success: data.success,
-          output: data.output || '',
-          error: data.error.errorMessage || data.error.fullError || JSON.stringify(data.error),
-          executionTime: data.executionTime
-        });
-      } else {
-        setOutput(data);
+      // Handle nested error object structures
+      let normalizedData = {
+        success: data.success !== undefined ? data.success : true,
+        output: '',
+        error: null,
+        executionTime: data.executionTime
+      };
+
+      // Check if data itself IS the error object
+      if (data.hasError || (data.errorMessage && !data.output)) {
+        normalizedData.success = false;
+        normalizedData.error = data.errorMessage || data.fullError || JSON.stringify(data, null, 2);
       }
+      // Check if data.error exists and is an object
+      else if (data.error) {
+        normalizedData.success = false;
+        if (typeof data.error === 'object') {
+          normalizedData.error = data.error.errorMessage || 
+                                 data.error.fullError || 
+                                 data.error.message ||
+                                 JSON.stringify(data.error, null, 2);
+        } else {
+          normalizedData.error = data.error;
+        }
+      }
+      // Success case
+      else {
+        normalizedData.success = true;
+        normalizedData.output = data.output || data.result || '';
+      }
+      
+      console.log('[Frontend] Normalized output:', normalizedData);
+      setOutput(normalizedData);
     } catch (error) {
       console.error('[Frontend] Error running code:', error);
       setOutput({ 

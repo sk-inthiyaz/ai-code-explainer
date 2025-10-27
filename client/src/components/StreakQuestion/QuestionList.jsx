@@ -29,7 +29,7 @@ const QuestionList = ({ questions, onQuestionDeleted }) => {
       'hard': '4️⃣',
       'mix': '5️⃣'
     };
-    return emojis[difficulty] || '❓';
+    return emojis[difficulty?.toLowerCase?.()] || '❓';
   };
 
   return (
@@ -46,7 +46,7 @@ const QuestionList = ({ questions, onQuestionDeleted }) => {
             <div className="question-header">
               <div className="question-info">
                 <span className="difficulty-badge">
-                  {getDifficultyEmoji(question.difficulty)} {question.difficulty.toUpperCase()}
+                  {getDifficultyEmoji(question.difficulty)} {question.difficulty ? question.difficulty.toUpperCase() : 'N/A'}
                 </span>
                 <h3>{question.title}</h3>
               </div>

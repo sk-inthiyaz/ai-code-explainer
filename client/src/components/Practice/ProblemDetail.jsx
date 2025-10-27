@@ -178,6 +178,24 @@ const ProblemDetail = () => {
           </div>
         )}
 
+        {/* Test Cases (Public Only) */}
+        {problem.testCases && problem.testCases.filter(tc => !tc.isHidden).length > 0 && (
+          <div className="problem-section">
+            <h3>🧪 Test Cases</h3>
+            {problem.testCases
+              .filter(tc => !tc.isHidden)
+              .map((testCase, idx) => (
+                <div key={idx} className="example-box">
+                  <div><strong>Input:</strong> {testCase.input}</div>
+                  <div><strong>Expected Output:</strong> {testCase.expectedOutput}</div>
+                  {testCase.explanation && (
+                    <div><strong>Explanation:</strong> {testCase.explanation}</div>
+                  )}
+                </div>
+              ))}
+          </div>
+        )}
+
         {/* Constraints */}
         {problem.constraints && problem.constraints.length > 0 && (
           <div className="problem-section">

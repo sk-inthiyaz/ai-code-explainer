@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import StreakQuestionManager from '../StreakQuestion/StreakQuestionManager';
-import './AdminDashboard.css';
+import '../pages/AdminDashboard.css';
 
 const AdminDashboard = () => {
   const [questions, setQuestions] = useState([]);

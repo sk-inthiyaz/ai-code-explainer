@@ -10,6 +10,48 @@ const practiceController = require('../controllers/practiceController');
 // NEW PRACTICE SYSTEM ROUTES
 // ===============================
 
+// ===============================
+// ADMIN ROUTES (MUST BE BEFORE DYNAMIC ROUTES)
+// ===============================
+const isAdmin = require('../middleware/isAdmin');
+
+// Get all problems (admin only) - MUST BE BEFORE /problems/:id
+router.get('/problems/all', isAdmin, async (req, res) => {
+  try {
+    console.log('📚 [GET /problems/all] ENDPOINT HIT - User:', req.user?.email, 'isAdmin:', req.user?.isAdmin);
+    console.log('🔍 Attempting to find all practice problems...');
+    console.log('🗄️ Database connection state:', require('mongoose').connection.readyState); // 0=disconnected, 1=connected, 2=connecting, 3=disconnecting
+    
+    if (require('mongoose').connection.readyState !== 1) {
+      throw new Error('Database not connected. Connection state: ' + require('mongoose').connection.readyState);
+    }
+    
+    console.log('🔎 PracticeProblem model:', typeof PracticeProblem);
+    console.log('🔎 PracticeProblem.find:', typeof PracticeProblem.find);
+    
+    const problems = await PracticeProblem.find().sort({ createdAt: -1 });
+    
+    console.log('✅ Query successful! Found', problems.length, 'problems');
+    console.log('✅ First problem sample:', problems[0]?.title);
+    console.log('📦 Sending response:', { problems: problems.length > 0 ? 'populated' : 'empty' });
+    
+    res.json({ problems });
+  } catch (error) {
+    console.error('❌ Error fetching problems:', error.message);
+    console.error('🔥 Error stack:', error.stack);
+    console.error('🔥 Error type:', error.constructor.name);
+    res.status(500).json({ 
+      message: 'Failed to fetch problems', 
+      error: error.message,
+      details: error.stack
+    });
+  }
+});
+
+// ===============================
+// REGULAR USER ROUTES (AFTER ADMIN ROUTES)
+// ===============================
+
 // List all practice problems with filters
 router.get('/problems', auth, practiceController.getProblems);
 
@@ -27,6 +69,168 @@ router.get('/stats', auth, practiceController.getUserStats);
 
 // Get submission details
 router.get('/submissions/:submissionId', auth, practiceController.getSubmissionDetails);
+
+// ===============================
+// ADMIN UPLOAD ROUTE
+// ===============================
+
+// Upload practice problems (admin only)
+router.post('/admin/upload-problems', isAdmin, async (req, res) => {
+  try {
+    const { problems, replaceExisting } = req.body;
+    console.log('📤 [POST /admin/upload-problems] User:', req.user?.email, 'Problems count:', problems?.length);
+
+    if (!Array.isArray(problems) || problems.length === 0) {
+      return res.status(400).json({ message: 'Problems array is required' });
+    }
+
+    const results = {
+      success: [],
+      failed: [],
+      skipped: []
+    };
+
+    for (const problemData of problems) {
+      try {
+        // Check if problem already exists
+        const existing = await PracticeProblem.findOne({ title: problemData.title });
+        
+        if (existing) {
+          if (replaceExisting) {
+            // Update existing problem
+            await PracticeProblem.findByIdAndUpdate(existing._id, {
+              ...problemData,
+              acceptanceRate: existing.acceptanceRate,
+              totalSubmissions: existing.totalSubmissions,
+              acceptedSubmissions: existing.acceptedSubmissions
+            });
+            results.success.push(problemData.title);
+          } else {
+            results.skipped.push(problemData.title);
+          }
+          continue;
+        }
+
+        // Create new problem
+        const newProblem = new PracticeProblem({
+          title: problemData.title,
+          description: problemData.description,
+          difficulty: problemData.difficulty,
+          topic: problemData.topic,
+          constraints: problemData.constraints || [],
+          hints: problemData.hints || [],
+          functionSignature: problemData.functionSignature,
+          codeTemplate: problemData.codeTemplate,
+          testCases: problemData.testCases || [],
+          examples: problemData.examples || [],
+          tags: problemData.tags || [problemData.topic],
+          supportedLanguages: Object.keys(problemData.codeTemplate || {})
+        });
+
+        await newProblem.save();
+        console.log('✅ Saved problem:', problemData.title);
+        results.success.push(problemData.title);
+      } catch (err) {
+        console.error('❌ Error saving problem:', problemData.title, err.message);
+        results.failed.push({ title: problemData.title, error: err.message });
+      }
+    }
+
+    res.status(201).json({
+      message: `Uploaded ${results.success.length} problems successfully`,
+      results
+    });
+  } catch (error) {
+    console.error('Error uploading problems:', error);
+    res.status(500).json({ message: 'Failed to upload problems', error: error.message });
+  }
+});
+
+// Get admin stats
+router.get('/admin/stats', isAdmin, async (req, res) => {
+  try {
+    console.log('📊 [GET /admin/stats] Fetching statistics...');
+    console.log('🗄️ Database connection state:', require('mongoose').connection.readyState);
+    
+    const totalProblems = await PracticeProblem.countDocuments();
+    console.log('📈 Total problems:', totalProblems);
+    
+    const byDifficulty = await PracticeProblem.aggregate([
+      { $group: { _id: '$difficulty', count: { $sum: 1 } } }
+    ]);
+    console.log('📊 By difficulty:', byDifficulty);
+    
+    const byTopic = await PracticeProblem.aggregate([
+      { $group: { _id: '$topic', count: { $sum: 1 } } }
+    ]);
+    console.log('📚 By topic:', byTopic);
+
+    const stats = {
+      totalProblems,
+      byDifficulty: byDifficulty.reduce((acc, { _id, count }) => {
+        acc[_id] = count;
+        return acc;
+      }, {}),
+      byTopic: byTopic.reduce((acc, { _id, count }) => {
+        acc[_id] = count;
+        return acc;
+      }, {})
+    };
+
+    res.json(stats);
+  } catch (error) {
+    console.error('❌ Error fetching stats:', error);
+    console.error('🔥 Error stack:', error.stack);
+    res.status(500).json({ 
+      message: 'Failed to fetch stats', 
+      error: error.message,
+      details: error.stack
+    });
+  }
+});
+
+// Delete problem (admin only)
+router.delete('/admin/problems/:id', isAdmin, async (req, res) => {
+  try {
+    const problem = await PracticeProblem.findByIdAndDelete(req.params.id);
+    if (!problem) {
+      return res.status(404).json({ message: 'Problem not found' });
+    }
+    res.json({ message: 'Problem deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete problem', error: error.message });
+  }
+});
+
+// Update problem (admin only)
+router.put('/admin/problems/:id', isAdmin, async (req, res) => {
+  try {
+    const { title, description, difficulty, topic, constraints, hints } = req.body;
+    
+    const updateData = {
+      title,
+      description,
+      difficulty,
+      topic,
+      constraints,
+      hints: Array.isArray(hints) ? hints : []
+    };
+
+    const problem = await PracticeProblem.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!problem) {
+      return res.status(404).json({ message: 'Problem not found' });
+    }
+
+    res.json({ message: 'Problem updated successfully', problem });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update problem', error: error.message });
+  }
+});
 
 // ===============================
 // EXISTING AI ROUTES (KEPT)
@@ -211,6 +415,56 @@ Provide your analysis in this exact JSON format:
             status: statusCode
         });
     }
+});
+
+// ===== HEALTH CHECK & DIAGNOSTICS =====
+// Simple health check (no auth required)
+router.get('/health', (req, res) => {
+  const mongoose = require('mongoose');
+  const connectionState = mongoose.connection.readyState;
+  const states = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting'
+  };
+  
+  res.json({
+    status: 'ok',
+    database: states[connectionState],
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Test database connection (admin only)
+router.get('/admin/health', isAdmin, async (req, res) => {
+  try {
+    const mongoose = require('mongoose');
+    const connectionState = mongoose.connection.readyState;
+    const states = {
+      0: 'disconnected',
+      1: 'connected',
+      2: 'connecting',
+      3: 'disconnecting'
+    };
+    
+    // Try a simple count query
+    const count = await PracticeProblem.countDocuments();
+    
+    res.json({
+      status: 'ok',
+      database: states[connectionState],
+      problemsCount: count,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      database: 'connection error',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 module.exports = router;
