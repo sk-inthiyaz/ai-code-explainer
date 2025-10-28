@@ -1,116 +1,65 @@
 .discussion-list-container {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f7fafc;
 }
 
-/* Header */
-.discussion-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.header-content h1 {
-  font-size: 2.5rem;
-  margin: 0 0 0.5rem 0;
-  color: #2d3748;
-}
-
-.header-content p {
-  font-size: 1.1rem;
-  color: #718096;
-  margin: 0;
-}
-
-.create-discussion-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
-
-.create-discussion-btn span {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.create-discussion-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-}
-
-/* Filters */
+/* Filters - Simple Top Bar */
 .discussion-filters {
-  display: flex;
-  gap: 1rem;
   margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.filter-row {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-end;
   flex-wrap: wrap;
 }
 
-.filter-group {
+.filter-item {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  flex: 1;
-  min-width: 150px;
 }
 
-.filter-group label {
-  font-size: 0.9rem;
+.filter-item label {
+  font-size: 0.875rem;
   font-weight: 600;
   color: #4a5568;
 }
 
-.filter-group select {
-  padding: 0.6rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+.filter-item select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
   font-size: 0.95rem;
   background: white;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-width: 150px;
 }
 
-.filter-group select:focus {
+.filter-item select:focus {
   outline: none;
   border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .search-form {
   display: flex;
   gap: 0.5rem;
-  flex: 1.5;
+  flex: 1;
   min-width: 250px;
-  align-self: flex-end;
 }
 
 .search-form input {
   flex: 1;
-  padding: 0.6rem 1rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
   font-size: 0.95rem;
   transition: all 0.2s ease;
 }
@@ -118,175 +67,106 @@
 .search-form input:focus {
   outline: none;
   border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .search-form button {
-  padding: 0.6rem 1.2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0.5rem 1rem;
+  background: #667eea;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   transition: all 0.2s ease;
 }
 
 .search-form button:hover {
-  transform: scale(1.05);
+  background: #5568d3;
 }
 
-/* Discussions Grid */
-.discussions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.discussion-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+/* Discussions List - Simple Items */
+.discussions-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0;
 }
 
-.discussion-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+.discussion-item {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.discussion-card-header {
+.discussion-item:hover {
+  background: #f7fafc;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
+
+.discussion-main {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.discussion-meta {
-  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  align-items: center;
-}
-
-.language-badge {
-  padding: 0.3rem 0.8rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.pinned-badge {
-  padding: 0.3rem 0.8rem;
-  background: #ffd700;
-  color: #744210;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.solved-badge {
-  padding: 0.3rem 0.8rem;
-  background: #48bb78;
-  color: white;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.time-ago {
-  font-size: 0.85rem;
-  color: #a0aec0;
 }
 
 .discussion-title {
-  font-size: 1.3rem;
-  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
   color: #2d3748;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.solved-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #48bb78;
+  background: #f0fff4;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
 }
 
 .discussion-excerpt {
-  color: #4a5568;
+  color: #718096;
   line-height: 1.6;
   margin: 0;
-  flex-grow: 1;
+  font-size: 0.95rem;
 }
 
-.discussion-tags {
+.discussion-footer {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+  color: #a0aec0;
+  margin-top: 0.5rem;
 }
 
-.tag {
-  padding: 0.3rem 0.8rem;
-  background: #edf2f7;
-  color: #4a5568;
-  border-radius: 6px;
-  font-size: 0.8rem;
+.author {
   font-weight: 500;
-}
-
-.discussion-card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 1rem;
-  border-top: 1px solid #e2e8f0;
-}
-
-.author-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.author-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.author-name {
-  font-size: 0.9rem;
   color: #4a5568;
-  font-weight: 500;
+}
+
+.time {
+  color: #a0aec0;
 }
 
 .discussion-stats {
   display: flex;
   gap: 1rem;
+  margin-left: auto;
 }
 
-.stat {
+.discussion-stats span {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  font-size: 0.9rem;
+  gap: 0.25rem;
   color: #718096;
-}
-
-.stat-icon {
-  font-size: 1rem;
 }
 
 /* Loading State */
@@ -296,8 +176,6 @@
   align-items: center;
   justify-content: center;
   padding: 4rem;
-  background: white;
-  border-radius: 12px;
 }
 
 .spinner {
@@ -321,44 +199,24 @@
 .loading-spinner p {
   margin-top: 1rem;
   color: #718096;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 /* Empty State */
 .no-discussions {
   text-align: center;
   padding: 4rem 2rem;
-  background: white;
-  border-radius: 12px;
 }
 
 .no-discussions h3 {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   color: #2d3748;
   margin-bottom: 0.5rem;
 }
 
 .no-discussions p {
   color: #718096;
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
-}
-
-.no-discussions button {
-  padding: 0.8rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 10px;
   font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.no-discussions button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 /* Pagination */
@@ -367,17 +225,17 @@
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  padding: 2rem;
-  background: white;
-  border-radius: 12px;
+  padding: 2rem 0;
+  margin-top: 2rem;
+  border-top: 1px solid #e2e8f0;
 }
 
 .pagination button {
-  padding: 0.6rem 1.2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0.5rem 1rem;
+  background: #667eea;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -390,13 +248,44 @@
 }
 
 .pagination button:not(:disabled):hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  background: #5568d3;
 }
 
 .page-info {
   font-weight: 600;
   color: #4a5568;
+}
+
+/* Floating Action Button - Bottom Right */
+.fab-button {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 2rem;
+  font-weight: 300;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.fab-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+}
+
+.fab-button:active {
+  transform: scale(0.95);
 }
 
 /* Responsive */
@@ -405,29 +294,40 @@
     padding: 1rem;
   }
 
-  .discussion-header {
+  .filter-row {
     flex-direction: column;
     gap: 1rem;
-    text-align: center;
   }
 
-  .header-content h1 {
-    font-size: 2rem;
-  }
-
-  .discussion-filters {
-    flex-direction: column;
-  }
-
-  .filter-group {
-    min-width: 100%;
-  }
-
+  .filter-item,
   .search-form {
+    width: 100%;
     min-width: 100%;
   }
 
-  .discussions-grid {
-    grid-template-columns: 1fr;
+  .discussion-item {
+    padding: 1rem 0;
+  }
+
+  .discussion-title {
+    font-size: 1.1rem;
+  }
+
+  .discussion-footer {
+    flex-wrap: wrap;
+  }
+
+  .discussion-stats {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+
+  .fab-button {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 55px;
+    height: 55px;
+    font-size: 1.8rem;
   }
 }
