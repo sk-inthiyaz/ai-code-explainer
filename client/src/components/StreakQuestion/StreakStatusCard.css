@@ -93,10 +93,19 @@
   margin-top: 8px;
 }
 .progress-fill { height: 100%; border-radius: 999px; }
+
+.streak-status-card .progress-text,
+.level-progress .progress-text,
 .progress-text { 
-  margin: 6px 0 0 0; 
-  opacity: 0.95;
-  color: white;
+  margin: 6px 0 0 0 !important; 
+  opacity: 0.95 !important;
+  color: white !important;
+  writing-mode: horizontal-tb !important;
+  transform: none !important;
+  text-orientation: mixed !important;
+  display: block !important;
+  width: 100% !important;
+  position: relative !important;
 }
 
 .badges-section { margin-top: 14px; }
