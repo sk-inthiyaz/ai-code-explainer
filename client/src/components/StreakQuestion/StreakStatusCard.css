@@ -56,15 +56,34 @@
   color: white;
 }
 
-.level-progress { margin-top: 14px; }
-.progress-header { 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center;
+.level-progress { 
+  margin-top: 14px; 
 }
-.progress-header h3,
+
+.streak-status-card .level-progress .progress-header,
+.level-progress .progress-header { 
+  display: flex !important; 
+  flex-direction: row !important;
+  justify-content: space-between !important; 
+  align-items: center !important;
+  margin-bottom: 8px !important;
+  width: 100% !important;
+}
+
+.streak-status-card .progress-header h3,
+.level-progress .progress-header h3,
+.progress-header h3 {
+  color: white !important;
+  margin: 0 !important;
+  flex: 1 !important;
+}
+
+.streak-status-card .progress-header span,
+.level-progress .progress-header span,
 .progress-header span {
-  color: white;
+  color: white !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
 }
 .progress-bar { 
   height: 10px; 
