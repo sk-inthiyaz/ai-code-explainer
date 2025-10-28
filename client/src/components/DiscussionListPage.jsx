@@ -19,6 +19,7 @@ const DiscussionListPage = () => {
     total: 0,
     pages: 0
   });
+  const [trendingDiscussions, setTrendingDiscussions] = useState([]);
 
   const languages = ['all', 'Java', 'Python', 'C++', 'JavaScript', 'General'];
   const topics = [
@@ -42,6 +43,7 @@ const DiscussionListPage = () => {
 
   useEffect(() => {
     fetchDiscussions();
+    fetchTrendingDiscussions();
   }, [filters, pagination.page]);
 
   const fetchDiscussions = async () => {
@@ -71,6 +73,22 @@ const DiscussionListPage = () => {
       toast.error('Failed to load discussions');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchTrendingDiscussions = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/discussions`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: {
+          sort: 'popular',
+          limit: 5
+        }
+      });
+      setTrendingDiscussions(response.data.discussions);
+    } catch (error) {
+      console.error('Error fetching trending discussions:', error);
     }
   };
 
@@ -110,9 +128,10 @@ const DiscussionListPage = () => {
   };
 
   return (
-    <div className="discussion-list-container">
-      {/* Filters at top */}
-      <div className="discussion-filters">
+    <div className="discussion-page-wrapper">
+      <div className="discussion-list-container">
+        {/* Filters at top */}
+        <div className="discussion-filters">
         <div className="filter-row">
           <div className="filter-item">
             <label>Language:</label>
@@ -233,6 +252,27 @@ const DiscussionListPage = () => {
         +
       </button>
     </div>
+
+    {/* Right Sidebar - Trending */}
+    <div className="trending-sidebar">
+      <h3>Top Trending Discussions</h3>
+      <div className="trending-list">
+        {trendingDiscussions.map(discussion => (
+          <div
+            key={discussion._id}
+            className="trending-item"
+            onClick={() => navigate(`/discussions/${discussion._id}`)}
+          >
+            <h4>{discussion.title}</h4>
+            <div className="trending-stats">
+              <span>👍 {discussion.votes}</span>
+              <span>💬 {discussion.commentCount}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
   );
 };
 
