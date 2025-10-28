@@ -1,13 +1,36 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./InteractivePractice.css";
+import leftArrowIcon from '../images/left-arrow (1).png';
 
 const InteractivePractice = () => {
   const navigate = useNavigate();
   return (
     <div className="ip-container">
       <div className="ip-hero">
-        <h1>Interactive Coding Practice</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+          <button 
+            className="back-button-icon" 
+            onClick={() => navigate('/LearnHub')}
+            title="Back to LearnHub"
+            style={{
+              background: 'var(--card-bg)',
+              border: '2px solid var(--border-color)',
+              borderRadius: '50%',
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              padding: '0'
+            }}
+          >
+            <img src={leftArrowIcon} alt="Back" style={{ width: '20px', height: '20px', filter: 'var(--icon-filter)' }} />
+          </button>
+          <h1 style={{ margin: 0 }}>Interactive Coding Practice</h1>
+        </div>
         <p>Master coding through hands-on practice and AI-powered guidance</p>
       </div>
 

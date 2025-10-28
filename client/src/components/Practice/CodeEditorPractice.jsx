@@ -501,9 +501,10 @@ const CodeEditorPractice = () => {
             </div>
           )}
 
-          <div className="monaco-editor-container">
+          <div className="monaco-editor-container" style={{ height: '520px', width: '100%', minHeight: '520px' }}>
             <Editor
               height="100%"
+              width="100%"
               language={languageMap[language].monacoLang}
               value={code}
               onChange={(value) => setCode(value || '')}
@@ -512,6 +513,7 @@ const CodeEditorPractice = () => {
                   ? 'vs-dark'
                   : 'light'
               }
+              loading={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>Loading editor...</div>}
               options={{
                 fontSize: 14,
                 minimap: { enabled: false },

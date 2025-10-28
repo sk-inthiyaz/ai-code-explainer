@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Practice.css';
+import leftArrowIcon from '../images/left-arrow (1).png';
 
 const PracticeDashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -54,8 +56,17 @@ const PracticeDashboard = () => {
   return (
     <div className="dashboard-container">
       <div className="practice-header">
-        <h1>📊 My Practice Progress</h1>
-        <p>Track your coding journey and celebrate your achievements</p>
+        <div className="problems-list-header">
+          <button 
+            className="back-button-icon" 
+            onClick={() => navigate('/LearnHub')}
+            title="Back to LearnHub"
+          >
+            <img src={leftArrowIcon} alt="Back" />
+          </button>
+          <h1>📊 My Practice Progress</h1>
+        </div>
+        <p style={{ marginTop: '0.5rem' }}>Track your coding journey and celebrate your achievements</p>
       </div>
 
       {/* Stats Grid */}

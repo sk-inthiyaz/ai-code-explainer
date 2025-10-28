@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Practice.css';
+import leftArrowIcon from '../images/left-arrow (1).png';
 
 const ProblemsList = () => {
   const [problems, setProblems] = useState([]);
@@ -70,11 +71,22 @@ const ProblemsList = () => {
     navigate(`/practice/problems/${problemId}`);
   };
 
+  const handleBackClick = () => {
+    navigate('/practice'); // Navigate back to practice dashboard
+  };
+
   return (
     <div className="practice-container">
-      <div className="practice-header">
+      {/* Header with Back Button and Title */}
+      <div className="problems-list-header">
+        <button 
+          className="back-button-icon" 
+          onClick={handleBackClick}
+          title="Back to Practice"
+        >
+          <img src={leftArrowIcon} alt="Back" />
+        </button>
         <h1>📚 Practice Problems</h1>
-        <p>Master your coding skills with curated problems from Easy to Hard difficulty</p>
       </div>
 
       {/* Filters */}

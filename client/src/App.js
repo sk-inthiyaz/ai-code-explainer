@@ -40,6 +40,7 @@ import PracticeDashboard from './components/Practice/PracticeDashboard';
 import AdminPracticeProblems from './components/Practice/AdminPracticeProblems';
 import InteractivePractice from './components/pages/InteractivePractice';
 import ProgressTrackerPage from './components/pages/ProgressTrackerPage';
+import DiscussionListPage from './components/DiscussionListPage';
 
 // Styles
 import './index.css';
@@ -310,6 +311,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <ProgressTrackerPage />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/discussions" 
+                element={
+                  <PrivateRoute>
+                    <DiscussionListPage />
                   </PrivateRoute>
                 } 
               />

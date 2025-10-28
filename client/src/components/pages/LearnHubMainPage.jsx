@@ -30,6 +30,12 @@ const LearnHubMainPage = () => {
       desc: "Track topics completed and badges earned",
       link: "/progress",
     },
+    {
+      icon: "💬",
+      title: "Discussions",
+      desc: "Join the community! Ask questions, share knowledge, and help others learn",
+      link: "/discussions",
+    },
   ];
 
   return (
