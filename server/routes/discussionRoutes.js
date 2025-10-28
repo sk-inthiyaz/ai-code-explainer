@@ -13,47 +13,47 @@ const {
   deleteComment,
   getUserDiscussions
 } = require('../controllers/discussionController');
-const authenticateToken = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 
 // ===================================
 // DISCUSSION ROUTES
 // ===================================
 
 // Get all discussions (with filters)
-router.get('/', authenticateToken, getDiscussions);
+router.get('/', auth, getDiscussions);
 
 // Get user's own discussions
-router.get('/my-discussions', authenticateToken, getUserDiscussions);
+router.get('/my-discussions', auth, getUserDiscussions);
 
 // Get single discussion
-router.get('/:id', authenticateToken, getDiscussionById);
+router.get('/:id', auth, getDiscussionById);
 
 // Create new discussion
-router.post('/', authenticateToken, createDiscussion);
+router.post('/', auth, createDiscussion);
 
 // Update discussion
-router.put('/:id', authenticateToken, updateDiscussion);
+router.put('/:id', auth, updateDiscussion);
 
 // Delete discussion
-router.delete('/:id', authenticateToken, deleteDiscussion);
+router.delete('/:id', auth, deleteDiscussion);
 
 // Vote on discussion
-router.post('/:id/vote', authenticateToken, voteDiscussion);
+router.post('/:id/vote', auth, voteDiscussion);
 
 // Mark as solved
-router.put('/:id/solved', authenticateToken, markAsSolved);
+router.put('/:id/solved', auth, markAsSolved);
 
 // ===================================
 // COMMENT ROUTES
 // ===================================
 
 // Add comment
-router.post('/:discussionId/comments', authenticateToken, addComment);
+router.post('/:discussionId/comments', auth, addComment);
 
 // Vote on comment
-router.post('/comments/:id/vote', authenticateToken, voteComment);
+router.post('/comments/:id/vote', auth, voteComment);
 
 // Delete comment
-router.delete('/comments/:id', authenticateToken, deleteComment);
+router.delete('/comments/:id', auth, deleteComment);
 
 module.exports = router;
