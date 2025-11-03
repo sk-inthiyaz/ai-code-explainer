@@ -4,7 +4,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import './DiscussionListPage.css';
 
-const DiscussionListPage = () => {
+const DiscussionListPage = ({ isDark }) => {
   const navigate = useNavigate();
   const [discussions, setDiscussions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +50,7 @@ const DiscussionListPage = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/discussions`, {
+      const response = await axios.get('http://localhost:5000/api/discussions', {
         headers: { Authorization: `Bearer ${token}` },
         params: {
           language: filters.language,
@@ -79,7 +79,7 @@ const DiscussionListPage = () => {
   const fetchTrendingDiscussions = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/discussions`, {
+      const response = await axios.get('http://localhost:5000/api/discussions', {
         headers: { Authorization: `Bearer ${token}` },
         params: {
           sort: 'popular',
@@ -132,54 +132,59 @@ const DiscussionListPage = () => {
       <div className="discussion-list-container">
         {/* Filters at top */}
         <div className="discussion-filters">
-        <div className="filter-row">
-          <div className="filter-item">
-            <label>Language:</label>
-            <select
-              value={filters.language}
-              onChange={(e) => handleFilterChange('language', e.target.value)}
-            >
-              {languages.map(lang => (
-                <option key={lang} value={lang}>{lang === 'all' ? 'All Languages' : lang}</option>
-              ))}
-            </select>
+          <div className="filter-row">
+            <div className="filter-item">
+              <label>Language:</label>
+              <select
+                value={filters.language}
+                onChange={(e) => handleFilterChange('language', e.target.value)}
+              >
+                {languages.map(lang => (
+                  <option key={lang} value={lang}>{lang === 'all' ? 'All Languages' : lang}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-item">
+              <label>Topic:</label>
+              <select
+                value={filters.topic}
+                onChange={(e) => handleFilterChange('topic', e.target.value)}
+              >
+                {topics.map(topic => (
+                  <option key={topic} value={topic}>{topic === 'all' ? 'All Topics' : topic}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-item">
+              <label>Sort by:</label>
+              <select
+                value={filters.sort}
+                onChange={(e) => handleFilterChange('sort', e.target.value)}
+              >
+                {sortOptions.map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <form onSubmit={handleSearch} className="search-form">
+              <input
+                type="text"
+                placeholder="Search discussions..."
+                value={filters.search}
+                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+              />
+              <button type="submit">🔍</button>
+            </form>
           </div>
 
-          <div className="filter-item">
-            <label>Topic:</label>
-            <select
-              value={filters.topic}
-              onChange={(e) => handleFilterChange('topic', e.target.value)}
-            >
-              {topics.map(topic => (
-                <option key={topic} value={topic}>{topic === 'all' ? 'All Topics' : topic}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-item">
-            <label>Sort by:</label>
-            <select
-              value={filters.sort}
-              onChange={(e) => handleFilterChange('sort', e.target.value)}
-            >
-              {sortOptions.map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-          </div>
-
-          <form onSubmit={handleSearch} className="search-form">
-            <input
-              type="text"
-              placeholder="Search discussions..."
-              value={filters.search}
-              onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-            />
-            <button type="submit">🔍</button>
-          </form>
+          {/* Create Discussion Button */}
+          <button className="btn-create-discussion" onClick={() => navigate('/discussions/new')}>
+            + Create Discussion
+          </button>
         </div>
-      </div>
 
       {/* Discussion List */}
       {loading ? (
@@ -201,7 +206,7 @@ const DiscussionListPage = () => {
                 className="discussion-item"
                 onClick={() => navigate(`/discussions/${discussion._id}`)}
               >
-                <div className="discussion-main">
+                <div className="discussion-content">
                   <h3 className="discussion-title">
                     {discussion.title}
                     {discussion.isSolved && <span className="solved-tag">✓ Solved</span>}
@@ -218,6 +223,11 @@ const DiscussionListPage = () => {
                       <span>💬 {discussion.commentCount}</span>
                       <span>👁️ {discussion.views}</span>
                     </div>
+                  </div>
+                </div>
+                <div className="discussion-avatar">
+                  <div className="user-avatar">
+                    {discussion.author?.name?.charAt(0).toUpperCase()}
                   </div>
                 </div>
               </div>

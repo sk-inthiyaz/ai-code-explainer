@@ -41,6 +41,8 @@ import AdminPracticeProblems from './components/Practice/AdminPracticeProblems';
 import InteractivePractice from './components/pages/InteractivePractice';
 import ProgressTrackerPage from './components/pages/ProgressTrackerPage';
 import DiscussionListPage from './components/DiscussionListPage';
+import NewDiscussionPage from './components/NewDiscussionPage';
+import DiscussionDetailPage from './components/DiscussionDetailPage';
 
 // Styles
 import './index.css';
@@ -318,7 +320,23 @@ function App() {
                 path="/discussions" 
                 element={
                   <PrivateRoute>
-                    <DiscussionListPage />
+                    <DiscussionListPage isDark={isDark} />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/discussions/new" 
+                element={
+                  <PrivateRoute>
+                    <NewDiscussionPage isDark={isDark} />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/discussions/:id" 
+                element={
+                  <PrivateRoute>
+                    <DiscussionDetailPage isDark={isDark} />
                   </PrivateRoute>
                 } 
               />
