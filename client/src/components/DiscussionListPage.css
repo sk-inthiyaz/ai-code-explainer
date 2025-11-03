@@ -17,6 +17,26 @@
   max-width: 900px;
 }
 
+/* Back Button */
+.btn-back-list {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-color);
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-back-list:hover {
+  background: var(--background-secondary);
+  border-color: var(--primary);
+}
+
 /* Filters - Simple Top Bar */
 .discussion-filters {
   margin-bottom: 2rem;

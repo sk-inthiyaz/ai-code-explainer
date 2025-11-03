@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import leftArrow from './images/left-arrow (1).png';
 import './DiscussionListPage.css';
 
 const DiscussionListPage = ({ isDark }) => {
@@ -130,6 +131,12 @@ const DiscussionListPage = ({ isDark }) => {
   return (
     <div className="discussion-page-wrapper">
       <div className="discussion-list-container">
+        {/* Back Button */}
+        <button className="btn-back-list" onClick={() => navigate(-1)}>
+          <img src={leftArrow} alt="Back" style={{ width: 20, height: 20, marginRight: 8 }} />
+          Back
+        </button>
+
         {/* Filters at top */}
         <div className="discussion-filters">
           <div className="filter-row">
