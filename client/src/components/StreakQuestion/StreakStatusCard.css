@@ -29,31 +29,58 @@
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+/* Increase specificity to avoid collisions with other .stats-grid rules */
+.streak-status-card .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 6px;
+  width: 100%;
 }
 
 .stat-box {
   background: rgba(255,255,255,0.12);
   border: 1px solid rgba(255,255,255,0.2);
   border-radius: 12px;
-  padding: 12px;
+  padding: 6px 8px;
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 1px;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 90px;
+  flex: 1;
+  min-width: 0;
 }
 
 .stat-box.primary { background: rgba(255,255,255,0.18); }
-.stat-icon { font-size: 20px; }
+.stat-icon { font-size: 20px; line-height: 1; }
 .stat-label { 
   margin: 0; 
   opacity: 0.85; 
-  font-size: 0.9rem;
+  font-size: 0.65rem;
   color: white;
+  line-height: 1.1;
+  word-break: break-word;
 }
 .stat-value { 
   margin: 0; 
   font-weight: 700;
   color: white;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.stat-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
 }
 
 .level-progress { 
