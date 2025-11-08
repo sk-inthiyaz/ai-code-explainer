@@ -43,27 +43,34 @@
 }
 
 .btn-back {
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
   gap: 8px;
   align-self: flex-start;
-  background: transparent;
-  border: 1px solid var(--border-color);
+  background: rgba(99, 102, 241, 0.1);
+  border: 2px solid var(--primary);
   border-radius: 12px;
   color: var(--text-color);
-  padding: 10px 16px;
+  padding: 12px 20px;
   cursor: pointer;
-  font-size: 15px;
-  transition: background 0.2s ease;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+  z-index: 999;
+  position: relative;
 }
 
 .btn-back img {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) saturate(100%) invert(100%);
 }
 
 .btn-back:hover {
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(99, 102, 241, 0.2);
+  border-color: var(--primary);
+  transform: translateX(-2px);
 }
 
 .profile-header h1 {
@@ -341,6 +348,90 @@
 .heatmap-cell:hover {
   transform: scale(1.1);
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+
+/* Bio Section */
+.profile-bio-section {
+  margin: 16px 0;
+  padding: 0;
+}
+
+.profile-bio-section .label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-color);
+  opacity: 0.9;
+}
+
+.profile-bio-input {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--card-background);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.profile-bio-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.profile-bio-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-color);
+  opacity: 0.85;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Show More Button */
+.btn-show-more {
+  width: 100%;
+  padding: 10px 16px;
+  margin: 12px 0;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-color);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-show-more:hover {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--primary);
+}
+
+/* Activity Section Inline (inside stats-column) - inherits stats-card styling */
+
+.activity-section-inline .activity-header {
+  margin-bottom: 20px;
+}
+
+.activity-section-inline .activity-header h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.activity-section-inline .activity-header p {
+  margin: 0;
+  color: rgba(148, 163, 184, 0.9);
+  font-size: 14px;
 }
 
 @media (max-width: 1100px) {
