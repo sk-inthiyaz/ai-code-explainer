@@ -20,6 +20,37 @@
   padding: 0 18px;
 }
 
+.navbar-left-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-back-btn {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  height: 32px;
+  min-width: 32px;
+}
+
+.navbar-back-btn:hover {
+  background: #f3f4f6;
+  border-color: #2563eb;
+}
+
+.navbar-back-btn img {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) saturate(100%) invert(47%) sepia(89%) saturate(1686%) hue-rotate(207deg) brightness(95%) contrast(92%);
+}
+
 .navbar-title {
   font-size: 1.1rem;
   font-weight: 700;
