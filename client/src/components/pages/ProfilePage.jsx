@@ -81,13 +81,12 @@ const HEAT_LEVELS = [
 const FALLBACK_AVATAR = `data:image/svg+xml;utf8,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><rect width="160" height="160" rx="80" fill="#312e81"/><circle cx="80" cy="62" r="34" fill="white" opacity="0.18"/><path d="M80 88c-24 0-44 17-44 38v12h88v-12c0-21-20-38-44-38z" fill="white" opacity="0.22"/><text x="50%" y="54%" text-anchor="middle" font-size="52" fill="white" font-family="Arial" dy="0.35em">AI</text></svg>'
 )}`;
-const PROFILE_PRIMARY_FIELDS = ['name', 'codingLevel'];
+const PROFILE_PRIMARY_FIELDS = ['name', 'codingLevel', 'bio'];
 const DETAIL_FIELDS = [
-  { name: 'email', label: 'Email', type: 'email' },
-  { name: 'phone', label: 'Phone', type: 'tel' },
-  { name: 'country', label: 'Country', type: 'text' },
-  { name: 'college', label: 'College', type: 'text' },
-  { name: 'age', label: 'Age', type: 'number' }
+  { name: 'email', label: 'Email', type: 'email', visible: true },
+  { name: 'phone', label: 'Phone', type: 'tel', visible: false },
+  { name: 'location', label: 'Location', type: 'text', visible: false },
+  { name: 'college', label: 'College', type: 'text', visible: false }
 ];
 const FORM_FIELD_KEYS = [...PROFILE_PRIMARY_FIELDS, ...DETAIL_FIELDS.map((field) => field.name)];
 
@@ -110,6 +109,7 @@ const ProfilePage = ({ isDark }) => {
   const [profile, setProfile] = useState(null);
   const [preview, setPreview] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [showMore, setShowMore] = useState(false);
   const [formValues, setFormValues] = useState(() => buildFormState(MOCK_PROFILE));
   const [loading, setLoading] = useState(true);
 
@@ -223,13 +223,15 @@ const ProfilePage = ({ isDark }) => {
   const handleAvatarChange = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    setPreview((previousUrl) => {
-      if (previousUrl) {
-        URL.revokeObjectURL(previousUrl);
-      }
-      return URL.createObjectURL(file);
-    });
-    setFormValues((prev) => ({ ...prev, avatarFile: file }));
+    
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result;
+      setPreview(base64String);
+      setFormValues((prev) => ({ ...prev, avatar: base64String }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleFieldChange = (event) => {
@@ -245,21 +247,23 @@ const ProfilePage = ({ isDark }) => {
         return;
       }
 
-      const formData = new FormData();
+      const payload = {};
       FORM_FIELD_KEYS.forEach((key) => {
         const value = formValues[key];
         if (value !== undefined && value !== null) {
-          formData.append(key, value);
+          payload[key] = value;
         }
       });
-      if (formValues.avatarFile instanceof File) {
-        formData.append('avatar', formValues.avatarFile);
+      
+      // Add avatar if it exists
+      if (formValues.avatar) {
+        payload.avatar = formValues.avatar;
       }
 
-      await axios.put('http://localhost:5000/api/profile/me', formData, {
+      await axios.put('http://localhost:5000/api/profile/me', payload, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'application/json'
         }
       });
 
@@ -311,11 +315,6 @@ const ProfilePage = ({ isDark }) => {
 
   return (
     <div className={`profile-page ${isDark ? 'dark' : 'light'}`}>
-      <button className="btn-back" onClick={() => navigate(-1)}>
-        <img src={leftArrow} alt="Back" />
-        Back
-      </button>
-
       <header className="profile-header">
         <h1>🧑‍💻 Profile Page</h1>
         <p className="subtitle">Review your coding journey, update your profile, and stay on track.</p>
@@ -352,6 +351,58 @@ const ProfilePage = ({ isDark }) => {
                 <Line type="monotone" dataKey="streak" stroke="#6366F1" strokeWidth={3} dot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
+          </div>
+
+          {/* Coding Activity Section - Moved here */}
+          <div className="stats-card activity-section-inline">
+            <div className="activity-header">
+              <h2>🔥 Coding Activity</h2>
+              <p>Track your daily progress across learning, practice, and streak challenges.</p>
+            </div>
+            <div className="heatmap-container">
+              <div className="heatmap-grid">
+                {activityGrid.weeks.map((week, weekIndex) => (
+                  <div key={`week-${weekIndex}`} className="heatmap-week">
+                    {week.map((day) => {
+                      const level = HEAT_LEVELS.slice().reverse().find((threshold) => day.count >= threshold.threshold);
+                      const learningCount = day.learningTicks || 0;
+                      const practiceCount = day.practiceProblems || 0;
+                      const streakCount = day.streakCompleted || 0;
+                      const totalCount = learningCount + practiceCount + streakCount;
+                      
+                      const tooltipText = `${new Date(day.date).toLocaleDateString()}\n` +
+                        `Total Activities: ${totalCount}\n` +
+                        `📚 Learning: ${learningCount}\n` +
+                        `💻 Practice: ${practiceCount}\n` +
+                        `🔥 Streak: ${streakCount}`;
+                      
+                      return (
+                        <div
+                          key={day.date}
+                          className="heatmap-cell"
+                          style={{ backgroundColor: level?.color }}
+                          title={tooltipText}
+                        />
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+              <div className="heatmap-months">
+                {activityGrid.months.map((month, idx) => (
+                  <div
+                    key={`${month.name}-${idx}`}
+                    className="month-label"
+                    style={{ 
+                      left: `${(month.startWeek / 20) * 100}%`,
+                      width: `${(month.weekCount / 20) * 100}%`
+                    }}
+                  >
+                    {month.name}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -400,8 +451,46 @@ const ProfilePage = ({ isDark }) => {
               <p className="joined-on">Joined on {joinedLabel}</p>
             </div>
 
+            {/* Bio Section */}
+            <div className="profile-bio-section">
+              {isEditing ? (
+                <textarea
+                  className="profile-bio-input"
+                  name="bio"
+                  value={formValues.bio || ''}
+                  placeholder="Tell us about yourself..."
+                  onChange={handleFieldChange}
+                  rows={3}
+                />
+              ) : (
+                <p className="profile-bio-text">
+                  {profile?.bio || 'No bio added yet.'}
+                </p>
+              )}
+            </div>
+
             <div className="profile-details">
-              {DETAIL_FIELDS.map(({ name, label, type }) => (
+              {/* Always visible field - Email */}
+              {DETAIL_FIELDS.filter(f => f.visible).map(({ name, label, type }) => (
+                <div className="detail-row" key={name}>
+                  <span className="label">{label}</span>
+                  {isEditing ? (
+                    <input
+                      type={type}
+                      name={name}
+                      value={formValues[name] ?? ''}
+                      onChange={handleFieldChange}
+                    />
+                  ) : (
+                    <span className="value">
+                      {profile && (profile[name] || profile[name] === 0) ? profile[name] : '—'}
+                    </span>
+                  )}
+                </div>
+              ))}
+
+              {/* Collapsible fields */}
+              {showMore && DETAIL_FIELDS.filter(f => !f.visible).map(({ name, label, type }) => (
                 <div className="detail-row" key={name}>
                   <span className="label">{label}</span>
                   {isEditing ? (
@@ -419,6 +508,17 @@ const ProfilePage = ({ isDark }) => {
                 </div>
               ))}
             </div>
+
+            {/* Show More Button */}
+            {!isEditing && (
+              <button 
+                type="button" 
+                className="btn-show-more" 
+                onClick={() => setShowMore(!showMore)}
+              >
+                {showMore ? '▲ Show Less' : '▼ Show More'}
+              </button>
+            )}
 
             <div className="profile-actions">
               {isEditing ? (
@@ -438,57 +538,6 @@ const ProfilePage = ({ isDark }) => {
             </div>
           </div>
         </aside>
-      </section>
-
-      <section className="activity-section">
-        <div className="activity-header">
-          <h2>🔥 Coding Activity</h2>
-          <p>Track your daily progress across learning, practice, and streak challenges.</p>
-        </div>
-        <div className="heatmap-container">
-          <div className="heatmap-grid">
-            {activityGrid.weeks.map((week, weekIndex) => (
-              <div key={`week-${weekIndex}`} className="heatmap-week">
-                {week.map((day) => {
-                  const level = HEAT_LEVELS.slice().reverse().find((threshold) => day.count >= threshold.threshold);
-                  const learningCount = day.learningTicks || 0;
-                  const practiceCount = day.practiceProblems || 0;
-                  const streakCount = day.streakCompleted || 0;
-                  const totalCount = learningCount + practiceCount + streakCount;
-                  
-                  const tooltipText = `${new Date(day.date).toLocaleDateString()}\n` +
-                    `Total Activities: ${totalCount}\n` +
-                    `📚 Learning: ${learningCount}\n` +
-                    `💻 Practice: ${practiceCount}\n` +
-                    `🔥 Streak: ${streakCount}`;
-                  
-                  return (
-                    <div
-                      key={day.date}
-                      className="heatmap-cell"
-                      style={{ backgroundColor: level?.color }}
-                      title={tooltipText}
-                    />
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-          <div className="heatmap-months">
-            {activityGrid.months.map((month, idx) => (
-              <div
-                key={`${month.name}-${idx}`}
-                className="month-label"
-                style={{ 
-                  left: `${(month.startWeek / 20) * 100}%`,
-                  width: `${(month.weekCount / 20) * 100}%`
-                }}
-              >
-                {month.name}
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
     </div>
   );
