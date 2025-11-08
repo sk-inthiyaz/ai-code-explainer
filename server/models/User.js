@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  resetPasswordToken: {
+    type: String
+  },
+  resetPasswordExpires: {
+    type: Date
+  },
   bio: {
     type: String,
     default: ''
@@ -37,6 +43,20 @@ const userSchema = new mongoose.Schema({
   isAdmin: {
     type: Boolean,
     default: false
+  },
+  notifications: {
+    emailNotifications: {
+      type: Boolean,
+      default: true
+    },
+    streakReminders: {
+      type: Boolean,
+      default: true
+    },
+    discussionUpdates: {
+      type: Boolean,
+      default: true
+    }
   },
   streak: {
     currentStreak: {
