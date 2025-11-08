@@ -131,12 +131,6 @@ const DiscussionListPage = ({ isDark }) => {
   return (
     <div className="discussion-page-wrapper">
       <div className="discussion-list-container">
-        {/* Back Button */}
-        <button className="btn-back-list" onClick={() => navigate(-1)}>
-          <img src={leftArrow} alt="Back" style={{ width: 20, height: 20, marginRight: 8 }} />
-          Back
-        </button>
-
         {/* Filters at top */}
         <div className="discussion-filters">
           <div className="filter-row">
