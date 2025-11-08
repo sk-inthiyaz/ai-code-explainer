@@ -129,9 +129,6 @@ const ProgressTrackerPage = () => {
       {/* Header */}
       <div className="progress-header">
         <div className="header-top">
-          <button className="back-btn" onClick={() => navigate('/LearnHub')}>
-            <img src={leftArrowIcon} alt="Back" />
-          </button>
           <div className="header-content">
             <h1>📊 Your Progress Dashboard</h1>
             <p>Track your learning journey across all platforms</p>

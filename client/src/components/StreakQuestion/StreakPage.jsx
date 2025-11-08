@@ -157,9 +157,6 @@ const StreakPage = () => {
       <div className="streak-container">
         <div className="streak-header">
           <div className="title-row-header">
-            <Link to="/LearnHub" className="btn-back">
-              <img src={leftArrow} alt="Back" style={{ width: 24, height: 24, verticalAlign: 'middle' }} />
-            </Link>
             <h1>🔥 Daily Streak Challenge</h1>
           </div>
           <p>Solve today's problem, keep your streak alive, and climb the leaderboard.</p>

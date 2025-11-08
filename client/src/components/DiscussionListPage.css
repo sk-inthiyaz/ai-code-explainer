@@ -2,9 +2,9 @@
 .discussion-page-wrapper {
   display: flex;
   gap: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1rem 1rem 2rem;
+  max-width: 100%;
+  margin: 0;
+  padding: 1rem 0.5rem 2rem;
   min-height: calc(100vh - 44px);
   background: var(--background-primary);
   color: var(--text-color);
