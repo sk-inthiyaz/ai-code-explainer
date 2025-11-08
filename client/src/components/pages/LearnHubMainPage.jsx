@@ -36,6 +36,12 @@ const LearnHubMainPage = () => {
       desc: "Join the community! Ask questions, share knowledge, and help others learn",
       link: "/discussions",
     },
+    {
+      icon: "🧑‍💻",
+      title: "Profile Page",
+      desc: "Review your coding journey, update your profile, and stay on track",
+      link: "/profile",
+    },
   ];
 
   return (
