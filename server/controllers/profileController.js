@@ -233,7 +233,60 @@ async function calculateActivityHeatmap(userId, streakSubmissions, practiceSubmi
   return heatmap;
 }
 
+// Get another user's profile
+const getUserProfileById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    const user = await User.findById(userId)
+      .select('-password')
+      .populate('completedQuestions.questionId', 'title levelName activeDate');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const streakSubmissions = await Submission.find({ 
+      userId,
+      status: 'accepted'
+    }).sort({ createdAt: 1 });
+
+    const practiceSubmissions = await PracticeSubmission.find({
+      userId,
+      status: 'accepted'
+    }).sort({ submittedAt: 1 });
+
+    const solvedPerWeek = calculateSolvedPerWeek(streakSubmissions, practiceSubmissions);
+    const streakHistory = calculateStreakHistory(user);
+    const heatmap = await calculateActivityHeatmap(userId, streakSubmissions, practiceSubmissions);
+
+    const profileData = {
+      name: user.name,
+      email: user.email,
+      bio: user.bio || '',
+      phone: user.phone || '',
+      location: user.country || '',
+      college: user.college || '',
+      avatarUrl: user.avatarUrl || '',
+      joinedOn: user.createdAt,
+      codingLevel: user.level || 'Beginner',
+      codingLevelPercent: Math.min((user.streak || 0) * 2, 100),
+      stats: {
+        solvedPerWeek,
+        streakHistory,
+        heatmap
+      }
+    };
+
+    res.json(profileData);
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ message: 'Failed to fetch user profile', error: error.message });
+  }
+};
+
 module.exports = {
   getUserProfile,
-  updateUserProfile
+  updateUserProfile,
+  getUserProfileById
 };

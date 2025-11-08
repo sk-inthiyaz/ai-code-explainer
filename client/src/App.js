@@ -349,6 +349,14 @@ function App() {
                   </PrivateRoute>
                 } 
               />
+              <Route 
+                path="/user/:userId" 
+                element={
+                  <PrivateRoute>
+                    <ProfilePage isDark={isDark} />
+                  </PrivateRoute>
+                } 
+              />
             </Routes>
           </main>
         </div>

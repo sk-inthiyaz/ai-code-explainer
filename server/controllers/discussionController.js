@@ -40,7 +40,7 @@ const getDiscussions = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const discussions = await Discussion.find(query)
-      .populate('author', 'name email')
+      .populate('author', 'name email avatarUrl')
       .sort(sortOption)
       .limit(parseInt(limit))
       .skip(skip)
@@ -70,7 +70,7 @@ const getDiscussionById = async (req, res) => {
     const userId = req.user?._id || req.user?.userId;
 
     const discussion = await Discussion.findById(id)
-      .populate('author', 'name email');
+      .populate('author', 'name email avatarUrl');
 
     if (!discussion) {
       return res.status(404).json({ message: 'Discussion not found' });
@@ -85,14 +85,14 @@ const getDiscussionById = async (req, res) => {
 
     // Get comments for this discussion
     const comments = await Comment.find({ discussionId: id, parentCommentId: null })
-      .populate('author', 'name email')
+      .populate('author', 'name email avatarUrl')
       .sort({ votes: -1, createdAt: 1 })
       .lean();
 
     // Get replies for each comment
     for (let comment of comments) {
       const replies = await Comment.find({ parentCommentId: comment._id })
-        .populate('author', 'name email')
+        .populate('author', 'name email avatarUrl')
         .sort({ createdAt: 1 })
         .lean();
       comment.replies = replies;
