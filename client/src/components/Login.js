@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiMail, FiLock, FiEye, FiEyeOff, FiCode, FiArrowRight } from 'react-icons/fi';
+import { FiMail, FiLock, FiEye, FiEyeOff, FiCode, FiArrowRight, FiCheck } from 'react-icons/fi';
 import './Login.css';
 
 const Login = () => {
@@ -69,25 +69,25 @@ const Login = () => {
             <div className="brand-icon">
               <FiCode className="code-icon" />
             </div>
-            <h1 className="brand-title">AI Code Explainer</h1>
+            <h1 className="brand-title">Coding Hub</h1>
             <p className="brand-subtitle">
               Master coding with AI-powered explanations, interactive practice, and personalized learning paths
             </p>
             <div className="brand-features">
               <div className="feature-item">
-                <div className="feature-icon">✨</div>
+                <FiCheck className="check-icon" />
                 <span>AI-Powered Learning</span>
               </div>
               <div className="feature-item">
-                <div className="feature-icon">🎯</div>
+                <FiCheck className="check-icon" />
                 <span>Interactive Practice</span>
               </div>
               <div className="feature-item">
-                <div className="feature-icon">🔥</div>
+                <FiCheck className="check-icon" />
                 <span>Daily Streak Challenges</span>
               </div>
               <div className="feature-item">
-                <div className="feature-icon">💬</div>
+                <FiCheck className="check-icon" />
                 <span>Community Discussions</span>
               </div>
             </div>
