@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  bio: {
+    type: String,
+    default: ''
+  },
   phone: {
     type: String,
     default: ''
@@ -25,10 +29,6 @@ const userSchema = new mongoose.Schema({
   college: {
     type: String,
     default: ''
-  },
-  age: {
-    type: Number,
-    default: null
   },
   avatarUrl: {
     type: String,

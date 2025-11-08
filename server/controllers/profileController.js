@@ -46,10 +46,10 @@ const getUserProfile = async (req, res) => {
     const profileData = {
       name: user.name,
       email: user.email,
+      bio: user.bio || '',
       phone: user.phone || '',
-      country: user.country || '',
+      location: user.country || '',
       college: user.college || '',
-      age: user.age || null,
       joinedOn: user.createdAt,
       codingLevel: StreakQuestion.getLevelName(user.level),
       codingLevelPercent: ((user.level - 1) / 4) * 100, // Level 1-5 mapped to 0-100%
@@ -80,24 +80,22 @@ const updateUserProfile = async (req, res) => {
       return res.status(401).json({ message: 'User not authenticated' });
     }
 
-    const { name, email, phone, country, college, age, codingLevel } = req.body;
+    const { name, email, bio, phone, location, college, codingLevel, avatar } = req.body;
     
     const updateFields = {};
     if (name) updateFields.name = name;
     if (email) updateFields.email = email;
+    if (bio !== undefined) updateFields.bio = bio;
     if (phone !== undefined) updateFields.phone = phone;
-    if (country !== undefined) updateFields.country = country;
+    if (location !== undefined) updateFields.country = location;
     if (college !== undefined) updateFields.college = college;
-    if (age !== undefined) updateFields.age = parseInt(age);
     if (codingLevel) {
       updateFields.level = StreakQuestion.getLevelNumber(codingLevel);
     }
 
-    // Handle avatar upload if present
-    if (req.file) {
-      // You can implement file upload logic here
-      // For now, we'll just store the filename
-      updateFields.avatarUrl = `/uploads/avatars/${req.file.filename}`;
+    // Handle avatar as base64 string
+    if (avatar && avatar.startsWith('data:image')) {
+      updateFields.avatarUrl = avatar;
     }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -115,10 +113,10 @@ const updateUserProfile = async (req, res) => {
       user: {
         name: updatedUser.name,
         email: updatedUser.email,
+        bio: updatedUser.bio,
         phone: updatedUser.phone,
-        country: updatedUser.country,
+        location: updatedUser.country,
         college: updatedUser.college,
-        age: updatedUser.age,
         avatarUrl: updatedUser.avatarUrl
       }
     });
