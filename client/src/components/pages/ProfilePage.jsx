@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import {
@@ -106,12 +106,14 @@ const buildFormState = (source) => {
 
 const ProfilePage = ({ isDark }) => {
   const navigate = useNavigate();
+  const { userId } = useParams();
   const [profile, setProfile] = useState(null);
   const [preview, setPreview] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [formValues, setFormValues] = useState(() => buildFormState(MOCK_PROFILE));
   const [loading, setLoading] = useState(true);
+  const [isOwnProfile, setIsOwnProfile] = useState(true);
 
   useEffect(() => {
     let mounted = true;
@@ -126,10 +128,19 @@ const ProfilePage = ({ isDark }) => {
           }
           return;
         }
-        const response = await axios.get('http://localhost:5000/api/profile/me', {
+
+        const endpoint = userId 
+          ? `http://localhost:5000/api/profile/user/${userId}`
+          : 'http://localhost:5000/api/profile/me';
+        
+        const response = await axios.get(endpoint, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (!mounted) return;
+
+        const currentUser = JSON.parse(localStorage.getItem('user'));
+        const isOwn = !userId || userId === (currentUser?._id || currentUser?.userId);
+        setIsOwnProfile(isOwn);
 
         if (response.data) {
           const profileData = {
@@ -161,7 +172,7 @@ const ProfilePage = ({ isDark }) => {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     return () => {
@@ -417,10 +428,12 @@ const ProfilePage = ({ isDark }) => {
               >
                 <img src={avatarSrc} alt="Profile" className="profile-avatar" />
               </div>
-              <label className="btn-outline small">
-                Upload Photo
-                <input type="file" accept="image/*" onChange={handleAvatarChange} hidden />
-              </label>
+              {isOwnProfile && (
+                <label className="btn-outline small">
+                  Upload Photo
+                  <input type="file" accept="image/*" onChange={handleAvatarChange} hidden />
+                </label>
+              )}
             </div>
 
             <div className="profile-info">
@@ -520,22 +533,24 @@ const ProfilePage = ({ isDark }) => {
               </button>
             )}
 
-            <div className="profile-actions">
-              {isEditing ? (
-                <>
-                  <button type="button" className="btn-primary" onClick={handleSaveProfile}>
-                    Save Changes
+            {isOwnProfile && (
+              <div className="profile-actions">
+                {isEditing ? (
+                  <>
+                    <button type="button" className="btn-primary" onClick={handleSaveProfile}>
+                      Save Changes
+                    </button>
+                    <button type="button" className="btn-outline" onClick={handleCancelEdit}>
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button type="button" className="btn-primary" onClick={() => setIsEditing(true)}>
+                    ✏️ Edit Profile
                   </button>
-                  <button type="button" className="btn-outline" onClick={handleCancelEdit}>
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <button type="button" className="btn-primary" onClick={() => setIsEditing(true)}>
-                  ✏️ Edit Profile
-                </button>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
         </aside>
       </section>
