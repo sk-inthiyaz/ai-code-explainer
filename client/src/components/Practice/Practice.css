@@ -5,8 +5,8 @@
 .practice-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 1rem 2rem 2rem;
-  min-height: 100vh;
+  padding: 0.5rem 1rem 2rem;
+  min-height: calc(100vh - 44px);
 }
 
 /* Problems List Header with Back Button */
@@ -15,7 +15,7 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
-  padding-top: 1rem;
+  padding-top: 0.5rem;
 }
 
 .problems-list-header h1 {

@@ -3,9 +3,9 @@
    =================================== */
 
 .progress-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 44px);
   background: var(--bg-primary);
-  padding: 2rem;
+  padding: 1rem 1rem 2rem;
 }
 
 /* ===================================
