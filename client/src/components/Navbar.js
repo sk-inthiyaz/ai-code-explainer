@@ -14,6 +14,11 @@ const Navbar = ({ isDark, toggleDarkMode }) => {
           {user && (
             <span className="navbar-welcome">Welcome, {user.name}</span>
           )}
+          {user && (
+            <Link to="/profile" className="navbar-link">
+              Profile
+            </Link>
+          )}
           {user ? (
             <button onClick={logout} className="navbar-logout-btn">
               Logout

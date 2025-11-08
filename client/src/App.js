@@ -43,6 +43,7 @@ import ProgressTrackerPage from './components/pages/ProgressTrackerPage';
 import DiscussionListPage from './components/DiscussionListPage';
 import NewDiscussionPage from './components/NewDiscussionPage';
 import DiscussionDetailPage from './components/DiscussionDetailPage';
+import ProfilePage from './components/pages/ProfilePage';
 
 // Styles
 import './index.css';
@@ -337,6 +338,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <DiscussionDetailPage isDark={isDark} />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/profile" 
+                element={
+                  <PrivateRoute>
+                    <ProfilePage isDark={isDark} />
                   </PrivateRoute>
                 } 
               />

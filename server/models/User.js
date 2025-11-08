@@ -14,6 +14,26 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  phone: {
+    type: String,
+    default: ''
+  },
+  country: {
+    type: String,
+    default: ''
+  },
+  college: {
+    type: String,
+    default: ''
+  },
+  age: {
+    type: Number,
+    default: null
+  },
+  avatarUrl: {
+    type: String,
+    default: ''
+  },
   isAdmin: {
     type: Boolean,
     default: false
