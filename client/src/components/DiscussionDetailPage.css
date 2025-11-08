@@ -71,6 +71,13 @@
   color: white;
   font-weight: 700;
   font-size: 1.2rem;
+  overflow: hidden;
+}
+
+.author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .author-avatar.small {
@@ -88,6 +95,10 @@
 .author-name {
   font-weight: 600;
   color: var(--text-color);
+}
+
+.author-name:hover {
+  text-decoration: underline;
 }
 
 .post-time {

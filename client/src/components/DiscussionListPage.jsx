@@ -205,9 +205,12 @@ const DiscussionListPage = ({ isDark }) => {
               <div
                 key={discussion._id}
                 className="discussion-item"
-                onClick={() => navigate(`/discussions/${discussion._id}`)}
               >
-                <div className="discussion-content">
+                <div 
+                  className="discussion-content"
+                  onClick={() => navigate(`/discussions/${discussion._id}`)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <h3 className="discussion-title">
                     {discussion.title}
                     {discussion.isSolved && <span className="solved-tag">✓ Solved</span>}
@@ -226,9 +229,25 @@ const DiscussionListPage = ({ isDark }) => {
                     </div>
                   </div>
                 </div>
-                <div className="discussion-avatar">
+                <div 
+                  className="discussion-avatar"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/user/${discussion.author?._id}`);
+                  }}
+                  style={{ cursor: 'pointer' }}
+                  title={`View ${discussion.author?.name}'s profile`}
+                >
                   <div className="user-avatar">
-                    {discussion.author?.name?.charAt(0).toUpperCase()}
+                    {discussion.author?.avatarUrl ? (
+                      <img 
+                        src={discussion.author.avatarUrl} 
+                        alt={discussion.author.name}
+                        style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      discussion.author?.name?.charAt(0).toUpperCase()
+                    )}
                   </div>
                 </div>
               </div>

@@ -226,11 +226,31 @@ const DiscussionDetailPage = ({ isDark }) => {
         <div className="discussion-content-card">
           <div className="discussion-header-row">
             <div className="author-section">
-              <div className="author-avatar">
-                {discussion.author?.name?.charAt(0).toUpperCase()}
+              <div 
+                className="author-avatar"
+                onClick={() => navigate(`/user/${discussion.author?._id}`)}
+                style={{ cursor: 'pointer' }}
+                title={`View ${discussion.author?.name}'s profile`}
+              >
+                {discussion.author?.avatarUrl ? (
+                  <img 
+                    src={discussion.author.avatarUrl} 
+                    alt={discussion.author.name}
+                    style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  discussion.author?.name?.charAt(0).toUpperCase()
+                )}
               </div>
               <div className="author-info">
-                <span className="author-name">{discussion.author?.name}</span>
+                <span 
+                  className="author-name"
+                  onClick={() => navigate(`/user/${discussion.author?._id}`)}
+                  style={{ cursor: 'pointer' }}
+                  title={`View ${discussion.author?.name}'s profile`}
+                >
+                  {discussion.author?.name}
+                </span>
                 <span className="post-time">{formatTimeAgo(discussion.createdAt)}</span>
               </div>
             </div>
@@ -348,10 +368,30 @@ const DiscussionDetailPage = ({ isDark }) => {
               <div key={comment._id} className="comment-item">
                 <div className="comment-header">
                   <div className="comment-author">
-                    <div className="author-avatar small">
-                      {comment.author?.name?.charAt(0).toUpperCase()}
+                    <div 
+                      className="author-avatar small"
+                      onClick={() => navigate(`/user/${comment.author?._id}`)}
+                      style={{ cursor: 'pointer' }}
+                      title={`View ${comment.author?.name}'s profile`}
+                    >
+                      {comment.author?.avatarUrl ? (
+                        <img 
+                          src={comment.author.avatarUrl} 
+                          alt={comment.author.name}
+                          style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        comment.author?.name?.charAt(0).toUpperCase()
+                      )}
                     </div>
-                    <span className="author-name">{comment.author?.name}</span>
+                    <span 
+                      className="author-name"
+                      onClick={() => navigate(`/user/${comment.author?._id}`)}
+                      style={{ cursor: 'pointer' }}
+                      title={`View ${comment.author?.name}'s profile`}
+                    >
+                      {comment.author?.name}
+                    </span>
                     <span className="comment-time">{formatTimeAgo(comment.createdAt)}</span>
                   </div>
 
@@ -389,10 +429,30 @@ const DiscussionDetailPage = ({ isDark }) => {
                       <div key={reply._id} className="reply-item">
                         <div className="comment-header">
                           <div className="comment-author">
-                            <div className="author-avatar small">
-                              {reply.author?.name?.charAt(0).toUpperCase()}
+                            <div 
+                              className="author-avatar small"
+                              onClick={() => navigate(`/user/${reply.author?._id}`)}
+                              style={{ cursor: 'pointer' }}
+                              title={`View ${reply.author?.name}'s profile`}
+                            >
+                              {reply.author?.avatarUrl ? (
+                                <img 
+                                  src={reply.author.avatarUrl} 
+                                  alt={reply.author.name}
+                                  style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                                />
+                              ) : (
+                                reply.author?.name?.charAt(0).toUpperCase()
+                              )}
                             </div>
-                            <span className="author-name">{reply.author?.name}</span>
+                            <span 
+                              className="author-name"
+                              onClick={() => navigate(`/user/${reply.author?._id}`)}
+                              style={{ cursor: 'pointer' }}
+                              title={`View ${reply.author?.name}'s profile`}
+                            >
+                              {reply.author?.name}
+                            </span>
                             <span className="comment-time">{formatTimeAgo(reply.createdAt)}</span>
                           </div>
 
