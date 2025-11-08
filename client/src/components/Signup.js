@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { FiMail, FiLock, FiEye, FiEyeOff, FiUser, FiCode, FiArrowRight, FiCheck } from 'react-icons/fi';
+import './Signup.css';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -7,14 +9,26 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
       const response = await fetch('http://localhost:5000/api/auth/signup', {
@@ -31,113 +45,184 @@ const Signup = () => {
         throw new Error(data.message || 'Signup failed');
       }
 
-      alert('Signup successful! Please login.');
+      alert('🎉 Signup successful! Please login.');
       navigate('/login');
     } catch (error) {
       console.error('Signup error:', error);
       setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Create your account
-        </h2>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-
-
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
-              <div className="mt-1">
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
+    <div className="signup-page">
+      <div className="signup-container">
+        {/* Left Side - Branding */}
+        <div className="signup-branding">
+          <div className="branding-content">
+            <div className="brand-icon">
+              <FiCode className="code-icon" />
+            </div>
+            <h1 className="brand-title">Join Coding Hub</h1>
+            <p className="brand-subtitle">
+              Start your coding journey with AI-powered learning and practice
+            </p>
+            <div className="brand-features">
+              <div className="feature-item">
+                <FiCheck className="check-icon" />
+                <span>Free forever - No credit card required</span>
+              </div>
+              <div className="feature-item">
+                <FiCheck className="check-icon" />
+                <span>Access to all learning resources</span>
+              </div>
+              <div className="feature-item">
+                <FiCheck className="check-icon" />
+                <span>Track your progress & streaks</span>
+              </div>
+              <div className="feature-item">
+                <FiCheck className="check-icon" />
+                <span>Join our coding community</span>
               </div>
             </div>
+          </div>
+        </div>
 
-            
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
+        {/* Right Side - Signup Form */}
+        <div className="signup-form-section">
+          <div className="signup-form-container">
+            <div className="signup-header">
+              <h2 className="signup-title">Create Account</h2>
+              <p className="signup-subtitle">Sign up to start learning today</p>
             </div>
 
-            
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
+            <form className="signup-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="name" className="form-label">
+                  Full Name
+                </label>
+                <div className="input-wrapper">
+                  <FiUser className="input-icon" />
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="form-input"
+                    placeholder="John Doe"
+                    disabled={isLoading}
+                  />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                Confirm Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">
+                  Email Address
+                </label>
+                <div className="input-wrapper">
+                  <FiMail className="input-icon" />
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="form-input"
+                    placeholder="you@example.com"
+                    disabled={isLoading}
+                  />
+                </div>
               </div>
-            </div>
 
-            {error && (
-              <div className="text-red-500 text-sm">
-                {error}
+              <div className="form-group">
+                <label htmlFor="password" className="form-label">
+                  Password
+                </label>
+                <div className="input-wrapper">
+                  <FiLock className="input-icon" />
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="form-input"
+                    placeholder="At least 6 characters"
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="password-toggle"
+                    tabIndex="-1"
+                  >
+                    {showPassword ? <FiEyeOff /> : <FiEye />}
+                  </button>
+                </div>
               </div>
-            )}
 
-            <div>
+              <div className="form-group">
+                <label htmlFor="confirmPassword" className="form-label">
+                  Confirm Password
+                </label>
+                <div className="input-wrapper">
+                  <FiLock className="input-icon" />
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="form-input"
+                    placeholder="Re-enter your password"
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="password-toggle"
+                    tabIndex="-1"
+                  >
+                    {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                  </button>
+                </div>
+              </div>
+
+              {error && (
+                <div className="error-message">
+                  <span>⚠️</span> {error}
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="signup-button"
+                disabled={isLoading}
               >
-                Sign up
+                {isLoading ? (
+                  <>
+                    <span className="spinner"></span>
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    Create Account
+                    <FiArrowRight className="button-icon" />
+                  </>
+                )}
               </button>
+            </form>
+
+            <div className="login-prompt">
+              <p>Already have an account? <Link to="/login" className="login-link">Sign in</Link></p>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
