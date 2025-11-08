@@ -18,7 +18,7 @@ const Sidebar = ({ onNewChat, onSelectHistory, onOpenLearnHub, onOpenAbout, onDe
       </button>
       <nav className={`sidebar-root${isOpen ? " open" : ""}`}>
         <div className="sidebar-header">
-          <span className="sidebar-title">AI Code Explainer</span>
+          <span className="sidebar-title">Coding Hub</span>
         </div>
         <ul className="sidebar-menu">
           <li onClick={onNewChat} className="sidebar-menu-item">

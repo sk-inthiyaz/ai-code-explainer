@@ -6,6 +6,8 @@ import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 import PrivateRoute from "./components/PrivateRoute";
 import ChatPage from "./components/pages/ChatPage";
 import LearnHubMainPage from './components/pages/LearnHubMainPage';
@@ -44,6 +46,7 @@ import DiscussionListPage from './components/DiscussionListPage';
 import NewDiscussionPage from './components/NewDiscussionPage';
 import DiscussionDetailPage from './components/DiscussionDetailPage';
 import ProfilePage from './components/pages/ProfilePage';
+import SettingsPage from './components/pages/SettingsPage';
 
 // Styles
 import './index.css';
@@ -153,6 +156,8 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route 
                 path="/admin/dashboard" 
                 element={
@@ -354,6 +359,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <ProfilePage isDark={isDark} />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/settings" 
+                element={
+                  <PrivateRoute>
+                    <SettingsPage isDark={isDark} />
                   </PrivateRoute>
                 } 
               />

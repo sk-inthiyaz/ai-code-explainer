@@ -2,20 +2,22 @@
 
 .sidebar-hamburger {
   position: fixed;
-  top: 18px;
-  left: 18px;
+  top: 70px;
+  left: 15px;
   z-index: 120;
-  background: var(--chat-bg);
+  background: var(--primary);
   border: none;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  padding: 6px 8px;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+  padding: 8px 10px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
+  color: white;
 }
 .sidebar-hamburger:focus,
 .sidebar-hamburger:hover {
-  background: #e3eafe;
+  background: var(--primary-light);
+  box-shadow: 0 3px 10px rgba(79, 70, 229, 0.3);
 }
 
 .sidebar-root {
