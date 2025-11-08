@@ -47,13 +47,13 @@ const Sidebar = ({ onNewChat, onSelectHistory, onOpenLearnHub, onOpenAbout, onDe
               <FiBookOpen className="sidebar-icon" /> LearnHub
             </Link>
           </li>
-          <li onClick={onOpenAbout} className="sidebar-menu-item">
-            <FiInfo className="sidebar-icon" /> About
-          </li>
           <li className="sidebar-menu-item">
             <Link to="/settings" style={{ display: 'flex', alignItems: 'center', width: '100%', textDecoration: 'none', color: 'inherit' }}>
               <FiSettings className="sidebar-icon" /> Settings
             </Link>
+          </li>
+          <li onClick={onOpenAbout} className="sidebar-menu-item">
+            <FiInfo className="sidebar-icon" /> About
           </li>
         </ul>
       </nav>
