@@ -1,5 +1,5 @@
 import React from "react";
-import { FiMenu, FiMessageSquare, FiBookOpen, FiInfo, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiMenu, FiMessageSquare, FiBookOpen, FiInfo, FiPlus, FiTrash2, FiSettings } from "react-icons/fi";
 import "./Sidebar.css";
 import { Link } from 'react-router-dom';
 
@@ -49,6 +49,11 @@ const Sidebar = ({ onNewChat, onSelectHistory, onOpenLearnHub, onOpenAbout, onDe
           </li>
           <li onClick={onOpenAbout} className="sidebar-menu-item">
             <FiInfo className="sidebar-icon" /> About
+          </li>
+          <li className="sidebar-menu-item">
+            <Link to="/settings" style={{ display: 'flex', alignItems: 'center', width: '100%', textDecoration: 'none', color: 'inherit' }}>
+              <FiSettings className="sidebar-icon" /> Settings
+            </Link>
           </li>
         </ul>
       </nav>
